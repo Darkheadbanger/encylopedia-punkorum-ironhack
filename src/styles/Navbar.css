@@ -9,8 +9,73 @@
   height: auto;
 }
 
-.punkArchive-logo img{
-    width: 100%;
-    height: fit-content;
-    object-fit: cover;
+.punkArchive-logo img {
+  width: 100%;
+  height: fit-content;
+  object-fit: cover;
+}
+
+form {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+form label {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.formsSearch-container {
+  display: flex;
+  gap: 0.5rem;
+}
+
+#search {
+  background-color: rgba(30, 30, 30, 0.85);
+  border: 2px solid #555;
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+#search:focus {
+  outline: none;
+  border-color: #888;
+  background-color: rgba(40, 40, 40, 0.9);
+}
+
+select {
+  background-color: rgba(30, 30, 30, 0.85);
+  border: 2px solid #555;
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+select:focus {
+  outline: none;
+  border-color: #888;
+  background-color: rgba(40, 40, 40, 0.9);
+}
+
+button[type="submit"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: none;
+  background: none;
+  border: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  color: #afcb89;
+}
+
+button[type="submit"]:hover {
+  color: #8f333b;
 }

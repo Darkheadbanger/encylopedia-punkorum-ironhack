@@ -21,7 +21,7 @@ function Navbar() {
         <form>
             <label>Search:</label>
             <div className="formsSearch-container">
-                <input type="text" name="search" id="search" />
+                <input type="text" name="search" id="search" placeholder={"Select the " + selectSearch}/>
                 <select value={selectSearch} onChange={handleSelect}>
                     <option value="bands">Bands</option>
                     <option value="genres">Music Genre</option>
