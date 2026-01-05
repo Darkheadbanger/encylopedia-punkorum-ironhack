@@ -9,10 +9,33 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  position: relative;
+  z-index: 2;
 }
 
 * {
   box-sizing: border-box;
-  background-color: #000000;
   color: #ffffff;
+}
+
+body {
+  margin: 0;
+  background-image: url("../assets/punk-wallpaper.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  z-index: 1;
 }

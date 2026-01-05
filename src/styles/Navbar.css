@@ -1,0 +1,16 @@
+.navbar-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.punkArchive-logo {
+  width: 351px;
+  height: auto;
+}
+
+.punkArchive-logo img{
+    width: 100%;
+    height: fit-content;
+    object-fit: cover;
+}

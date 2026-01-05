@@ -1,4 +1,7 @@
 import React, { useState } from "react"
+import logoImage from "../assets/encyclopedia-punkorum-logo.png"
+import '../styles/Navbar.css'
+ 
 
 function Navbar() {
   // const [count, setCount] = useState(0)
@@ -12,8 +15,9 @@ function Navbar() {
   return (
     <div className="navbar-container">
         <div className="punkArchive-logo">
-            <img src="./assets/encyclopedia-punkorum-logo.png" alt="Encyclopedia Punkorum logo"/>
+            <img src={logoImage} alt="Encyclopedia Punkorum logo"/>
         </div>
+        <div className="search-container">
         <form>
             <label>Search:</label>
             <div className="formsSearch-container">
@@ -31,6 +35,7 @@ function Navbar() {
             </div>
             <button type="submit">Submit</button>
         </form>
+        </div>
     </div>
   )
 }

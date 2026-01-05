@@ -1,5 +1,4 @@
 // import { useState } from 'react'
-import './styles/Global.css'
 import Navbar from "./components/Navbar"
 
 function App() {
