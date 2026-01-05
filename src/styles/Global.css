@@ -1,7 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=New+Rocker&display=swap");
+
 #root {
   max-width: 1280px;
   padding: 2rem;
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "New Rocker", cursive, system-ui, Avenir, Helvetica, Arial,
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -9,7 +12,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  
+
   position: relative;
   z-index: 2;
 }
@@ -17,6 +20,10 @@
 * {
   box-sizing: border-box;
   color: #ffffff;
+}
+
+input, select, button, textarea {
+  font-family: inherit;
 }
 
 body {
