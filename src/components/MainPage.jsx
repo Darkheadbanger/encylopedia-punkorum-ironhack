@@ -1,26 +1,23 @@
 import React from "react";
-import "../styles/RandomInfo.css";
+// import "../styles/RandomInfo.css";
 
 function MainPage() {
   // const [count, setCount] = useState(0)
   //  const [selectSearch, setSelectSearch] = useState("Bands");
   return (
-    <aside className="randominfos-container">
-      <div className="randominfos-info">
-        <h3>Bands</h3>
-        {/* Links */}
-        <p>Alphabetical</p>
-        <p>Country</p>
-        <p>Genre</p>
-        <h3>Labels</h3>
-        {/* links */}
-        <p>Alphabetical</p>
-        <p>Country</p>
-        <h3>Reviews</h3>
+    <>
+        <main className="main-content">
+            <section className="main-section-container">
+                <p>There are currently {194088} bands, in Encyclopaedia Punkorum.</p>
 
-        <p>Random bands</p>
-      </div>
-    </aside>
+                <div className="main-choice">
+                    {/* Link */}
+                    <div className="bands">Bands</div>
+                    <div className="bands">Genres</div>
+                </div>
+            </section>
+        </main>
+    </>
   );
 }
 

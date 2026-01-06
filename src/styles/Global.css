@@ -2,6 +2,8 @@
 
 #root {
   max-width: 1280px;
+  width: 100%;
+  min-height: 100vh;
   padding: 2rem;
   font-family: "New Rocker", cursive, system-ui, Avenir, Helvetica, Arial,
     sans-serif;
@@ -15,6 +17,9 @@
 
   position: relative;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
 }
 
 * {
@@ -31,6 +36,9 @@ textarea {
 
 body {
   margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background-image: url("../assets/punk-wallpaper.jpg");
   background-repeat: no-repeat;
   background-size: cover;
@@ -54,10 +62,49 @@ body::after {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: flex-start;
 }
 
 .aside-container {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.main-section-container {
+  text-align: center;
+  max-width: 800px;
+}
+
+.main-choice {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.bands {
+  padding: 0.5rem 1rem;
+  border: 2px solid white;
+  cursor: pointer;
+}
+
+.main-container{
+  display: flex;
+  flex-direction: column;
+}
+
+.main-page{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 200px;
 }
