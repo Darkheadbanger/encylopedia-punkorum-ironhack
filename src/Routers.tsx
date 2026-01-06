@@ -1,6 +1,6 @@
-// import { useState } from 'react'
-
 import {Routes, Route} from "react-router-dom"
+import HomePage from "./layouts/HomePage.jsx";
+
 function Routers() {
   // const [count, setCount] = useState(0)
 
