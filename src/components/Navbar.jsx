@@ -17,8 +17,8 @@ function Navbar() {
         <div className="punkArchive-logo">
             <img src={logoImage} alt="Encyclopedia Punkorum logo"/>
         </div>
-        <div className="search-container">
-        <form>
+        <div className="info-container">
+        <form className="search-container">
             <label>Search:</label>
             <div className="formsSearch-container">
                 <input type="text" name="search" id="search" placeholder={"Select the " + selectSearch}/>
@@ -35,7 +35,15 @@ function Navbar() {
             </div>
             <button type="submit">Submit</button>
         </form>
+        <div className="info-list">
+          {/* Router */}
+          <p>Help</p>
+          <p>Rules</p>
+          <p>Store</p>
+          <p>Forum</p>
         </div>
+        </div>
+
     </div>
   )
 }

@@ -18,7 +18,6 @@
 form {
   display: flex;
   align-items: center;
-  gap: 1rem;
 }
 
 form label {
@@ -78,4 +77,28 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
   color: #8f333b;
+}
+
+.search-container{
+  display: flex;
+  flex-direction: column;
+}
+
+.search-container label{
+  align-self: self-start;
+}
+.search-container button[type="submit"]{
+  align-self: self-end;
+}
+
+.info-container{
+  display: flex;
+  flex-direction: column;
+}
+
+.info-list{
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: end ;
 }
