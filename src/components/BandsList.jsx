@@ -1,17 +1,13 @@
 import React from "react";
 import "../styles/MainPage.css";
 
-function BandsList() {
+function BandsList({band}) {
   return (
-    <main className="main-content">
-      <section className="main-section-container">
-        <p>There are currently 194088 bands, in Encyclopaedia Punkorum.</p>
-        <div className="main-choice">
-          <button>Bands</button>
-          <button>Genres</button>
-        </div>
-      </section>
-    </main>
+    <div className="band-item">
+      <h3>{band.name}</h3>
+      <p>Country: {band.country || 'Unknown'}</p>
+      <p>Type: {band.type}</p>
+    </div>
   );
 }
 
