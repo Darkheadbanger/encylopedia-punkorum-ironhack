@@ -1,5 +1,5 @@
 import React from "react";
-// import "../styles/RandomInfo.css";
+import "../styles/MainPage.css";
 
 function MainPage() {
   // const [count, setCount] = useState(0)
@@ -12,8 +12,8 @@ function MainPage() {
 
                 <div className="main-choice">
                     {/* Link */}
-                    <div className="bands">Bands</div>
-                    <div className="bands">Genres</div>
+                    <button >Bands</button>
+                    <button >Genres</button>
                 </div>
             </section>
         </main>

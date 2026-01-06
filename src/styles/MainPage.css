@@ -1,0 +1,9 @@
+.main-choice button {
+  width: 150px;
+  height: 100px;
+  border-radius: 25px;
+  background-color: rgba(30, 30, 30, 0.85);
+  cursor: pointer;
+  color: #afcb89;
+  font-size: 1.2em;
+}
