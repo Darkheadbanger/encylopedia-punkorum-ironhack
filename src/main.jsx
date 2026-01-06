@@ -4,10 +4,12 @@ import './index.css'
 import './styles/Global.css'
 import App from './App.jsx'
 // Import Google Fonts in CSS instead, e.g. in src/styles/Global.css add:
-
+import { BrowserRouter as Router } from 'react-router-dom'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <Router>
+      <App />      
+    </Router>
   </StrictMode>,
 )
