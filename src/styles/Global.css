@@ -55,3 +55,9 @@ body::after {
   flex-direction: row;
   justify-content: space-between;
 }
+
+.aside-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
