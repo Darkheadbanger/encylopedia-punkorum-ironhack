@@ -1,5 +1,6 @@
 import React from "react";
 import "../styles/MainPage.css";
+import { Link } from "react-router-dom";
 
 function MainPage() {
   return (
@@ -7,7 +8,7 @@ function MainPage() {
       <section className="main-section-container">
         <p>There are currently 194088 bands, in Encyclopaedia Punkorum.</p>
         <div className="main-choice">
-          <button>Bands</button>
+         <Link to="/bands" ><button>Bands</button></Link> 
           <button>Genres</button>
         </div>
       </section>

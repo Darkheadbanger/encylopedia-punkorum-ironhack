@@ -1,9 +1,10 @@
 import HomePage from "./layouts/HomePage.jsx";
-
+import Routers from "./Routers.jsx"
 function App() {
   return (
     <>
-      <HomePage />
+      {/* <HomePage /> */}
+      <Routers />
     </>
   );
 }

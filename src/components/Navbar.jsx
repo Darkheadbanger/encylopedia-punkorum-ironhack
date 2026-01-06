@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import logoImage from "../assets/encyclopedia-punkorum-logo.png";
 import "../styles/Navbar.css";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   const [selectSearch, setSelectSearch] = useState("Bands");
@@ -14,7 +15,7 @@ function Navbar() {
   return (
     <>
       <div className="punkArchive-logo">
-        <img src={logoImage} alt="Encyclopedia Punkorum logo" />
+        <Link to="/" ><img src={logoImage} alt="Encyclopedia Punkorum logo" /></Link>
       </div>
       <div className="info-container">
         <form className="search-container">
