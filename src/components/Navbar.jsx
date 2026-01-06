@@ -13,13 +13,13 @@ function Navbar() {
     console.log("searchValues", event.target.value)
   }
   return (
-    <div className="navbar-container">
+    <>
         <div className="punkArchive-logo">
             <img src={logoImage} alt="Encyclopedia Punkorum logo"/>
         </div>
         <div className="info-container">
         <form className="search-container">
-            <label>Search:</label>
+            <label htmlFor="search">Search:</label>
             <div className="formsSearch-container">
                 <input type="text" name="search" id="search" placeholder={"Select the " + selectSearch}/>
                 <select value={selectSearch} onChange={handleSelect}>
@@ -35,16 +35,16 @@ function Navbar() {
             </div>
             <button type="submit">Submit</button>
         </form>
-        <div className="info-list">
+        <nav className="info-list">
           {/* Router */}
           <p>Help</p>
           <p>Rules</p>
           <p>Store</p>
           <p>Forum</p>
-        </div>
+        </nav>
         </div>
 
-    </div>
+    </>
   )
 }
 

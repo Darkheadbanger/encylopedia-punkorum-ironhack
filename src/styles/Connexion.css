@@ -1,0 +1,22 @@
+.connexion-container {
+  border: 2px white solid;
+  width: 198px;
+  height: 120px;
+  padding: 5px 15px 34px 13px;
+}
+
+.connexion-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.connexion-info input {
+  background-color: rgba(30, 30, 30, 0.85);
+  border: 2px solid #555;
+}
+
+.connexion-info input:focus {
+  outline: none;
+  border-color: #888;
+  background-color: rgba(40, 40, 40, 0.9);
+}

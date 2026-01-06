@@ -1,12 +1,7 @@
-.navbar-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
 .punkArchive-logo {
   width: 351px;
   height: auto;
+  margin: 0 15rem 0 0;
 }
 
 .punkArchive-logo img {
@@ -79,26 +74,26 @@ button[type="submit"]:hover {
   color: #8f333b;
 }
 
-.search-container{
+.search-container {
   display: flex;
   flex-direction: column;
 }
 
-.search-container label{
+.search-container label {
   align-self: self-start;
 }
-.search-container button[type="submit"]{
+.search-container button[type="submit"] {
   align-self: self-end;
 }
 
-.info-container{
+.info-container {
   display: flex;
   flex-direction: column;
 }
 
-.info-list{
+.info-list {
   display: flex;
   flex-direction: row;
   gap: 1rem;
-  justify-content: end ;
+  justify-content: end;
 }

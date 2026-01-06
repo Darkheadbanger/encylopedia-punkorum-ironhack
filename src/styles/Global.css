@@ -22,7 +22,10 @@
   color: #ffffff;
 }
 
-input, select, button, textarea {
+input,
+select,
+button,
+textarea {
   font-family: inherit;
 }
 
@@ -45,4 +48,10 @@ body::after {
   background: rgba(0, 0, 0, 0.6);
   pointer-events: none;
   z-index: 1;
+}
+
+.header-connexion {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
