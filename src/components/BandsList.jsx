@@ -7,12 +7,24 @@ function BandsList({band}) {
   const isActiveClass = band["life-span"].ended === null ? "still-active" : "not-active";
 
   return (
-    <tr className="band-list-container">
-      <td className="band-name">{band.name}</td>
-      <td>{band.country}</td>
-      <td className="genre">{genreMusic}</td>
-      <td className={isActiveClass}>{status}</td>
-    </tr>
+    <>
+      <thead>
+      <tr className="band-list-container">
+          <th scope="col" className="band-head-list">Bands</th>
+          <th scope="col" className="band-head-list">Country</th>
+          <th scope="col" className="band-head-list">Genre</th>
+          <th scope="col" className="band-head-list">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr className="band-list-container">
+          <td scope="col" className="band-name">{band.name}</td>
+          <td scope="col">{band.country}</td>
+          <td scope="col" className="genre">{genreMusic}</td>
+          <td scope="col" className={isActiveClass}>{status}</td>
+        </tr>
+      </tbody>
+    </>
   );
 }
 

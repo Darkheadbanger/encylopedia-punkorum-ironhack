@@ -29,9 +29,9 @@ function BandsPage() {
         <Navbar />
         <div className="bands-list-page">
           <p>There are currently {bands.length} bands in Encyclopaedia Punkorum.</p>
-          {bands && bands.map((band) => {
-            return <BandsList key={band.id} band={band} />
-          })}
+              {bands && bands.map((band) => {
+                return <BandsList key={band.id} band={band} />
+              })}
         </div>
       </div>
     </>
