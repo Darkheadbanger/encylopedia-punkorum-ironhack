@@ -13,10 +13,23 @@
   width: 134px;
 }
 
+.band-list-container:hover{
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
 .still-active {
   color: green;
 }
 
 .not-active {
   color: red;
+}
+
+.bandId{
+    text-decoration: none;
+}
+
+.bandId:hover{
+    text-decoration: underline;
+
 }

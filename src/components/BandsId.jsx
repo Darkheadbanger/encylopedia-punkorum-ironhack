@@ -1,10 +1,11 @@
 import React from "react";
+import "../styles/BandsList.css";
 import Navbar from "../components/Navbar.jsx";
 import Connexion from "../pages/Auth/Connexion.jsx";
 import RandomInfos from "../components/RandomInfos.jsx";
 import MainPage from "../components/MainPage.jsx";
 
-function HomePage({bands}) {
+function BandsId() {
   return (
     <>
       <div header className="header-connexion">
@@ -14,11 +15,11 @@ function HomePage({bands}) {
         </div>
         <Navbar />
         <div className="main-page">
-          <MainPage bands={bands}/>
+           
         </div>
       </div>
     </>
   );
 }
 
-export default HomePage;
+export default BandsId;
