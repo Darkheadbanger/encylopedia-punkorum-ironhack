@@ -1,0 +1,16 @@
+.band-list-container {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+.band-list-container h3,
+.band-list-container p {
+  color: #afcb89;
+}
+.still-active {
+  color: green;
+}
+
+.not-active {
+  color: red;
+}
