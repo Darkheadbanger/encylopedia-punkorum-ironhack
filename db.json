@@ -1,0 +1,334 @@
+{
+  "bands": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "name": "Sex Pistols",
+      "country": "GB",
+      "location": "London",
+      "status": "Split-up",
+      "formed": "1975",
+      "disbanded": "1978",
+      "genre": ["punk rock", "proto-punk"],
+      "disambiguation": "English punk rock band",
+      "image": null,
+      "albums": [
+        {
+          "title": "Never Mind the Bollocks, Here's the Sex Pistols",
+          "year": "1977",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "Johnny Rotten",
+          "instrument": "vocals",
+          "period": "1975-1978"
+        },
+        {
+          "name": "Sid Vicious",
+          "instrument": "bass",
+          "period": "1977-1978"
+        }
+      ]
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440002",
+      "name": "Ramones",
+      "country": "US",
+      "location": "New York",
+      "status": "Split-up",
+      "formed": "1974",
+      "disbanded": "1996",
+      "genre": ["punk rock", "pop punk"],
+      "disambiguation": "American punk rock band from Queens",
+      "image": null,
+      "albums": [
+        {
+          "title": "Ramones",
+          "year": "1976",
+          "type": "Album"
+        },
+        {
+          "title": "Rocket to Russia",
+          "year": "1977",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "Joey Ramone",
+          "instrument": "vocals",
+          "period": "1974-1996"
+        },
+        {
+          "name": "Johnny Ramone",
+          "instrument": "guitar",
+          "period": "1974-1996"
+        },
+        {
+          "name": "Dee Dee Ramone",
+          "instrument": "bass",
+          "period": "1974-1989"
+        }
+      ]
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440003",
+      "name": "The Clash",
+      "country": "GB",
+      "location": "London",
+      "status": "Split-up",
+      "formed": "1976",
+      "disbanded": "1986",
+      "genre": ["punk rock", "post-punk", "new wave"],
+      "disambiguation": "English punk rock band",
+      "image": null,
+      "albums": [
+        {
+          "title": "The Clash",
+          "year": "1977",
+          "type": "Album"
+        },
+        {
+          "title": "London Calling",
+          "year": "1979",
+          "type": "Album"
+        },
+        {
+          "title": "Combat Rock",
+          "year": "1982",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "Joe Strummer",
+          "instrument": "vocals, guitar",
+          "period": "1976-1986"
+        },
+        {
+          "name": "Mick Jones",
+          "instrument": "guitar",
+          "period": "1976-1983"
+        }
+      ]
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440004",
+      "name": "Minor Threat",
+      "country": "US",
+      "location": "Washington, D.C.",
+      "status": "Split-up",
+      "formed": "1980",
+      "disbanded": "1983",
+      "genre": ["hardcore punk", "straight edge"],
+      "disambiguation": "American hardcore punk band",
+      "image": null,
+      "albums": [
+        {
+          "title": "Out of Step",
+          "year": "1983",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "Ian MacKaye",
+          "instrument": "vocals",
+          "period": "1980-1983"
+        }
+      ]
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440005",
+      "name": "The Damned",
+      "country": "GB",
+      "location": "London",
+      "status": "Active",
+      "formed": "1976",
+      "disbanded": null,
+      "genre": ["punk rock", "gothic rock"],
+      "disambiguation": "English punk rock band",
+      "image": null,
+      "albums": [
+        {
+          "title": "Damned Damned Damned",
+          "year": "1977",
+          "type": "Album"
+        },
+        {
+          "title": "Machine Gun Etiquette",
+          "year": "1979",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "Dave Vanian",
+          "instrument": "vocals",
+          "period": "1976-present"
+        }
+      ]
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440006",
+      "name": "Buzzcocks",
+      "country": "GB",
+      "location": "Manchester",
+      "status": "Active",
+      "formed": "1976",
+      "disbanded": null,
+      "genre": ["punk rock", "power pop"],
+      "disambiguation": "English punk rock band",
+      "image": null,
+      "albums": [
+        {
+          "title": "Another Music in a Different Kitchen",
+          "year": "1978",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "Pete Shelley",
+          "instrument": "vocals, guitar",
+          "period": "1976-2018"
+        }
+      ]
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440007",
+      "name": "Fugazi",
+      "country": "US",
+      "location": "Washington, D.C.",
+      "status": "On hiatus",
+      "formed": "1987",
+      "disbanded": null,
+      "genre": ["post-hardcore", "punk rock"],
+      "disambiguation": "American post-hardcore band",
+      "image": null,
+      "albums": [
+        {
+          "title": "Repeater",
+          "year": "1990",
+          "type": "Album"
+        },
+        {
+          "title": "13 Songs",
+          "year": "1989",
+          "type": "Compilation"
+        }
+      ],
+      "members": [
+        {
+          "name": "Ian MacKaye",
+          "instrument": "vocals, guitar",
+          "period": "1987-present"
+        },
+        {
+          "name": "Guy Picciotto",
+          "instrument": "vocals, guitar",
+          "period": "1987-present"
+        }
+      ]
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440008",
+      "name": "Pennywise",
+      "country": "US",
+      "location": "Hermosa Beach, California",
+      "status": "Active",
+      "formed": "1988",
+      "disbanded": null,
+      "genre": ["punk rock", "skate punk", "melodic hardcore"],
+      "disambiguation": "American punk rock band",
+      "image": null,
+      "albums": [
+        {
+          "title": "Pennywise",
+          "year": "1991",
+          "type": "Album"
+        },
+        {
+          "title": "About Time",
+          "year": "1995",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "Jim Lindberg",
+          "instrument": "vocals",
+          "period": "1988-present"
+        }
+      ]
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440009",
+      "name": "Rancid",
+      "country": "US",
+      "location": "Berkeley, California",
+      "status": "Active",
+      "formed": "1991",
+      "disbanded": null,
+      "genre": ["punk rock", "ska punk", "street punk"],
+      "disambiguation": "American punk rock band",
+      "image": null,
+      "albums": [
+        {
+          "title": "Let's Go",
+          "year": "1994",
+          "type": "Album"
+        },
+        {
+          "title": "...And Out Come the Wolves",
+          "year": "1995",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "Tim Armstrong",
+          "instrument": "vocals, guitar",
+          "period": "1991-present"
+        },
+        {
+          "name": "Lars Frederiksen",
+          "instrument": "guitar",
+          "period": "1993-present"
+        }
+      ]
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440010",
+      "name": "Social Distortion",
+      "country": "US",
+      "location": "Fullerton, California",
+      "status": "Active",
+      "formed": "1978",
+      "disbanded": null,
+      "genre": ["punk rock", "cowpunk", "hard rock"],
+      "disambiguation": "American punk rock band",
+      "image": null,
+      "albums": [
+        {
+          "title": "Mommy's Little Monster",
+          "year": "1983",
+          "type": "Album"
+        },
+        {
+          "title": "Social Distortion",
+          "year": "1990",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "Mike Ness",
+          "instrument": "vocals, guitar",
+          "period": "1978-present"
+        }
+      ]
+    }
+  ]
+}
