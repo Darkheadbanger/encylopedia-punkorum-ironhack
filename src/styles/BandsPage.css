@@ -1,0 +1,6 @@
+.bands-list-page {
+  position: absolute;
+  left: 54%;
+  transform: translateX(-50%);
+  top: 200px;
+}

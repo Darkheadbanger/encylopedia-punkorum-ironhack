@@ -1,12 +1,15 @@
 .band-list-container {
   display: flex;
   flex-direction: row;
-  gap: 1rem;
+  gap: 5.5rem;
+  align-items: baseline;
+  border-bottom: 1px #555 solid;
 }
-.band-list-container h3,
-.band-list-container p {
+.band-list-container td {
   color: #afcb89;
+  width: 134px;
 }
+
 .still-active {
   color: green;
 }

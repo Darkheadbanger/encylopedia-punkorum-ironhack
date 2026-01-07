@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar.jsx";
 import Connexion from "../pages/Auth/Connexion.jsx";
 import RandomInfos from "../components/RandomInfos.jsx";
-import MainPage from "../components/MainPage.jsx";
 import axios from "axios";
 import BandsList from "../components/BandsList.jsx";
+import "../styles/BandsPage.css"
 
 function BandsPage() {
   const [bands, setBands] = useState([]);
@@ -27,7 +27,7 @@ function BandsPage() {
           <RandomInfos />
         </div>
         <Navbar />
-        <div className="main-page">
+        <div className="bands-list-page">
           <p>There are currently {bands.length} bands in Encyclopaedia Punkorum.</p>
           {bands && bands.map((band) => {
             return <BandsList key={band.id} band={band} />
