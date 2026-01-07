@@ -5,7 +5,7 @@ import ErrorPage from "./layouts/ErrorPage.jsx"
 import BandsIdPage from "./layouts/BandsIdPage.jsx";
 
 
-function Routers({bands}: {bands: IntrinsicAttributes}) {
+function Routers({bands}: {bands: any}) {
   return (
     <>
       <Routes>

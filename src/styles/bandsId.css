@@ -1,0 +1,35 @@
+.bands-info-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.band-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 600px;
+  margin: -30px 0 0px 0;
+}
+
+
+.band-info-list li span {
+  color: #afcb89;
+}
+
+.bands-photos-container{
+    width: 250px;
+    height: auto;
+}
+
+.bands-photos{
+    width: 100%;
+    object-fit: cover;
+}
+thead tbody tr{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+

@@ -1,10 +1,23 @@
 import React from "react";
-import BandsId from "../components/BandsId"
+import "../styles/BandsList.css";
+import Navbar from "../components/Navbar.jsx";
+import Connexion from "../pages/Auth/Connexion.jsx";
+import RandomInfos from "../components/RandomInfos.jsx";
+import BandsId from "../components/BandsId.jsx";
 
-function BandsIdPage() {
+function BandsIdPage({bands}) {
   return (
     <>
-      <BandsId></BandsId>
+      <div header className="header-connexion">
+        <div className="aside-container">
+          <Connexion />
+          <RandomInfos />
+        </div>
+        <Navbar />
+        <div className="main-page">
+           <BandsId bands={bands}></BandsId>
+        </div>
+      </div>
     </>
   );
 }
