@@ -5,7 +5,7 @@ import RandomInfos from "../components/RandomInfos.jsx";
 import BandsList from "../components/BandsList.jsx";
 import "../styles/BandsPage.css"
 
-function BandsPage({bands}) {
+function BandsPage({bands, setBands}) {
   return (
     <>
       <div header className="header-connexion">
@@ -25,7 +25,7 @@ function BandsPage({bands}) {
         </tr>
       </thead>
       {bands && bands.map((band) => {
-                return <BandsList key={band.id} band={band} />
+                return <BandsList key={band.id} band={band} setBands={setBands} />
               })}
         </div>
       </div>

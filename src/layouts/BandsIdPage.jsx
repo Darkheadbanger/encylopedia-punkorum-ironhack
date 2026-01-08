@@ -5,7 +5,7 @@ import Connexion from "../pages/Auth/Connexion.jsx";
 import RandomInfos from "../components/RandomInfos.jsx";
 import BandsId from "../components/BandsId.jsx";
 
-function BandsIdPage({bands}) {
+function BandsIdPage({bands, setBands}) {
   return (
     <>
       <div header className="header-connexion">
@@ -15,7 +15,7 @@ function BandsIdPage({bands}) {
         </div>
         <Navbar />
         <div className="main-page">
-           <BandsId bands={bands}></BandsId>
+           <BandsId bands={bands} setBands={setBands}></BandsId>
         </div>
       </div>
     </>

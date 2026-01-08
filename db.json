@@ -8,7 +8,10 @@
       "status": "Split-up",
       "formed": "1975",
       "disbanded": "1978",
-      "genre": ["punk rock", "proto-punk"],
+      "genre": [
+        "punk rock",
+        "proto-punk"
+      ],
       "disambiguation": "English punk rock band",
       "image": "https://i8.amplience.net/i/naras/gettyimages-592309028.jpg.jpg",
       "albums": [
@@ -39,7 +42,10 @@
       "status": "Split-up",
       "formed": "1974",
       "disbanded": "1996",
-      "genre": ["punk rock", "pop punk"],
+      "genre": [
+        "punk rock",
+        "pop punk"
+      ],
       "disambiguation": "American punk rock band from Queens",
       "image": null,
       "albums": [
@@ -80,7 +86,11 @@
       "status": "Split-up",
       "formed": "1976",
       "disbanded": "1986",
-      "genre": ["punk rock", "post-punk", "new wave"],
+      "genre": [
+        "punk rock",
+        "post-punk",
+        "new wave"
+      ],
       "disambiguation": "English punk rock band",
       "image": null,
       "albums": [
@@ -121,7 +131,10 @@
       "status": "Split-up",
       "formed": "1980",
       "disbanded": "1983",
-      "genre": ["hardcore punk", "straight edge"],
+      "genre": [
+        "hardcore punk",
+        "straight edge"
+      ],
       "disambiguation": "American hardcore punk band",
       "image": null,
       "albums": [
@@ -140,37 +153,6 @@
       ]
     },
     {
-      "id": "550e8400-e29b-41d4-a716-446655440005",
-      "name": "The Damned",
-      "country": "GB",
-      "location": "London",
-      "status": "Active",
-      "formed": "1976",
-      "disbanded": null,
-      "genre": ["punk rock", "gothic rock"],
-      "disambiguation": "English punk rock band",
-      "image": null,
-      "albums": [
-        {
-          "title": "Damned Damned Damned",
-          "year": "1977",
-          "type": "Album"
-        },
-        {
-          "title": "Machine Gun Etiquette",
-          "year": "1979",
-          "type": "Album"
-        }
-      ],
-      "members": [
-        {
-          "name": "Dave Vanian",
-          "instrument": "vocals",
-          "period": "1976-present"
-        }
-      ]
-    },
-    {
       "id": "550e8400-e29b-41d4-a716-446655440006",
       "name": "Buzzcocks",
       "country": "GB",
@@ -178,7 +160,10 @@
       "status": "Active",
       "formed": "1976",
       "disbanded": null,
-      "genre": ["punk rock", "power pop"],
+      "genre": [
+        "punk rock",
+        "power pop"
+      ],
       "disambiguation": "English punk rock band",
       "image": null,
       "albums": [
@@ -204,7 +189,10 @@
       "status": "On hiatus",
       "formed": "1987",
       "disbanded": null,
-      "genre": ["post-hardcore", "punk rock"],
+      "genre": [
+        "post-hardcore",
+        "punk rock"
+      ],
       "disambiguation": "American post-hardcore band",
       "image": null,
       "albums": [
@@ -240,7 +228,11 @@
       "status": "Active",
       "formed": "1988",
       "disbanded": null,
-      "genre": ["punk rock", "skate punk", "melodic hardcore"],
+      "genre": [
+        "punk rock",
+        "skate punk",
+        "melodic hardcore"
+      ],
       "disambiguation": "American punk rock band",
       "image": null,
       "albums": [
@@ -271,7 +263,11 @@
       "status": "Active",
       "formed": "1991",
       "disbanded": null,
-      "genre": ["punk rock", "ska punk", "street punk"],
+      "genre": [
+        "punk rock",
+        "ska punk",
+        "street punk"
+      ],
       "disambiguation": "American punk rock band",
       "image": null,
       "albums": [
@@ -307,7 +303,11 @@
       "status": "Active",
       "formed": "1978",
       "disbanded": null,
-      "genre": ["punk rock", "cowpunk", "hard rock"],
+      "genre": [
+        "punk rock",
+        "cowpunk",
+        "hard rock"
+      ],
       "disambiguation": "American punk rock band",
       "image": null,
       "albums": [

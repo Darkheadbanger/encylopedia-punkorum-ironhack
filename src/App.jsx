@@ -26,7 +26,7 @@ function App() {
   return (
     <>
       {/* <HomePage /> */}
-      <Routers bands={bands} />
+      <Routers bands={bands} setBands={setBands}/>
     </>
   );
 }

@@ -41,10 +41,16 @@ function Navbar() {
           <button type="submit">Submit</button>
         </form>
         <nav className="info-list">
-          <p>Help</p>
-          <p>Rules</p>
-          <p>Store</p>
-          <p>Forum</p>
+          <div className="create-band">
+            {/* {band.editable && <div className="delete-table" onClick={deleteButton}>🗑️</div>} */}
+            <p>Submit new band 📝</p>
+          </div>
+          <div className="info-list-site">
+            <p>Help</p>
+            <p>Rules</p>
+            <p>Store</p>
+            <p>Forum</p>
+          </div>
         </nav>
       </div>
     </>

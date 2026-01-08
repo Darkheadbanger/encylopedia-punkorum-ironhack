@@ -1,8 +1,9 @@
 import React from "react";
 import "../styles/BandsList.css";
 import { Link } from "react-router-dom";
+import { localBandsAPI } from "../services/api";
 
-function BandsList({band}) {
+function BandsList({band, setBands}) {
   
   // Gérer les deux structures : locale (JSON Server) et MusicBrainz
   let genreMusic, status, isActiveClass;
@@ -23,16 +24,29 @@ function BandsList({band}) {
     isActiveClass = band["life-span"]?.ended === null ? "still-active" : "not-active";
   }
 
+  const deleteButton = (event) => {
+    event.preventDefault();
+
+    if(window.confirm(`Delete ${band.name}`)){
+      localBandsAPI.delete(band.id)
+      .then(() => setBands(theBands => theBands.filter((theBand) => theBand.id !== band.id)))
+      .catch(error => console.error(error))
+    }
+  }
+
   return (
     <>
       <tbody>
           <tr className="band-list-container">
-            <Link to={`/bands/${band.id}`} className="bandId">
-              <td scope="col" className="band-name">
-                {band.name}
-                {band.editable && <span style={{marginLeft: '5px', fontSize: '0.8em'}}>✏️</span>}
-              </td>
-            </Link>
+            <div className="bandId">
+                <td scope="col" className="band-name">
+                  <Link to={`/bands/${band.id}`} >
+                    <p>{band.name}</p>
+                  </Link>
+                  {band.editable && <div className="edit-table">✏️</div>}
+                  {band.editable && <div className="delete-table" onClick={deleteButton}>🗑️</div>}
+                </td>
+            </div>
             <td scope="col">{band.country || "N/A"}</td>
             <td scope="col" className="genre">{genreMusic}</td>
             <td scope="col" className={isActiveClass}>{status}</td>

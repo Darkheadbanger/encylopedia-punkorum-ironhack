@@ -95,5 +95,31 @@ button[type="submit"]:hover {
   display: flex;
   flex-direction: row;
   gap: 1rem;
-  justify-content: end;
+  justify-content: space-around;
+  color: #afcb89;
+}
+
+.info-list-site {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.create-band {
+  color: #afcb89;
+  cursor: pointer;
+}
+
+.create-band p {
+  color: #afcb89;
+}
+
+.create-band:hover {
+  color: #8f333b;
+}
+
+.create-band:hover p {
+  color: #8f333b;
 }

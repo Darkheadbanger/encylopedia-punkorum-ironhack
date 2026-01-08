@@ -5,16 +5,16 @@
   align-items: baseline;
   border-bottom: 1px #555 solid;
 }
-.band-list-container .band-head-list{
-    margin: 0 73px 20px 0;
+.band-list-container .band-head-list {
+  margin: 0 73px 20px 0;
 }
 .band-list-container td {
   color: #afcb89;
   width: 134px;
 }
 
-.band-list-container:hover{
-    background-color: rgba(0, 0, 0, 0.6);
+.band-list-container:hover {
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .still-active {
@@ -25,11 +25,30 @@
   color: red;
 }
 
-.bandId{
-    text-decoration: none;
+.bandId {
+  text-decoration: none;
 }
 
-.bandId:hover{
-    text-decoration: underline;
+.bandId:hover {
+  text-decoration: underline;
+}
+.band-name {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;
+}
 
+.edit-table,
+.delete-table {
+  margin-left: 5px;
+  font-size: 0.8em;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.edit-table:hover,
+.delete-table:hover {
+  transform: scale(1.2);
 }
