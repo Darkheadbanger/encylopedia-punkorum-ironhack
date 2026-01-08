@@ -5,6 +5,7 @@ import RandomInfos from "../components/RandomInfos.jsx";
 import MainPage from "../components/MainPage.jsx";
 
 function AddBand({bands}) {
+    console.log(bands)
   return (
     <>
       <div header className="header-connexion">
