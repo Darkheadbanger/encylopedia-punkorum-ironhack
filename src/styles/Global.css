@@ -71,7 +71,7 @@ body::after {
   gap: 0.5rem;
 }
 
-.main-content { 
+.main-content {
   flex: 1;
   display: flex;
   justify-content: center;
@@ -105,7 +105,7 @@ body::after {
 
 .main-page {
   position: absolute;
-  left: 71%;
+  left: 60%;
   transform: translateX(-50%);
   top: 200px;
   width: 100%;
