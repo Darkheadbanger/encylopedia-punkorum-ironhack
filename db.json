@@ -2,7 +2,7 @@
   "bands": [
     {
       "id": "550e8400-e29b-41d4-a716-446655440001",
-      "name": "Sex Pistol",
+      "name": "Sex Pistols",
       "country": "GB",
       "location": "London",
       "status": "Split-up",
@@ -335,30 +335,30 @@
       ]
     },
     {
-      "id": "d1678775-5e8d-4f0c-beea-fbc5c9007660",
+      "id": "b05cbe3f-4a74-4abe-89cb-96dac791587a",
       "name": "Lalala",
-      "country": "GB",
-      "location": "London",
+      "country": "FR",
+      "location": "Pau",
       "status": "Active",
-      "formed": "2026",
+      "formed": "2016",
       "disbanded": null,
       "genre": [
         "Punk 77"
       ],
       "type": "Group",
-      "disambiguation": "English punk rock band!",
+      "disambiguation": "Imaginary punk rock band",
       "image": null,
       "albums": [
         {
-          "title": "Lplp",
-          "year": "2025",
+          "title": "Lolo",
+          "year": "2026",
           "type": "Album"
         }
       ],
       "members": [
         {
           "name": "David Bouhaben",
-          "instrument": "Dodo",
+          "instrument": "All Instrument",
           "period": "2026"
         }
       ],
