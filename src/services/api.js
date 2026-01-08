@@ -1,31 +1,33 @@
 import axios from 'axios';
 
-const JSON_SERVER_URL = import.meta.env.VITE_JSON_SERVER_URL || 'http://localhost:3001';
+const LOCAL_SERVER_URL = import.meta.env.VITE_LOCAL_SERVER_URL || 'http://localhost:3001';
 const MUSICBRAINZ_URL = 'https://musicbrainz.org/ws/2';
 
-// API JSON Server (complete CRUD)
+// API local pour gérer nos groupes
 export const localBandsAPI = {
-  getAll: () => axios.get(`${JSON_SERVER_URL}/bands`),
-  getOne: (id) => axios.get(`${JSON_SERVER_URL}/bands/${id}`),
-  create: (band) => axios.post(`${JSON_SERVER_URL}/bands`, band),
-  update: (id, band) => axios.put(`${JSON_SERVER_URL}/bands/${id}`, band),
-  delete: (id) => axios.delete(`${JSON_SERVER_URL}/bands/${id}`)
+  getAll: () => axios.get(`${LOCAL_SERVER_URL}/bands`),
+  getOne: (id) => axios.get(`${LOCAL_SERVER_URL}/bands/${id}`),
+  create: (band) => axios.post(`${LOCAL_SERVER_URL}/bands`, band),
+  update: (id, band) => axios.put(`${LOCAL_SERVER_URL}/bands/${id}`, band),
+  delete: (id) => axios.delete(`${LOCAL_SERVER_URL}/bands/${id}`)
 };
 
-// API MusicBrainz (read only)
-export const musicBrainzAPI = {
-  searchBands: (query, limit = 100, offset = 0) => {
+// API MusicBrainz pour avoir plus de groupes
+const limitTheMusicBrainzAPI = 100;
+const musicBrainzOffset = 0;
+export const APIFromMusicBrainz = {
+  searchBands: (query, limit = limitTheMusicBrainzAPI, offset = musicBrainzOffset) => {
     return axios.get(`${MUSICBRAINZ_URL}/artist`, {
       params: {
         query: query || 'tag:"hardcore punk" AND tag:"punk" AND type:group',
-        fmt: 'json',
+        fmt: 'json', // Format
         limit,
         offset
       }
     });
   },
-  getBandDetails: (artistId) => {
-    return axios.get(`${MUSICBRAINZ_URL}/artist/${artistId}`, {
+  getBandDetails: (bandId) => {
+    return axios.get(`${MUSICBRAINZ_URL}/artist/${bandId}`, {
       params: {
         inc: 'release-groups+artist-rels',
         fmt: 'json'
@@ -34,29 +36,29 @@ export const musicBrainzAPI = {
   }
 };
 
-// Merges two APIS
+// Récupérer tous les groupes des deux APIs
 export const getAllBands = async () => {
   try {
-    // 1. Get all bands from local API
-    const localResponse = await localBandsAPI.getAll();
-    const localBands = localResponse.data.map((band) => ({
+    // Groupes depuis notre serveur local
+    const responseFromLocalDB = await localBandsAPI.getAll();
+    const localDbBands = responseFromLocalDB.data.map((band) => ({
       ...band,
-      source: 'local', // To edit (local API only)
+      source: 'local',
       editable: true
     }));
 
-    // 1. Get all bands from MusicBrainz API
-    const mbResponse = await musicBrainzAPI.searchBands();
-    const mbBands = mbResponse.data.artists.map(band => ({
+    // Groupes depuis MusicBrainz
+    const responseMusicBrainzAPI = await APIFromMusicBrainz.searchBands();
+    const badnFromMusicBrainz = responseMusicBrainzAPI.data.artists.map(band => ({
       ...band,
-      source: 'musicbrainz', // Read only API
+      source: 'musicbrainz',
       editable: false
     }));
 
-    // Combines the two API, local first
-    return [...localBands, ...mbBands];
+    // On met les locaux en premier
+    return [...localDbBands, ...badnFromMusicBrainz];
   } catch (error) {
-    console.error('Error fetching bands:', error);
+    console.error(error);
     throw error;
   }
 };

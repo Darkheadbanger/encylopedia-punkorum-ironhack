@@ -459,6 +459,75 @@
       ],
       "source": "local",
       "editable": true
+    },
+    {
+      "id": "61f15d3c-fc14-406c-ab9d-fd69b8a4e547",
+      "name": "Beer Two",
+      "country": "US",
+      "location": "New York",
+      "status": "Split-up",
+      "formed": "1995",
+      "disbanded": "2026",
+      "genre": [
+        "Hardcore punk",
+        "  emo"
+      ],
+      "type": "Group",
+      "disambiguation": "English punk rock band Legend",
+      "image": null,
+      "albums": [
+        {
+          "title": "adda",
+          "year": "2018",
+          "type": "Album"
+        },
+        {
+          "title": "dezed",
+          "year": "2020",
+          "type": "EP"
+        }
+      ],
+      "members": [
+        {
+          "name": "feef",
+          "instrument": "All Instruments",
+          "period": "1995-2002"
+        }
+      ],
+      "source": "local",
+      "editable": true
+    },
+    {
+      "id": "f122a3b9-80e9-4231-9eed-e0e2cde8ecd8",
+      "name": "DADAO",
+      "country": "FR",
+      "location": "Pau",
+      "status": "Active",
+      "formed": "1995",
+      "disbanded": "2026",
+      "genre": [
+        "Punk Rock",
+        "  powerviolence"
+      ],
+      "type": "Group",
+      "disambiguation": "English punk rock band Legend",
+      "image": null,
+      "albums": [
+        {
+          "title": "DADA",
+          "year": "2005",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "DADA",
+          "instrument": "Guitar",
+          "period": "1995-2026"
+        }
+      ],
+      "source": "local",
+      "editable": true
     }
   ]
 }
