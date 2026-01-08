@@ -428,6 +428,37 @@
       ],
       "source": "local",
       "editable": true
+    },
+    {
+      "id": "57c6e15c-1dd3-40c8-a69b-4d4705c1f752",
+      "name": "David ",
+      "country": "FR",
+      "location": "Pau",
+      "status": "Active",
+      "formed": "1995",
+      "disbanded": null,
+      "genre": [
+        "Punkero"
+      ],
+      "type": "Group",
+      "disambiguation": "Indo France punk",
+      "image": null,
+      "albums": [
+        {
+          "title": "Dedede",
+          "year": "2021",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "David bouhaben",
+          "instrument": "All instruments",
+          "period": "2025"
+        }
+      ],
+      "source": "local",
+      "editable": true
     }
   ]
 }

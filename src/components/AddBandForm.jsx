@@ -25,7 +25,7 @@ function AddBandForm({ setBands }) {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
   };
 
@@ -50,9 +50,9 @@ function AddBandForm({ setBands }) {
     setAlbums(albums.filter((album, i) => i !== indexToRemove));
   };
 
-  const memberEmpty = { name: "", instrument: "", period: "" }
+  const memberEmpty = { name: "", instrument: "", period: "" };
   const addMember = () => {
-    setMembers([...members, memberEmpty ]);
+    setMembers([...members, memberEmpty]);
   };
 
   const removeMember = (indexToRemove) => {
