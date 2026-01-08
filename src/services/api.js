@@ -12,7 +12,7 @@ export const localBandsAPI = {
   delete: (id) => axios.delete(`${JSON_SERVER_URL}/bands/${id}`)
 };
 
-// API MusicBrainz (read seule)
+// API MusicBrainz (read only)
 export const musicBrainzAPI = {
   searchBands: (query, limit = 100, offset = 0) => {
     return axios.get(`${MUSICBRAINZ_URL}/artist`, {
@@ -34,26 +34,26 @@ export const musicBrainzAPI = {
   }
 };
 
-// Fonction pour combiner les deux sources
+// Merges two APIS
 export const getAllBands = async () => {
   try {
-    // 1. Récupérer VOS groupes (JSON Server)
+    // 1. Get all bands from local API
     const localResponse = await localBandsAPI.getAll();
-    const localBands = localResponse.data.map(band => ({
+    const localBands = localResponse.data.map((band) => ({
       ...band,
-      source: 'local', // Marquer comme éditable
+      source: 'local', // To edit (local API only)
       editable: true
     }));
 
-    // 2. Récupérer les groupes MusicBrainz
+    // 1. Get all bands from MusicBrainz API
     const mbResponse = await musicBrainzAPI.searchBands();
     const mbBands = mbResponse.data.artists.map(band => ({
       ...band,
-      source: 'musicbrainz', // Marquer comme non-éditable
+      source: 'musicbrainz', // Read only API
       editable: false
     }));
 
-    // 3. Combiner : VOS groupes EN PREMIER
+    // Combines the two API, local first
     return [...localBands, ...mbBands];
   } catch (error) {
     console.error('Error fetching bands:', error);

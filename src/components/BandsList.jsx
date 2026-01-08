@@ -43,7 +43,7 @@ function BandsList({band, setBands}) {
                   <Link to={`/bands/${band.id}`} >
                     <p>{band.name}</p>
                   </Link>
-                  {band.editable && <div className="edit-table">✏️</div>}
+                  <Link to={`/updateBand/${band.id}`}>{band.editable && <div className="edit-table">✏️</div>}</Link>
                   {band.editable && <div className="delete-table" onClick={deleteButton}>🗑️</div>}
                 </td>
             </div>

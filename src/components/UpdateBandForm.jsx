@@ -1,20 +1,144 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { localBandsAPI } from "../services/api";
+import "../styles/AddBandForm.css";
 
-import "../styles/RandomInfo.css";
+function UpdateBandForm({ bands, setBands }) {
+  const navigate = useNavigate();
+  const { updateId } = useParams();
+  
+  const band = bands.find((band) => band.id === updateId);
 
-function UpdateBandForm() {
-    const navigate = useNavigate();
-    const bandId = useParams()
+  const [formData, setFormData] = useState(() => {
+    if (band && band.source === 'local') {
+      return {
+        name: band.name || "",
+        country: band.country || "",
+        location: band.location || "",
+        status: band.status || "Active",
+        formed: band.formed || "",
+        disbanded: band.disbanded || "",
+        genre: Array.isArray(band.genre) ? band.genre.join(", ") : "",
+        type: band.type || "Group",
+        disambiguation: band.disambiguation || ""
+      };
+    }else{
+        return {
+        name: "",
+        country: "",
+        location: "",
+        status: "Active",
+        formed: "",
+        disbanded: "",
+        genre: "",
+        type: "Group",
+        disambiguation: ""
+        };
+    }
+  });
 
-    const band = bandId.find((band) => band.id === bandId)
+  const [albums, setAlbums] = useState(() => {
+    if (band && band.source === 'local') {
+      return band.albums;
+    }
+    return []
+  });
+
+  const [members, setMembers] = useState(() => {
+    if (band && band.source === 'local') {
+      return band.members;
+    }
+    return []
+  });
+
+  if (!band) {
+    return <p>Band not found</p>;
+  }
+
+   // For security, edit button only exist on local API but can be put manually on the url for musicBrainz API
+  if (band.source !== 'local') {
+    return (
+      <div className="add-band-container">
+        <h2>Cannot Edit MusicBrainz Bands</h2>
+        <p>This band is from MusicBrainz and cannot be edited.</p>
+        <button onClick={() => navigate("/bands")} className="btn-cancel">
+          Back to Bands
+        </button>
+      </div>
+    );
+  }
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleAlbumChange = (index, field, value) => {
+    const newAlbums = [...albums];
+    newAlbums[index][field] = value;
+    setAlbums(newAlbums);
+  };
+
+  const handleMemberChange = (index, field, value) => {
+    const newMembers = [...members];
+    newMembers[index][field] = value;
+    setMembers(newMembers);
+  };
+
+  const addAlbum = () => {
+    setAlbums([...albums, { title: "", year: "", type: "Album" }]);
+  };
+
+  const removeAlbum = (index) => {
+    setAlbums(albums.filter((_, i) => i !== index));
+  };
+
+  const addMember = () => {
+    setMembers([...members, { name: "", instrument: "", period: "" }]);
+  };
+
+  const removeMember = (index) => {
+    setMembers(members.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!formData.name.trim()) {
+      alert("Band name is required!");
+      return;
+    }
+
+    const updatedBand = {
+      ...band,
+      ...formData,
+      genre: formData.genre.split(",").map(genreStyle => genreStyle.trim()).filter(genreStyle => genreStyle),
+      disbanded: formData.disbanded || null,
+      albums: albums.filter(album => album.title.trim()),
+      members: members.filter(member => member.name.trim())
+    };
+
+    localBandsAPI.update(band.id, updatedBand)
+      .then(() => {
+        // Update bands list
+        setBands(previousBands => previousBands.map(thisBand => thisBand.id === band.id ? updatedBand : thisBand));
+        alert(`${updatedBand.name} has been updated!`);
+        navigate(`/bands/${band.id}`);
+      })
+      .catch(error => {
+        console.error("Error updating band:", error);
+        alert("Error updating band. Please try again.");
+      });
+  };
 
   return (
     <>
       <div className="add-band-container">
-        <h2>Add New Band to Encyclopedia Punkorum</h2>
+        <h2>Edit Band: {band.name}</h2>
 
-        <form className="add-band-form">
+        <form onSubmit={handleSubmit} className="add-band-form">
           {/* Basic Info */}
           <section className="form-section">
             <h3>Basic Information</h3>
@@ -249,12 +373,12 @@ function UpdateBandForm() {
           {/* Submit Buttons */}
           <div className="form-actions">
             <button type="submit" className="btn-submit">
-              Create Band
+              Update Band
             </button>
             <button
               type="button"
               className="btn-cancel"
-              onClick={() => navigate("/bands")}
+              onClick={() => navigate(`/bands/${band.id}`)}
             >
               Cancel
             </button>

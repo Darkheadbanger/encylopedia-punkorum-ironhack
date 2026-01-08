@@ -64,11 +64,11 @@ function BandsId({bands}) {
       <div className="bands-info-container">
         <h2>
           <span>{band.name}</span>
-          {band.editable && (
+          {/* {band.editable && (
             <Link to={`/bands/edit/${band.id}`} style={{marginLeft: '10px', fontSize: '0.8em'}}>
               ✏️ Edit
             </Link>
-          )}
+          )} */}
         </h2>
         <div className="band-info">
             <ul className="band-info-list">

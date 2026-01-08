@@ -105,7 +105,7 @@ body::after {
 
 .main-page {
   position: absolute;
-  left: 60%;
+  left: 70%;
   transform: translateX(-50%);
   top: 200px;
   width: 100%;

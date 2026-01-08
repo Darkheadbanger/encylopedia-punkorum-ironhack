@@ -68,7 +68,7 @@ function AddBandForm({ setBands }) {
     const newBand = {
       id: uuidv4(),
       ...formData,
-      genre: formData.genre.split(",").map(g => g.trim()).filter(g => g),
+      genre: formData.genre.split(",").map(genreStyle => genreStyle.trim()).filter(genreStyle => genreStyle),
       disbanded: formData.disbanded || null,
       image: null,
       albums: albums.filter(a => a.title.trim()),

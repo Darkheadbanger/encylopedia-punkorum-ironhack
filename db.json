@@ -2,7 +2,7 @@
   "bands": [
     {
       "id": "550e8400-e29b-41d4-a716-446655440001",
-      "name": "Sex Pistols",
+      "name": "Sex Pistol",
       "country": "GB",
       "location": "London",
       "status": "Split-up",
@@ -10,14 +10,15 @@
       "disbanded": "1978",
       "genre": [
         "punk rock",
-        "proto-punk"
+        "proto-punk",
+        "punk rock"
       ],
-      "disambiguation": "English punk rock band",
+      "disambiguation": "English punk rock band Legend",
       "image": "https://i8.amplience.net/i/naras/gettyimages-592309028.jpg.jpg",
       "albums": [
         {
-          "title": "Never Mind the Bollocks, Here's the Sex Pistols",
-          "year": "1977",
+          "title": "Neverr Mind the Bollocks, Here's the Sex Pistols",
+          "year": "1976",
           "type": "Album"
         }
       ],
@@ -25,14 +26,17 @@
         {
           "name": "Johnny Rotten",
           "instrument": "vocals",
-          "period": "1975-1978"
+          "period": "1975-1977"
         },
         {
           "name": "Sid Vicious",
           "instrument": "bass",
           "period": "1977-1978"
         }
-      ]
+      ],
+      "source": "local",
+      "editable": true,
+      "type": "Group"
     },
     {
       "id": "550e8400-e29b-41d4-a716-446655440002",
