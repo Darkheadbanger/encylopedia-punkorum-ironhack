@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const JSON_SERVER_URL = 'http://localhost:3001';
+const JSON_SERVER_URL = import.meta.env.VITE_JSON_SERVER_URL || 'http://localhost:3001';
 const MUSICBRAINZ_URL = 'https://musicbrainz.org/ws/2';
 
 // API JSON Server (complete CRUD)
