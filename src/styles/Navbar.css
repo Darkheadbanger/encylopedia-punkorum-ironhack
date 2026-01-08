@@ -123,3 +123,7 @@ button[type="submit"]:hover {
 .create-band:hover p {
   color: #8f333b;
 }
+
+.add-band{
+  text-decoration: none;
+}

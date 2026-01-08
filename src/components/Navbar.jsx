@@ -43,7 +43,7 @@ function Navbar() {
         <nav className="info-list">
           <div className="create-band">
             {/* {band.editable && <div className="delete-table" onClick={deleteButton}>🗑️</div>} */}
-            <Link to="/addBand" ><p>Submit new band</p></Link> 
+            <Link to="/addBand" className="add-band"><p>Submit new band</p></Link> 
           </div>
           <div className="info-list-site">
             <p>Help</p>
