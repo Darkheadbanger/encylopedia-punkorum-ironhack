@@ -3,7 +3,7 @@ import HomePage from "./layouts/HomePage.jsx";
 import BandsPage from "./layouts/BandsPage.jsx";
 import ErrorPage from "./layouts/ErrorPage.jsx"
 import BandsIdPage from "./layouts/BandsIdPage.jsx";
-
+import AddBand from "./layouts/AddBand.jsx"
 
 function Routers({bands, setBands}: {bands: any, setBands: any}) {
   return (
