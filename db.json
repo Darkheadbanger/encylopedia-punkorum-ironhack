@@ -364,6 +364,69 @@
       ],
       "source": "local",
       "editable": true
+    },
+    {
+      "id": "6805c7e3-5a06-4a0b-942c-0394f5695a68",
+      "name": "lolo",
+      "country": "US",
+      "location": "New York",
+      "status": "Active",
+      "formed": "2025",
+      "disbanded": "2026",
+      "genre": [
+        "Hardcore punk",
+        " emo"
+      ],
+      "type": "Group",
+      "disambiguation": "Awesome band",
+      "image": null,
+      "albums": [
+        {
+          "title": "El dorado del piero",
+          "year": "2025",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "El masko",
+          "instrument": "All Instruments",
+          "period": "2025"
+        }
+      ],
+      "source": "local",
+      "editable": true
+    },
+    {
+      "id": "7d67815a-b172-4ee6-ab23-2d2bedbfa8db",
+      "name": "Ngelo",
+      "country": "IDN",
+      "location": "Jakarta",
+      "status": "Active",
+      "formed": "2003",
+      "disbanded": "2008",
+      "genre": [
+        "Punk Rock"
+      ],
+      "type": "Group",
+      "disambiguation": "deddede",
+      "image": null,
+      "albums": [
+        {
+          "title": "Hello",
+          "year": "2025",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "Striker of death",
+          "instrument": "All Instruments",
+          "period": "2003 - 2008"
+        }
+      ],
+      "source": "local",
+      "editable": true
     }
   ]
 }

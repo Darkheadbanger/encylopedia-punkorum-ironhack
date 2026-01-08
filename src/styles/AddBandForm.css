@@ -1,4 +1,4 @@
-.add-band-container {
+.addband-container {
   max-width: 900px;
   margin: 2rem auto;
   padding: 2rem;
@@ -8,27 +8,27 @@
   color: #fff;
 }
 
-.add-band-container h2 {
+.addband-container h2 {
   color: #afcb89;
   margin-bottom: 2rem;
   text-align: center;
   font-size: 2rem;
 }
 
-.add-band-form {
+.addband-forms {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-.form-section {
+.info-section {
   background-color: rgba(40, 40, 40, 0.5);
   padding: 1.5rem;
   border-radius: 6px;
   border: 1px solid #444;
 }
 
-.form-section h3 {
+.info-section h3 {
   color: #afcb89;
   margin-bottom: 1rem;
   font-size: 1.3rem;
@@ -36,21 +36,21 @@
   padding-bottom: 0.5rem;
 }
 
-.form-group {
+.input-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   flex: 1;
 }
 
-.form-group label {
+.input-group label {
   color: #afcb89;
   font-weight: 600;
   font-size: 0.95rem;
 }
 
-.form-group input,
-.form-group select {
+.input-group input,
+.input-group select {
   background-color: rgba(30, 30, 30, 0.85);
   border: 2px solid #555;
   color: #fff;
@@ -60,39 +60,39 @@
   transition: border-color 0.2s;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.input-group input:focus,
+.input-group select:focus {
   outline: none;
   border-color: #afcb89;
   background-color: rgba(40, 40, 40, 0.9);
 }
 
-.form-row {
+.input-row {
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
 }
 
-.flex-2 {
+.bigger-input {
   flex: 2;
 }
 
-.dynamic-item {
+.list-item {
   margin-bottom: 0.75rem;
 }
 
-.dynamic-item .form-row {
+.list-item .input-row {
   align-items: flex-end;
   margin-bottom: 0;
 }
 
-.dynamic-item input,
-.dynamic-item select {
+.list-item input,
+.list-item select {
   margin-bottom: 0;
 }
 
-.btn-add,
-.btn-remove {
+.addmore-btn,
+.remove-btn {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
@@ -101,43 +101,43 @@
   transition: all 0.2s;
 }
 
-.btn-add {
+.addmore-btn {
   background-color: #afcb89;
   color: #000;
   margin-top: 0.5rem;
 }
 
-.btn-add:hover {
+.addmore-btn:hover {
   background-color: #8fb870;
   transform: translateY(-2px);
 }
 
-.btn-remove {
+.remove-btn {
   background-color: #8f333b;
   color: #fff;
   padding: 0.5rem 0.75rem;
   font-size: 0.9rem;
 }
 
-.btn-remove:hover {
+.remove-btn:hover {
   background-color: #a83f48;
 }
 
-.btn-remove:disabled {
+.remove-btn:disabled {
   background-color: #555;
   cursor: not-allowed;
   opacity: 0.5;
 }
 
-.form-actions {
+.buttons-container {
   display: flex;
   gap: 1rem;
   justify-content: center;
   margin-top: 1rem;
 }
 
-.btn-submit,
-.btn-cancel {
+.create-btn,
+.cancel-btn {
   padding: 1rem 2rem;
   border: none;
   border-radius: 4px;
@@ -147,22 +147,22 @@
   transition: all 0.2s;
 }
 
-.btn-submit {
+.create-btn {
   background-color: #afcb89;
   color: #000;
 }
 
-.btn-submit:hover {
+.create-btn:hover {
   background-color: #8fb870;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.btn-cancel {
+.cancel-btn {
   background-color: #555;
   color: #fff;
 }
 
-.btn-cancel:hover {
+.cancel-btn:hover {
   background-color: #666;
 }
