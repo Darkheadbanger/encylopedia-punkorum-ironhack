@@ -55,13 +55,12 @@ function UpdateBandForm({ bands, setBands }) {
     return <p>Band not found</p>;
   }
 
-   // For security, edit button only exist on local API but can be put manually on the url for musicBrainz API
   if (band.source !== 'local') {
     return (
-      <div className="add-band-container">
+      <div className="addband-container">
         <h2>Cannot Edit MusicBrainz Bands</h2>
         <p>This band is from MusicBrainz and cannot be edited.</p>
-        <button onClick={() => navigate("/bands")} className="btn-cancel">
+        <button onClick={() => navigate("/bands")} className="cancel-btn">
           Back to Bands
         </button>
       </div>
@@ -75,75 +74,76 @@ function UpdateBandForm({ bands, setBands }) {
     });
   };
 
-  const handleAlbumChange = (index, field, value) => {
+  const albumChange = (indexAlbums, categoryName, value) => {
     const newAlbums = [...albums];
-    newAlbums[index][field] = value;
+    newAlbums[indexAlbums][categoryName] = value;
     setAlbums(newAlbums);
   };
 
-  const handleMemberChange = (index, field, value) => {
+  const memberChange = (indexMember, categoryName, value) => {
     const newMembers = [...members];
-    newMembers[index][field] = value;
+    newMembers[indexMember][categoryName] = value;
     setMembers(newMembers);
   };
 
+  const albumEmpty = { title: "", year: "", type: "Album" };
   const addAlbum = () => {
-    setAlbums([...albums, { title: "", year: "", type: "Album" }]);
+    setAlbums([...albums, albumEmpty]);
   };
 
-  const removeAlbum = (index) => {
-    setAlbums(albums.filter((_, i) => i !== index));
+  const removeAlbum = (indexToRemove) => {
+    setAlbums(albums.filter((album, i) => i !== indexToRemove));
   };
 
+  const memberEmpty = { name: "", instrument: "", period: "" };
   const addMember = () => {
-    setMembers([...members, { name: "", instrument: "", period: "" }]);
+    setMembers([...members, memberEmpty]);
   };
 
-  const removeMember = (index) => {
-    setMembers(members.filter((_, i) => i !== index));
+  const removeMember = (indexToRemove) => {
+    setMembers(members.filter((member, i) => i !== indexToRemove));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!formData.name.trim()) {
-      alert("Band name is required!");
+    if (!formData.name) {
+      alert("You must enter the band name!");
       return;
     }
 
-    const updatedBand = {
+    const bandToUpdate = {
       ...band,
       ...formData,
-      genre: formData.genre.split(",").map(genreStyle => genreStyle.trim()).filter(genreStyle => genreStyle),
+      genre: formData.genre.split(",").map(genreStyle => genreStyle).filter(genreStyle => genreStyle),
       disbanded: formData.disbanded || null,
-      albums: albums.filter(album => album.title.trim()),
-      members: members.filter(member => member.name.trim())
+      albums: albums.filter(album => album.title),
+      members: members.filter(member => member.name)
     };
 
-    localBandsAPI.update(band.id, updatedBand)
+    localBandsAPI.update(band.id, bandToUpdate)
       .then(() => {
-        // Update bands list
-        setBands(previousBands => previousBands.map(thisBand => thisBand.id === band.id ? updatedBand : thisBand));
-        alert(`${updatedBand.name} has been updated!`);
+        setBands(existedBands => existedBands.map(thisBand => thisBand.id === band.id ? bandToUpdate : thisBand));
+        alert(`${bandToUpdate.name} has been updated!`);
         navigate(`/bands/${band.id}`);
       })
-      .catch(error => {
-        console.error("Error updating band:", error);
-        alert("Error updating band. Please try again.");
+      .catch((error) => {
+        console.error(error);
+        alert("There is something wrong when you updated the band. Try again!");
       });
   };
 
   return (
     <>
-      <div className="add-band-container">
+      <div className="addband-container">
         <h2>Edit Band: {band.name}</h2>
 
-        <form onSubmit={handleSubmit} className="add-band-form">
+        <form onSubmit={handleSubmit} className="addband-forms">
           {/* Basic Info */}
-          <section className="form-section">
+          <section className="info-section">
             <h3>Basic Information</h3>
 
-            <div className="form-group">
+            <div className="input-group">
               <label htmlFor="name">Band Name *</label>
               <input
                 type="text"
@@ -156,9 +156,9 @@ function UpdateBandForm({ bands, setBands }) {
               />
             </div>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="country">Country of Origin</label>
+            <div className="input-row">
+              <div className="input-group">
+                <label htmlFor="country">Country</label>
                 <input
                   type="text"
                   name="country"
@@ -169,7 +169,7 @@ function UpdateBandForm({ bands, setBands }) {
                 />
               </div>
 
-              <div className="form-group">
+              <div className="input-group">
                 <label htmlFor="location">Location</label>
                 <input
                   type="text"
@@ -182,8 +182,8 @@ function UpdateBandForm({ bands, setBands }) {
               </div>
             </div>
 
-            <div className="form-row">
-              <div className="form-group">
+            <div className="input-row">
+              <div className="input-group">
                 <label htmlFor="formed">Year Formed</label>
                 <input
                   type="text"
@@ -195,10 +195,8 @@ function UpdateBandForm({ bands, setBands }) {
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="disbanded">
-                  Year Disbanded (if applicable)
-                </label>
+              <div className="input-group">
+                <label htmlFor="disbanded">Year Disbanded (if the band dosen't active anymore)</label>
                 <input
                   type="text"
                   name="disbanded"
@@ -210,7 +208,7 @@ function UpdateBandForm({ bands, setBands }) {
               </div>
             </div>
 
-            <div className="form-group">
+            <div className="input-group">
               <label htmlFor="status">Status</label>
               <select
                 name="status"
@@ -224,8 +222,8 @@ function UpdateBandForm({ bands, setBands }) {
               </select>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="genre">Genres (comma separated)</label>
+            <div className="input-group">
+              <label htmlFor="genre">Genres (always use comma to separate)</label>
               <input
                 type="text"
                 name="genre"
@@ -236,8 +234,8 @@ function UpdateBandForm({ bands, setBands }) {
               />
             </div>
 
-            <div className="form-row">
-              <div className="form-group">
+            <div className="input-row">
+              <div className="input-group">
                 <label htmlFor="type">Type</label>
                 <select
                   name="type"
@@ -250,7 +248,7 @@ function UpdateBandForm({ bands, setBands }) {
                 </select>
               </div>
 
-              <div className="form-group">
+              <div className="input-group">
                 <label htmlFor="disambiguation">Disambiguation</label>
                 <input
                   type="text"
@@ -265,36 +263,36 @@ function UpdateBandForm({ bands, setBands }) {
           </section>
 
           {/* Albums */}
-          <section className="form-section">
+          <section className="info-section">
             <h3>Main Discography</h3>
             {albums.map((album, index) => (
-              <div key={index} className="dynamic-item">
-                <div className="form-row">
-                  <div className="form-group flex-2">
+              <div key={index} className="list-item">
+                <div className="input-row">
+                  <div className="input-group bigger-input">
                     <input
                       type="text"
                       placeholder="Album title"
                       value={album.title}
                       onChange={(e) =>
-                        handleAlbumChange(index, "title", e.target.value)
+                        albumChange(index, "title", e.target.value)
                       }
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="input-group">
                     <input
                       type="text"
                       placeholder="Year"
                       value={album.year}
                       onChange={(e) =>
-                        handleAlbumChange(index, "year", e.target.value)
+                        albumChange(index, "year", e.target.value)
                       }
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="input-group">
                     <select
                       value={album.type}
                       onChange={(e) =>
-                        handleAlbumChange(index, "type", e.target.value)
+                        albumChange(index, "type", e.target.value)
                       }
                     >
                       <option value="Album">Album</option>
@@ -304,7 +302,7 @@ function UpdateBandForm({ bands, setBands }) {
                   </div>
                   <button
                     type="button"
-                    className="btn-remove"
+                    className="remove-btn"
                     onClick={() => removeAlbum(index)}
                     disabled={albums.length === 1}
                   >
@@ -313,50 +311,50 @@ function UpdateBandForm({ bands, setBands }) {
                 </div>
               </div>
             ))}
-            <button type="button" className="btn-add" onClick={addAlbum}>
+            <button type="button" className="addmore-btn" onClick={addAlbum}>
               + Add Album
             </button>
           </section>
 
           {/* Members */}
-          <section className="form-section">
+          <section className="info-section">
             <h3>Members</h3>
             {members.map((member, index) => (
-              <div key={index} className="dynamic-item">
-                <div className="form-row">
-                  <div className="form-group flex-2">
+              <div key={index} className="list-item">
+                <div className="input-row">
+                  <div className="input-group bigger-input">
                     <input
                       type="text"
                       placeholder="Member name"
                       value={member.name}
                       onChange={(e) =>
-                        handleMemberChange(index, "name", e.target.value)
+                        memberChange(index, "name", e.target.value)
                       }
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="input-group">
                     <input
                       type="text"
                       placeholder="Instrument"
                       value={member.instrument}
                       onChange={(e) =>
-                        handleMemberChange(index, "instrument", e.target.value)
+                        memberChange(index, "instrument", e.target.value)
                       }
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="input-group">
                     <input
                       type="text"
                       placeholder="Period (e.g. 1975-1978)"
                       value={member.period}
                       onChange={(e) =>
-                        handleMemberChange(index, "period", e.target.value)
+                        memberChange(index, "period", e.target.value)
                       }
                     />
                   </div>
                   <button
                     type="button"
-                    className="btn-remove"
+                    className="remove-btn"
                     onClick={() => removeMember(index)}
                     disabled={members.length === 1}
                   >
@@ -365,19 +363,19 @@ function UpdateBandForm({ bands, setBands }) {
                 </div>
               </div>
             ))}
-            <button type="button" className="btn-add" onClick={addMember}>
+            <button type="button" className="addmore-btn" onClick={addMember}>
               + Add Member
             </button>
           </section>
 
           {/* Submit Buttons */}
-          <div className="form-actions">
-            <button type="submit" className="btn-submit">
+          <div className="buttons-container">
+            <button type="submit" className="create-btn">
               Update Band
             </button>
             <button
               type="button"
-              className="btn-cancel"
+              className="cancel-btn"
               onClick={() => navigate(`/bands/${band.id}`)}
             >
               Cancel

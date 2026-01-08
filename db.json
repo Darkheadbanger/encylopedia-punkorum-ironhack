@@ -399,30 +399,31 @@
     },
     {
       "id": "7d67815a-b172-4ee6-ab23-2d2bedbfa8db",
-      "name": "Ngelo",
-      "country": "IDN",
-      "location": "Jakarta",
-      "status": "Active",
-      "formed": "2003",
-      "disbanded": "2008",
+      "name": "Ngelolo",
+      "country": "FR",
+      "location": "Toulouse",
+      "status": "On hiatus",
+      "formed": "2002",
+      "disbanded": "2020",
       "genre": [
-        "Punk Rock"
+        "Punk Rock",
+        " powerviolence"
       ],
       "type": "Group",
-      "disambiguation": "deddede",
+      "disambiguation": "grer",
       "image": null,
       "albums": [
         {
-          "title": "Hello",
-          "year": "2025",
-          "type": "Album"
+          "title": "All death are the same",
+          "year": "2020",
+          "type": "EP"
         }
       ],
       "members": [
         {
-          "name": "Striker of death",
-          "instrument": "All Instruments",
-          "period": "2003 - 2008"
+          "name": "Walling",
+          "instrument": "All Instrument",
+          "period": "2000 - 2010"
         }
       ],
       "source": "local",
