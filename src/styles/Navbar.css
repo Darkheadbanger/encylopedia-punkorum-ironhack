@@ -112,8 +112,15 @@ button[type="submit"]:hover {
   cursor: pointer;
 }
 
+.create-band .add-band {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .create-band p {
   color: #afcb89;
+  margin: 0;
 }
 
 .create-band:hover {

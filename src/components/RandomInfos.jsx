@@ -2,23 +2,46 @@ import React from "react";
 import "../styles/RandomInfo.css";
 
 function RandomInfos() {
-  // const [count, setCount] = useState(0)
-  //  const [selectSearch, setSelectSearch] = useState("Bands");
+  const handleClick = (e) => {
+    e.preventDefault();
+    // Placeholder pour les futurs liens
+  };
+
   return (
     <aside className="randominfos-container">
       <div className="randominfos-info">
-        <h3>Bands</h3>
-        {/* Links */}
-        <p>Alphabetical</p>
-        <p>Country</p>
-        <p>Genre</p>
-        <h3>Labels</h3>
-        {/* links */}
-        <p>Alphabetical</p>
-        <p>Country</p>
-        <h3>Reviews</h3>
+        <section className="info-section">
+          <h3>Bands</h3>
+          <ul className="info-links">
+            <li><a href="#" onClick={handleClick}>Alphabetical</a></li>
+            <li><a href="#" onClick={handleClick}>Country</a></li>
+            <li><a href="#" onClick={handleClick}>Genre</a></li>
+          </ul>
+        </section>
 
-        <p>Random bands</p>
+        <section className="info-section">
+          <h3>Labels</h3>
+          <ul className="info-links">
+            <li><a href="#" onClick={handleClick}>Alphabetical</a></li>
+            <li><a href="#" onClick={handleClick}>Country</a></li>
+          </ul>
+        </section>
+
+        <section className="info-section">
+          <h3>Reviews</h3>
+          <ul className="info-links">
+            <li><a href="#" onClick={handleClick}>Latest</a></li>
+            <li><a href="#" onClick={handleClick}>Top Rated</a></li>
+          </ul>
+        </section>
+
+        <section className="info-section">
+          <h3>Random</h3>
+          <ul className="info-links">
+            <li><a href="#" onClick={handleClick}>Random Band</a></li>
+            <li><a href="#" onClick={handleClick}>Random Album</a></li>
+          </ul>
+        </section>
       </div>
     </aside>
   );

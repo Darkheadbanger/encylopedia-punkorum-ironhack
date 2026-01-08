@@ -329,6 +329,37 @@
           "period": "1978-present"
         }
       ]
+    },
+    {
+      "id": "d1678775-5e8d-4f0c-beea-fbc5c9007660",
+      "name": "Lalala",
+      "country": "GB",
+      "location": "London",
+      "status": "Active",
+      "formed": "2026",
+      "disbanded": null,
+      "genre": [
+        "Punk 77"
+      ],
+      "type": "Group",
+      "disambiguation": "English punk rock band!",
+      "image": null,
+      "albums": [
+        {
+          "title": "Lplp",
+          "year": "2025",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "David Bouhaben",
+          "instrument": "Dodo",
+          "period": "2026"
+        }
+      ],
+      "source": "local",
+      "editable": true
     }
   ]
 }
