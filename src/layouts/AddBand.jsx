@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar.jsx";
 import Connexion from "../pages/Auth/Connexion.jsx";
 import RandomInfos from "../components/RandomInfos.jsx";
 import "../styles/AddBandForm.css"
-import AddBandForm from "../components/addBandForm.jsx";
+import AddBandForm from "../components/AddBandForm.jsx";
 
 function AddBand({bands, setBands}) {
   return (
