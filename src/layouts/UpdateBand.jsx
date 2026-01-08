@@ -5,7 +5,7 @@ import RandomInfos from "../components/RandomInfos.jsx";
 import "../styles/AddBandForm.css"
 import UpdateBandForm from "../components/UpdateBandForm.jsx";
 
-function AddBand({bands, setBands}) {
+function UpdateBand({bands, setBands}) {
   return (
     <>
       <div header className="header-connexion">
@@ -22,4 +22,4 @@ function AddBand({bands, setBands}) {
   );
 }
 
-export default AddBand;
+export default UpdateBand;
