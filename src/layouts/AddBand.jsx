@@ -2,10 +2,10 @@ import React from "react";
 import Navbar from "../components/Navbar.jsx";
 import Connexion from "../pages/Auth/Connexion.jsx";
 import RandomInfos from "../components/RandomInfos.jsx";
-import MainPage from "../components/MainPage.jsx";
+import "../styles/AddBandForm.css"
+import AddBandForm from "../components/addBandForm.jsx";
 
-function AddBand({bands}) {
-    console.log(bands)
+function AddBand({bands, setBands}) {
   return (
     <>
       <div header className="header-connexion">
@@ -15,7 +15,7 @@ function AddBand({bands}) {
         </div>
         <Navbar />
         <div className="main-page">
-          {/* <MainPage bands={bands}/> */}
+          <AddBandForm bands={bands} setBands={setBands}/>
         </div>
       </div>
     </>
