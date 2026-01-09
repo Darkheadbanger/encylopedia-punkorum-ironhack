@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { localBandsAPI } from "../services/api";
-import "../styles/AddBandForm.css";
+import "../styles/UpdateBand.css";
 
 function UpdateBandForm({ bands, setBands }) {
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ function UpdateBandForm({ bands, setBands }) {
 
   if (band.source !== 'local') {
     return (
-      <div className="addband-container">
+      <div className="updateband-container">
         <h2>Cannot Edit MusicBrainz Bands</h2>
         <p>This band is from MusicBrainz and cannot be edited.</p>
         <button onClick={() => navigate("/bands")} className="cancel-btn">
@@ -135,10 +135,10 @@ function UpdateBandForm({ bands, setBands }) {
 
   return (
     <>
-      <div className="addband-container">
+      <div className="updateband-container">
         <h2>Edit Band: {band.name}</h2>
 
-        <form onSubmit={handleSubmit} className="addband-forms">
+        <form onSubmit={handleSubmit} className="updateband-forms">
           {/* Basic Info */}
           <section className="info-section">
             <h3>Basic Information</h3>
@@ -311,7 +311,7 @@ function UpdateBandForm({ bands, setBands }) {
                 </div>
               </div>
             ))}
-            <button type="button" className="addmore-btn" onClick={addAlbum}>
+            <button type="button" className="updatemore-btn" onClick={addAlbum}>
               + Add Album
             </button>
           </section>
@@ -363,14 +363,14 @@ function UpdateBandForm({ bands, setBands }) {
                 </div>
               </div>
             ))}
-            <button type="button" className="addmore-btn" onClick={addMember}>
+            <button type="button" className="updatemore-btn" onClick={addMember}>
               + Add Member
             </button>
           </section>
 
           {/* Submit Buttons */}
           <div className="buttons-container">
-            <button type="submit" className="create-btn">
+            <button type="submit" className="update-btn">
               Update Band
             </button>
             <button

@@ -85,6 +85,9 @@ body::after {
   max-width: 800px;
 }
 
+@media (max-width: 480px) {
+}
+
 .main-choice {
   display: flex;
   gap: 1rem;
@@ -105,8 +108,31 @@ body::after {
 
 .main-page {
   position: absolute;
-  left: 70%;
+  left: 900px;
   transform: translateX(-50%);
   top: 200px;
   width: 100%;
+}
+
+@media (max-width: 480px) {
+  .main-page {
+    left: 550px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 665px) {
+  .main-page {
+    left: 560px;
+  }
+}
+
+@media (min-width: 666px) and (max-width: 768px) {
+  .main-page {
+    left: 600px;
+  }
+}
+@media (min-width: 769px) and (max-width: 1279px) {
+  .main-page {
+    left: 664px;
+  }
 }

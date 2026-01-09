@@ -1,6 +1,30 @@
 .bands-list-page {
   position: absolute;
-  left: 54%;
+  left: 690px;
   transform: translateX(-50%);
   top: 200px;
+}
+
+@media (max-width: 480px) {
+  .bands-list-page {
+    left: 670px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 665px) {
+  .bands-list-page {
+    left: 653px;
+  }
+}
+
+@media (min-width: 666px) and (max-width: 768px) {
+  .bands-list-page {
+    left: 658px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .bands-list-page {
+    left: 660px;
+  }
 }
