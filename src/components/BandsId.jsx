@@ -12,7 +12,7 @@ function BandsId({bands}) {
 
   const [bandsDetails, setBandsDetails] = useState(null);
   const [loading, setLoading] = useState(band?.source !== 'local');
-
+ 
   useEffect(() => {
     // Si le groupe n'existe pas ou si c'est local, ne rien faire
     if (!band || band.source === 'local') return;
