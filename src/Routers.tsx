@@ -10,7 +10,7 @@ function Routers({bands, setBands}: {bands: any, setBands: any}) {
   return (
     <>
       <Routes>
-        <Route path="/" element={<HomePage/>}/>
+        <Route path="/" element={<HomePage bands={bands}/> }/>
         <Route path="/bands" element={<BandsPage bands={bands} setBands={setBands}/>} />
         <Route path="/bands/:bandsId" element={<BandsIdPage bands={bands} setBands={setBands}/>} />
         <Route path="/addBand" element={<AddBand bands={bands} setBands={setBands}/>} />

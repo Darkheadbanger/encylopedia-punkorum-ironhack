@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "../styles/bandsId.css"
 import { useParams, Link } from "react-router-dom";
 import misfitsImage from "../assets/misfits.jpg";
-import { musicBrainzAPI } from "../services/api";
+import { APIFromMusicBrainz } from "../services/api";
 
 
 function BandsId({bands}) {
@@ -19,7 +19,7 @@ function BandsId({bands}) {
     
     // Si c'est MusicBrainz, faire la requête API
     const timer = setTimeout(() => {
-      musicBrainzAPI.getBandDetails(band.id)
+      APIFromMusicBrainz.getBandDetails(band.id)
         .then((res) => {
           setBandsDetails({
             ...res.data,

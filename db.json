@@ -528,6 +528,44 @@
       ],
       "source": "local",
       "editable": true
+    },
+    {
+      "id": "0fe1786a-3c81-4241-9960-21aacf793e70",
+      "name": "Beer Tworeg",
+      "country": "FRre",
+      "location": "Paufe",
+      "status": "Active",
+      "formed": "1993",
+      "disbanded": "2025",
+      "genre": [
+        "Punk Rock",
+        "  powerviolence",
+        " punk"
+      ],
+      "type": "Group",
+      "disambiguation": "deddebdf",
+      "image": null,
+      "albums": [
+        {
+          "title": "fethe",
+          "year": "2017",
+          "type": "EP"
+        },
+        {
+          "title": "gtrhtr",
+          "year": "2015",
+          "type": "Album"
+        }
+      ],
+      "members": [
+        {
+          "name": "gterfe",
+          "instrument": "all instumrents",
+          "period": "2021"
+        }
+      ],
+      "source": "local",
+      "editable": true
     }
   ]
 }
