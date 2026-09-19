@@ -21,15 +21,17 @@
   gap: 2rem;
 }
 
-.info-section {
+/* Scoped: .info-section is also used (with another look) in the sidebar */
+.addband-forms .info-section {
   background-color: rgba(40, 40, 40, 0.5);
   padding: 1.5rem;
   border-radius: 6px;
   border: 1px solid #444;
 }
 
-.info-section h3 {
+.addband-forms .info-section h3 {
   color: #afcb89;
+  margin-top: 0;
   margin-bottom: 1rem;
   font-size: 1.3rem;
   border-bottom: 2px solid #555;
@@ -58,6 +60,10 @@
   border-radius: 4px;
   font-size: 1rem;
   transition: border-color 0.2s;
+}
+
+.input-group select {
+  cursor: pointer;
 }
 
 .input-group input:focus,
@@ -165,4 +171,27 @@
 
 .cancel-btn:hover {
   background-color: #666;
+}
+
+@media (max-width: 768px) {
+  .addband-container {
+    margin: 1rem 0;
+    padding: 1rem;
+  }
+
+  .addband-forms .info-section {
+    padding: 1rem;
+  }
+
+  .addband-forms .input-row {
+    flex-direction: column;
+  }
+
+  .addband-forms .list-item .input-row {
+    align-items: stretch;
+  }
+
+  .buttons-container {
+    flex-wrap: wrap;
+  }
 }

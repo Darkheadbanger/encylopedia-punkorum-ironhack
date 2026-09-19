@@ -9,11 +9,20 @@
 .connexion-info {
   display: flex;
   flex-direction: column;
+  gap: 0.25rem;
+}
+
+.connexion-info label {
+  font-weight: 600;
+  font-size: 1.1rem;
 }
 
 .connexion-info input {
   background-color: rgba(30, 30, 30, 0.85);
   border: 2px solid #555;
+  border-radius: 4px;
+  padding: 0.3rem 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .connexion-info input:focus {
@@ -22,22 +31,22 @@
   background-color: rgba(40, 40, 40, 0.9);
 }
 
-button[type="submit"] {
+/* Scoped to the login form so it does not override the Create/Update buttons */
+.connexion-info button[type="submit"] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   font-size: 1rem;
   font-weight: 600;
-  cursor: none;
   background: none;
   border: none;
-  transition: all 0.2s ease;
+  transition: color 0.2s ease;
   cursor: pointer;
   color: #afcb89;
   align-self: flex-end;
 }
 
-button[type="submit"]:hover {
+.connexion-info button[type="submit"]:hover {
   color: #8f333b;
 }
 
@@ -50,7 +59,6 @@ button[type="submit"]:hover {
 }
 
 .connexion-links a {
-  font-size: 1rem;
   font-weight: 600;
   background: none;
   border: none;

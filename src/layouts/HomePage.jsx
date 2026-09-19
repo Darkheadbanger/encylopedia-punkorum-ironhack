@@ -7,7 +7,7 @@ import MainPage from "../components/MainPage.jsx";
 function HomePage({bands}) {
   return (
     <>
-      <div header className="header-connexion">
+      <div className="header-connexion">
         <div className="aside-container">
           <Connexion />
           <RandomInfos />

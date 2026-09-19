@@ -23,11 +23,12 @@
   background-color: rgba(40, 40, 40, 0.9);
 }
 
-.info-section {
+/* Scoped: .info-section is also used (with another look) in the Add/Update forms */
+.randominfos-info .info-section {
   margin-bottom: 0.5rem;
 }
 
-.info-section h3 {
+.randominfos-info .info-section h3 {
   margin: 0 0 10px 0;
   padding: 5px 0;
   color: #afcb89;

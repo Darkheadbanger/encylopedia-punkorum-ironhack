@@ -8,7 +8,7 @@ import AddBandForm from "../components/AddBandForm.jsx";
 function AddBand({bands, setBands}) {
   return (
     <>
-      <div header className="header-connexion">
+      <div className="header-connexion">
         <div className="aside-container">
           <Connexion />
           <RandomInfos />

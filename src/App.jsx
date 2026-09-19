@@ -20,7 +20,7 @@ function App() {
   }, []);
 
   if (loading) {
-    return <div style={{color: 'white', textAlign: 'center', marginTop: '2rem'}}>Loading Encyclopedia Punkorum...</div>;
+    return <div className="app-loading">Loading Encyclopedia Punkorum...</div>;
   }
 
   return (

@@ -1,31 +1,37 @@
-.punkArchive-logo {
+.punk-archive-logo {
   width: 351px;
+  max-width: 100%;
   height: auto;
-  margin: 0 15rem 0 0;
 }
 
-.punkArchive-logo img {
+.punk-archive-logo img {
+  display: block;
   width: 100%;
-  height: fit-content;
-  object-fit: cover;
+  height: auto;
 }
 
-form {
+.search-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
-form label {
+.search-container label {
+  align-self: self-start;
   font-weight: 600;
   font-size: 1.1rem;
 }
 
-.formsSearch-container {
+.forms-search-container {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
+  width: 100%;
 }
 
 #search {
+  flex: 1 1 180px;
+  min-width: 0;
   background-color: rgba(30, 30, 30, 0.85);
   border: 2px solid #555;
   color: #fff;
@@ -40,7 +46,7 @@ form label {
   background-color: rgba(40, 40, 40, 0.9);
 }
 
-select {
+.forms-search-container select {
   background-color: rgba(30, 30, 30, 0.85);
   border: 2px solid #555;
   color: #fff;
@@ -50,40 +56,29 @@ select {
   cursor: pointer;
 }
 
-select:focus {
+.forms-search-container select:focus {
   outline: none;
   border-color: #888;
   background-color: rgba(40, 40, 40, 0.9);
 }
 
-button[type="submit"] {
+/* Scoped to the search form so it does not override the Create/Update buttons */
+.search-container button[type="submit"] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  align-self: self-end;
   font-size: 1rem;
   font-weight: 600;
-  cursor: none;
   background: none;
   border: none;
-  transition: all 0.2s ease;
+  transition: color 0.2s ease;
   cursor: pointer;
   color: #afcb89;
 }
 
-button[type="submit"]:hover {
+.search-container button[type="submit"]:hover {
   color: #8f333b;
-}
-
-.search-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.search-container label {
-  align-self: self-start;
-}
-.search-container button[type="submit"] {
-  align-self: self-end;
 }
 
 .info-container {
@@ -94,6 +89,7 @@ button[type="submit"]:hover {
 .info-list {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 1rem;
   justify-content: space-around;
   color: #afcb89;
@@ -102,6 +98,7 @@ button[type="submit"]:hover {
 .info-list-site {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 1rem;
   justify-content: space-around;
   align-items: center;
@@ -129,8 +126,4 @@ button[type="submit"]:hover {
 
 .create-band:hover p {
   color: #8f333b;
-}
-
-.add-band{
-  text-decoration: none;
 }

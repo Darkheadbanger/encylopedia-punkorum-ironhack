@@ -37,7 +37,7 @@ function BandsId({bands}) {
   
   // Si le groupe n'existe pas
   if (!band) {
-    return <p>Groupe non trouvé</p>;
+    return <p>Band not found</p>;
   }
 
   // Préparer les données selon la source
@@ -72,7 +72,7 @@ function BandsId({bands}) {
         </h2>
         <div className="band-info">
             <ul className="band-info-list">
-                <li><span>Country of origins : </span>{band.country || "N/A"}</li>
+                <li><span>Country of origin : </span>{band.country || "N/A"}</li>
                 <li><span>Location : </span>
                   {band.source === 'local' 
                     ? (band.location || "N/A")

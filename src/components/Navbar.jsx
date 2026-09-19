@@ -4,7 +4,8 @@ import "../styles/Navbar.css";
 import { Link } from "react-router-dom";
 
 function Navbar() {
-  const [selectSearch, setSelectSearch] = useState("Bands");
+  // Must match an <option value>, otherwise the controlled <select> has no matching option
+  const [selectSearch, setSelectSearch] = useState("bands");
 
   const handleSelect = (event) => {
     const searchValues = event.target.value;
@@ -14,20 +15,20 @@ function Navbar() {
 
   return (
     <>
-      <div className="punkArchive-logo">
+      <div className="punk-archive-logo">
         <Link to="/" ><img src={logoImage} alt="Encyclopedia Punkorum logo" /></Link>
       </div>
       <div className="info-container">
         <form className="search-container">
           <label htmlFor="search">Search:</label>
-          <div className="formsSearch-container">
+          <div className="forms-search-container">
             <input
               type="text"
               name="search"
               id="search"
               placeholder={"Select the " + selectSearch}
             />
-            <select value={selectSearch} onChange={handleSelect}>
+            <select value={selectSearch} onChange={handleSelect} aria-label="Search category">
               <option value="bands">Bands</option>
               <option value="genres">Music Genre</option>
               <option value="themes">Themes</option>

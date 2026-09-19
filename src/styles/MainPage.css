@@ -1,9 +1,23 @@
+/* "Bands" is a link and "Genres" a button: both get the same look */
+.main-choice a,
 .main-choice button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 150px;
   height: 100px;
   border-radius: 25px;
+  border: 2px solid #555;
   background-color: rgba(30, 30, 30, 0.85);
   cursor: pointer;
   color: #afcb89;
   font-size: 1.2em;
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.main-choice a:hover,
+.main-choice button:hover {
+  color: #8f333b;
+  border-color: #8f333b;
 }

@@ -8,8 +8,8 @@ function MainPage({bands}) {
       <section className="main-section-container">
           <p>There are currently {bands.length} bands in Encyclopaedia Punkorum.</p>
         <div className="main-choice">
-         <Link to="/bands" ><button>Bands</button></Link> 
-          <button>Genres</button>
+          <Link to="/bands">Bands</Link>
+          <button type="button">Genres</button>
         </div>
       </section>
     </main>

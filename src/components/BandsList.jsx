@@ -34,25 +34,22 @@ function BandsList({band, setBands}) {
     }
   }
 
+  // One table row: the <table> and <tbody> are in BandsPage
   return (
-    <>
-      <tbody>
-          <tr className="band-list-container">
-            <div className="bandId">
-                <td scope="col" className="band-name">
-                  <Link to={`/bands/${band.id}`} >
-                    <p>{band.name}</p>
-                  </Link>
-                  <Link to={`/updateBand/${band.id}`}>{band.editable && <div className="edit-table">✏️</div>}</Link>
-                  {band.editable && <div className="delete-table" onClick={deleteButton}>🗑️</div>}
-                </td>
-            </div>
-            <td scope="col">{band.country || "N/A"}</td>
-            <td scope="col" className="genre">{genreMusic}</td>
-            <td scope="col" className={isActiveClass}>{status}</td>
-          </tr>
-      </tbody>
-    </>
+    <tr className="band-list-container">
+      <td className="band-id">
+        <div className="band-name">
+          <Link to={`/bands/${band.id}`} >
+            <p>{band.name}</p>
+          </Link>
+          {band.editable && <Link to={`/updateBand/${band.id}`} className="edit-table" aria-label={`Edit ${band.name}`}>✏️</Link>}
+          {band.editable && <button type="button" className="delete-table" onClick={deleteButton} aria-label={`Delete ${band.name}`}>🗑️</button>}
+        </div>
+      </td>
+      <td>{band.country || "N/A"}</td>
+      <td className="genre">{genreMusic}</td>
+      <td className={isActiveClass}>{status}</td>
+    </tr>
   );
 }
 

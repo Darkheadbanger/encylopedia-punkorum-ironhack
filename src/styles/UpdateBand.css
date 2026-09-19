@@ -1,34 +1,4 @@
-.update-page {
-  position: absolute;
-  left: 757px;
-  transform: translateX(-50%);
-  top: 200px;
-  width: 100%;
-}
-
-@media (max-width: 480px) {
-  .update-page {
-    left: 492px;
-  }
-}
-
-@media (min-width: 481px) and (max-width: 665px) {
-  .update-page {
-    left: 548px;
-  }
-}
-
-@media (min-width: 666px) and (max-width: 768px) {
-  .update-page {
-    left: 600px;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .update-page {
-    left: 678px;
-  }
-}
+/* .update-page is placed by the grid in Global.css */
 
 .updateband-container {
   max-width: 900px;
@@ -53,15 +23,17 @@
   gap: 2rem;
 }
 
-.info-section {
+/* Scoped: .info-section is also used (with another look) in the sidebar */
+.updateband-forms .info-section {
   background-color: rgba(40, 40, 40, 0.5);
   padding: 1.5rem;
   border-radius: 6px;
   border: 1px solid #444;
 }
 
-.info-section h3 {
+.updateband-forms .info-section h3 {
   color: #afcb89;
+  margin-top: 0;
   margin-bottom: 1rem;
   font-size: 1.3rem;
   border-bottom: 2px solid #555;
@@ -90,6 +62,10 @@
   border-radius: 4px;
   font-size: 1rem;
   transition: border-color 0.2s;
+}
+
+.input-group select {
+  cursor: pointer;
 }
 
 .input-group input:focus,
@@ -197,4 +173,27 @@
 
 .cancel-btn:hover {
   background-color: #666;
+}
+
+@media (max-width: 768px) {
+  .updateband-container {
+    margin: 1rem 0;
+    padding: 1rem;
+  }
+
+  .updateband-forms .info-section {
+    padding: 1rem;
+  }
+
+  .updateband-forms .input-row {
+    flex-direction: column;
+  }
+
+  .updateband-forms .list-item .input-row {
+    align-items: stretch;
+  }
+
+  .buttons-container {
+    flex-wrap: wrap;
+  }
 }

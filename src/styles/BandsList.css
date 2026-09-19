@@ -1,37 +1,54 @@
-.band-list-container {
-  display: flex;
-  flex-direction: row;
-  gap: 5.5rem;
-  align-items: baseline;
-  border-bottom: 1px #555 solid;
-}
-.band-list-container .band-head-list {
-  margin: 0 73px 20px 0;
-}
-.band-list-container td {
-  color: #afcb89;
-  width: 134px;
+.bands-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
 }
 
-.band-list-container:hover {
+.band-list-container {
+  border-bottom: 1px #555 solid;
+}
+
+.band-list-container th,
+.band-list-container td {
+  padding: 0 0.75rem;
+  text-align: left;
+  vertical-align: baseline;
+}
+
+/* Name and Genre get more room than Country and Status */
+.band-list-container .band-head-list:nth-child(odd) {
+  width: 35%;
+}
+
+.band-list-container .band-head-list {
+  padding-bottom: 0.75rem;
+}
+
+.band-list-container td {
+  color: #afcb89;
+}
+
+tbody .band-list-container:hover {
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-.still-active {
-  color: green;
+/* More specific than ".band-list-container td", otherwise the status color never shows */
+.band-list-container .still-active {
+  color: #5fd35f;
 }
 
-.not-active {
-  color: red;
+.band-list-container .not-active {
+  color: #ff5c5c;
 }
 
-.bandId {
+.band-id {
   text-decoration: none;
 }
 
-.bandId:hover {
+.band-id:hover {
   text-decoration: underline;
 }
+
 .band-name {
   display: flex;
   flex-direction: row;
@@ -43,9 +60,18 @@
 .edit-table,
 .delete-table {
   margin-left: 5px;
+  text-decoration: none;
   font-size: 0.8em;
   cursor: pointer;
   transition: transform 0.2s;
+}
+
+/* The delete icon is a real <button>: remove the default button look */
+.delete-table {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
 }
 
 .edit-table:hover,

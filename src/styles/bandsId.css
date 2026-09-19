@@ -1,35 +1,58 @@
 .bands-info-container {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: flex-start;
+  gap: 1rem;
   width: 100%;
 }
 
 .band-info {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: center;
-  width: 600px;
+  width: 100%;
+  max-width: 600px;
   margin: -30px 0 0px 0;
 }
-
 
 .band-info-list li span {
   color: #afcb89;
 }
 
-.bands-photos-container{
-    width: 250px;
-    height: auto;
+.bands-photos-container {
+  width: 250px;
+  max-width: 100%;
+  height: auto;
 }
 
-.bands-photos{
-    width: 100%;
-    object-fit: cover;
-}
-thead tbody tr{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
+.bands-photos {
+  width: 100%;
+  object-fit: cover;
 }
 
+.band-details-table {
+  width: 100%;
+  margin-top: 2rem;
+  border-collapse: collapse;
+}
+
+.band-details-table th {
+  text-align: left;
+  color: #afcb89;
+  padding: 0.5rem;
+  border-bottom: 2px solid #555;
+}
+
+.band-details-table td {
+  width: 50%;
+  padding: 0.5rem;
+  vertical-align: top;
+}
+
+@media (max-width: 768px) {
+  .band-info {
+    margin: 0;
+  }
+}

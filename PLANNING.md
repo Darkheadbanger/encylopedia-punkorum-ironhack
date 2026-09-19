@@ -260,6 +260,13 @@ Week-end :
 
 > Noter ici tout ce qui est trouvé en route. On trie en S7.
 
+- ✅ ~~(Must, S5) La page 404 plante~~ — corrigé le 19/09/2026 (import renommé `NotFound`, styles adaptés au thème sombre).
+- ✅ ~~(Should, S5) HTML invalide dans la liste~~ — corrigé le 19/09/2026 (vrai `<table>`, `<td>` au lieu de `<div>`, `<Link>` sans `<button>`, attribut `header` retiré).
+- (Must, S9) **Les formulaires de recherche et de connexion rechargent toute la page** : ils n'ont pas de `onSubmit` avec `preventDefault()`. Cliquer sur « Submit » ou « Login » recharge l'app et relance les appels API.
+- (Should, S9) **Le statut n'est pas le même selon la page** pour un groupe MusicBrainz : « Still Active / Split-up » dans la liste, « Active / Disbanded » dans le détail. La logique est aussi différente (`ended === null` contre `ended ?`).
+- (Should, S9) CSS dupliqué : `AddBandForm.css` et `UpdateBand.css` contiennent les mêmes règles (`.input-group`, `.input-row`, `.remove-btn`, `.cancel-btn`…). À regrouper dans un seul `BandForm.css` lors de la refonte des formulaires en React 19.
+- (Could, S16) Nommage des fichiers CSS : `bandsId.css`, `RandomInfo.css` et `UpdateBand.css` ne suivent pas le nom de leur composant. ⚠️ Sous Windows, un renommage qui ne change que la casse (`bandsId` → `BandsId`) doit passer par `git mv`, sinon le déploiement sous Linux cassera.
+- (Could, S16) `src/index.css` est entièrement commenté mais toujours importé dans `main.jsx`. `import React` est inutile dans plusieurs fichiers (React 19 n'en a plus besoin pour le JSX).
 - (Must, S6 ou S9) **json-server épinglé en `1.0.0-beta.3`** : à partir de la beta.14, le serveur ignore l'`id` envoyé par le client et en génère un autre. `AddBandForm.jsx` crée l'id avec `uuid()` et met `bandToAdd` dans le state sans lire la réponse du serveur : les ids ne correspondraient plus, et modifier ou supprimer un groupe tout juste ajouté échouerait. Correction : utiliser `response.data` (l'id vient du serveur), puis mettre json-server à jour et retirer `uuid`.
 - (Should, S16) Mises à jour majeures en attente : Vite 8 + `@vitejs/plugin-react` 6 (Rolldown), ESLint 10 + `@eslint/js` 10 + `globals` 17 + `eslint-plugin-react-refresh` 0.5, `uuid` 14 (inutile si on le retire). Une à la fois, avec lint + build + test du site après chaque étape.
 - (Could) Vidéo 21:25 : `use(promise)` + `<Suspense>` pour charger les groupes. ⚠️ La promesse doit être stable (créée hors du render ou mise en cache), sinon boucle infinie. À tenter seulement si tout le reste est fini.

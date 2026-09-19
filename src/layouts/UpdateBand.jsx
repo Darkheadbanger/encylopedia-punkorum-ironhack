@@ -9,7 +9,7 @@ import UpdateBandForm from "../components/UpdateBandForm.jsx";
 function UpdateBand({bands, setBands}) {
   return (
     <>
-      <div header className="header-connexion">
+      <div className="header-connexion">
         <div className="aside-container">
           <Connexion />
           <RandomInfos />

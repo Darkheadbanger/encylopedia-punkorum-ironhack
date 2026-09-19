@@ -154,7 +154,7 @@ function AddBandForm({ setBands }) {
             </div>
 
             <div className="input-group">
-              <label htmlFor="disbanded">Year Disbanded (if the band dosen't active anymore)</label>
+              <label htmlFor="disbanded">Year Disbanded (if the band is no longer active)</label>
               <input
                 type="text"
                 name="disbanded"
@@ -230,6 +230,7 @@ function AddBandForm({ setBands }) {
                   <input
                     type="text"
                     placeholder="Album title"
+                    aria-label="Album title"
                     value={album.title}
                     onChange={(e) => albumChange(index, "title", e.target.value)}
                   />
@@ -238,12 +239,14 @@ function AddBandForm({ setBands }) {
                   <input
                     type="text"
                     placeholder="Year"
+                    aria-label="Album year"
                     value={album.year}
                     onChange={(e) => albumChange(index, "year", e.target.value)}
                   />
                 </div>
                 <div className="input-group">
                   <select
+                    aria-label="Album type"
                     value={album.type}
                     onChange={(e) => albumChange(index, "type", e.target.value)}
                   >
@@ -256,6 +259,7 @@ function AddBandForm({ setBands }) {
                   type="button"
                   className="remove-btn"
                   onClick={() => removeAlbum(index)}
+                  aria-label="Remove album"
                   disabled={albums.length === 1}
                 >
                   ❌
@@ -278,6 +282,7 @@ function AddBandForm({ setBands }) {
                   <input
                     type="text"
                     placeholder="Member name"
+                    aria-label="Member name"
                     value={member.name}
                     onChange={(e) => memberChange(index, "name", e.target.value)}
                   />
@@ -286,6 +291,7 @@ function AddBandForm({ setBands }) {
                   <input
                     type="text"
                     placeholder="Instrument"
+                    aria-label="Instrument"
                     value={member.instrument}
                     onChange={(e) => memberChange(index, "instrument", e.target.value)}
                   />
@@ -294,6 +300,7 @@ function AddBandForm({ setBands }) {
                   <input
                     type="text"
                     placeholder="Period (e.g. 1975-1978)"
+                    aria-label="Period"
                     value={member.period}
                     onChange={(e) => memberChange(index, "period", e.target.value)}
                   />
@@ -302,6 +309,7 @@ function AddBandForm({ setBands }) {
                   type="button"
                   className="remove-btn"
                   onClick={() => removeMember(index)}
+                  aria-label="Remove member"
                   disabled={members.length === 1}
                 >
                   ❌
