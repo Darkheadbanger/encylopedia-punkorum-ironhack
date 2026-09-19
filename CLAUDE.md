@@ -173,7 +173,18 @@ npm run dev      # Vite dev server → http://localhost:5173
 npm run build
 npm run lint     # ESLint 9 (flat config, plugins react-hooks et react-refresh)
 npm run preview
+npm test         # Vitest en mode watch (relance les tests à chaque sauvegarde)
+npm run test:run # Vitest une seule fois (avant un commit)
+npx vitest run src/components/BandsList.test.jsx   # un seul fichier de test
 ```
+
+### Tests
+
+- **Vitest** + **React Testing Library** + **jsdom** (config dans `vite.config.js`, setup dans `src/setupTests.js`). C'est le même Vitest que David utilise au travail côté Angular.
+- Un fichier `*.test.jsx` à côté de chaque fichier testé. Les données de test partagées sont dans `src/test/fixtures.js` (`makeLocalBand()`, `makeMusicBrainzBand()`).
+- **Jamais de vrai appel réseau** : `axios` ou `../services/api` sont mockés avec `vi.mock`.
+- On teste ce que voit l'utilisateur (`getByRole`, `getByLabelText`, `userEvent`), pas les détails internes (state, noms de fonctions).
+- Toute nouvelle fonctionnalité ou correction de bug vient avec son test. `npm run test:run` doit passer avant chaque commit.
 
 L'URL du serveur local peut être surchargée via la variable d'env `VITE_LOCAL_SERVER_URL`.
 
