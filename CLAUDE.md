@@ -164,19 +164,7 @@ Deux dépôts voisins :
 
 React 19 + Vite 7, JavaScript/JSX (`Routers.tsx` est le seul fichier TypeScript).
 
-### Commands
-
-```bash
-npm install
-npm run server   # json-server sur http://localhost:3001 (à lancer en premier)
-npm run dev      # Vite dev server → http://localhost:5173
-npm run build
-npm run lint     # ESLint 9 (flat config, plugins react-hooks et react-refresh)
-npm run preview
-npm test         # Vitest en mode watch (relance les tests à chaque sauvegarde)
-npm run test:run # Vitest une seule fois (avant un commit)
-npx vitest run src/components/BandsList.test.jsx   # un seul fichier de test
-```
+> Commandes, stack et arborescence : voir `package.json` et `src/`. ⚠️ `npm run server` doit tourner **avant** `npm run dev`.
 
 ### Tests
 
@@ -188,29 +176,10 @@ npx vitest run src/components/BandsList.test.jsx   # un seul fichier de test
 
 L'URL du serveur local peut être surchargée via la variable d'env `VITE_LOCAL_SERVER_URL`.
 
-### Stack
+### Conventions
 
-- **React 19** (function components + hooks). David veut utiliser les nouveautés React 19 là où elles sont utiles : Actions (`<form action>`), `useActionState`, `useFormStatus`, `useOptimistic`, `useTransition`, `use()`, `<Context value>` sans `.Provider`, `<title>`/`<meta>` dans les composants, `ref` en prop (plus de `forwardRef`). Toujours expliquer l'ancienne façon (`useState`, `useEffect`, `onSubmit`) avant la nouvelle.
-- **React Router DOM 7** (`BrowserRouter` dans `main.jsx`)
-- **Axios** pour les appels HTTP
-- **uuid** pour générer les ids
-- CSS classique, un fichier par composant dans `src/styles/`
-
-### Architecture
-
-```
-src/
-  main.jsx            # createRoot + StrictMode + BrowserRouter
-  App.jsx             # charge tous les groupes (useEffect) et garde le state `bands`
-  Routers.tsx         # déclaration des routes, passe bands/setBands en props
-  services/api.js     # localBandsAPI (CRUD json-server), APIFromMusicBrainz, getAllBands()
-  layouts/            # une "page" par route (HomePage, BandsPage, BandsIdPage, AddBand, UpdateBand, ErrorPage)
-  components/         # composants UI (Navbar, BandsList, BandsId, AddBandForm, UpdateBandForm, MainPage, RandomInfos…)
-  pages/Auth/         # Connexion.jsx (affiché dans chaque layout, pas encore de vraie authentification)
-  styles/             # CSS par composant
-  assets/             # logo, images
-db.json               # données locales des groupes
-```
+- **React 19** : David veut utiliser les nouveautés là où elles sont utiles — Actions (`<form action>`), `useActionState`, `useFormStatus`, `useOptimistic`, `useTransition`, `use()`, `<Context value>` sans `.Provider`, `<title>`/`<meta>` dans les composants, `ref` en prop (plus de `forwardRef`). **Toujours expliquer l'ancienne façon (`useState`, `useEffect`, `onSubmit`) avant la nouvelle.**
+- CSS classique, **un fichier par composant** dans `src/styles/` (pas de CSS-in-JS, pas de framework UI).
 
 **State management** : pas de librairie. Le state `bands` / `setBands` vit dans `App` (`useState`) et descend par **props** (prop drilling) jusqu'aux layouts et composants.
 
@@ -218,18 +187,7 @@ db.json               # données locales des groupes
 - `getAllBands()` fusionne les groupes **locaux** (`source: 'local'`, `editable: true`) et ceux de **MusicBrainz** (`source: 'musicbrainz'`, `editable: false`). Les locaux passent en premier.
 - Seuls les groupes locaux sont modifiables/supprimables (CRUD via json-server).
 
-**Routing** :
-
-| Path | Layout | Rôle |
-|---|---|---|
-| `/` | `HomePage` | Accueil |
-| `/bands` | `BandsPage` | Liste des groupes |
-| `/bands/:bandsId` | `BandsIdPage` | Détail d'un groupe |
-| `/addBand` | `AddBand` | Formulaire d'ajout |
-| `/updateBand/:updateId` | `UpdateBand` | Formulaire de modification |
-| `*` | `ErrorPage` | 404 |
-
-**Modèle d'un groupe (`db.json`)** : `id`, `name`, `country`, `location`, `status`, `formed`, `disbanded`, `genre[]`, `disambiguation`, `image`, `albums[] {title, year, type}`, `members[] {name, instrument, period}`, `source`, `editable`, `type`. Les objets MusicBrainz ont une forme différente : bien gérer les deux formats dans les composants.
+⚠️ **Deux formats de groupe coexistent** : un groupe local (`db.json`) et un objet MusicBrainz n'ont pas la même forme. Tout composant qui affiche un groupe doit gérer les deux.
 
 ---
 
@@ -242,14 +200,6 @@ db.json               # données locales des groupes
 - Équivalent Spring Boot, pour la comparaison : json-server remplace à lui seul controller + service + repository + base de données. Pratique pour prototyper, mais pas de validation, pas de logique métier, pas de sécurité.
 
 ---
-
-## Pistes d'amélioration (à prioriser avec David)
-
-- **Fondations** : éviter le prop drilling (Context ou custom hook `useBands`), loading/erreur par page, ne pas bloquer toute l'app si MusicBrainz échoue.
-- **Qualité** : cohérence JS/TS (`App.jsx` importe `./Routers.jsx` alors que le fichier est `Routers.tsx`), nommage cohérent, suppression du code mort, validation des formulaires.
-- **Fonctionnalités** : recherche/filtres (pays, genre, statut), pagination, page détail enrichie pour les groupes MusicBrainz, vraie authentification pour protéger l'ajout/modification.
-- **Design** : identité visuelle punk forte, responsive mobile, accessibilité.
-- **Présentation** : déploiement en ligne (front + json-server), README propre avec captures d'écran.
 
 ## Plan de préparation (septembre 2026 → février 2027)
 

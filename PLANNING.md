@@ -256,6 +256,26 @@ Week-end :
 
 ---
 
+## Journal d'apprentissage
+
+> **Comment ça marche** : quand David dit « je finis la journée », Claude ajoute une entrée ici.
+> Ce journal est la **mémoire longue** du projet : après un `/clear`, Claude relit ce fichier et
+> retrouve où on en est. Une entrée = 3 à 6 lignes maximum, en français, datée.
+>
+> Format : `### JJ/MM/AAAA — <thème>` puis **Fait** / **Appris** / **Prochaine fois**.
+
+### 19/09/2026 — Découverte du projet
+- **Fait** : tour du dépôt et de son organisation. Correction de deux bugs (page 404 qui plantait, HTML invalide dans la liste des groupes). Mise en place des tests Vitest + React Testing Library.
+- **Appris** : la structure générale du projet (App → Routers → layouts → components) et d'où viennent les données (`db.json` via json-server + API MusicBrainz).
+- **Prochaine fois** : faire tourner l'app et la parcourir page par page.
+
+### 20/09/2026 — Diagnostic de l'outillage
+- **Fait** : `/doctor` — nettoyage de la configuration Claude Code (8 skills inutiles désactivés, plugin GitKraken retiré, `CLAUDE.md` allégé de 50 lignes, mode auto activé). Mise en place de ce journal.
+- **Appris** : `CLAUDE.md` est relu à **chaque** session, donc tout ce qu'il contient coûte du contexte ; ce qu'une session peut retrouver seule en lisant le repo (commandes npm, arborescence, liste des routes) n'a pas à y figurer.
+- **Prochaine fois** : bloc week-end de la S1 — lancer `npm run server` + `npm run dev`, parcourir toutes les pages, noter les bugs ci-dessous.
+
+---
+
 ## Bugs & idées
 
 > Noter ici tout ce qui est trouvé en route. On trie en S7.
