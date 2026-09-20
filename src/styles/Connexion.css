@@ -9,7 +9,7 @@
 .connexion-info {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--space-xs);
 }
 
 .connexion-info label {
@@ -18,17 +18,17 @@
 }
 
 .connexion-info input {
-  background-color: rgba(30, 30, 30, 0.85);
-  border: 2px solid #555;
+  background-color: var(--color-panel);
+  border: 2px solid var(--color-border);
   border-radius: 4px;
-  padding: 0.3rem 0.5rem;
-  margin-bottom: 0.25rem;
+  padding: var(--space-xs) var(--space-sm);
+  margin-bottom: var(--space-xs);
 }
 
 .connexion-info input:focus {
   outline: none;
-  border-color: #888;
-  background-color: rgba(40, 40, 40, 0.9);
+  border-color: var(--color-muted);
+  background-color: var(--color-panel-alt);
 }
 
 /* Scoped to the login form so it does not override the Create/Update buttons */
@@ -42,19 +42,19 @@
   border: none;
   transition: color 0.2s ease;
   cursor: pointer;
-  color: #afcb89;
+  color: var(--color-accent);
   align-self: flex-end;
 }
 
 .connexion-info button[type="submit"]:hover {
-  color: #8f333b;
+  color: var(--color-danger);
 }
 
 .connexion-links {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
   justify-content: space-around;
 }
 
@@ -70,5 +70,5 @@
 }
 
 .connexion-links a:hover {
-  color: #8f333b;
+  color: var(--color-danger);
 }

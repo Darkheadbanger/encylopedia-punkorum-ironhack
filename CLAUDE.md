@@ -154,17 +154,27 @@ Principe d'extension intelligente : quand je te demande de créer un prompt, si 
 Deux dépôts voisins :
 
 - **`encylopedia-punkorum-ironhack/`** (ce dépôt) — front React (Vite).
-- **`../encyclopedia-punkorum-ironhack-backend/`** — back minimal : uniquement **json-server** (fausse API REST à partir d'un fichier JSON), utilisé pour le déploiement.
+- **`../encyclopedia-punkorum-ironhack-backend/`** — back minimal **Express** (`server.js`, un seul fichier). A remplacé json-server le 20/09/2026.
 
-**Data flow** : `db.json` → json-server expose `/bands` en REST (CRUD) → le front React fusionne ces groupes locaux avec des groupes récupérés sur l'**API publique MusicBrainz** (lecture seule).
+**Data flow** : `db.json` (dans le dépôt back) → Express expose `/bands` en REST (CRUD **avec validation**) et `/api/mb/*` qui **relaie MusicBrainz** en ajoutant l'en-tête `User-Agent` → le front fusionne les groupes locaux et ceux de MusicBrainz dans `getAllBands()`.
+
+⚠️ **Deux serveurs à lancer** : `npm start` côté back (port 3001), puis `npm run dev` côté front (5173). Le front n'a plus de script `server`.
 
 ---
 
 ## Front (ce dépôt)
 
-React 19 + Vite 7, JavaScript/JSX (`Routers.tsx` est le seul fichier TypeScript).
+React 19 + Vite 7, **TypeScript strict** (migration complète le 20/09/2026 : plus aucun `.js`/`.jsx` dans `src/`, plus aucun `any`).
 
-> Commandes, stack et arborescence : voir `package.json` et `src/`. ⚠️ `npm run server` doit tourner **avant** `npm run dev`.
+⚠️ **`src/types.ts` est le cœur du typage.** `Band` est une **union discriminée** par `source` :
+```ts
+type Band = LocalBand | MusicBrainzBand;  // 'local' | 'musicbrainz'
+```
+Le compilateur **refuse** de lire `band.albums` tant que `band.source === 'local'` n'a pas été vérifié. Le piège « deux formats de groupe » est donc devenu une erreur de compilation. Pour les listes mélangées (`BandsId.tsx`), on narrowe sur l'**élément** avec des type guards (`isLocalAlbum`, `isLocalMember`), pas sur `band.source` — TypeScript ne peut pas suivre la seconde forme.
+
+`npm run typecheck` vérifie les types ; `npm run build` le fait aussi avant de compiler.
+
+> Commandes, stack et arborescence : voir `package.json` et `src/`. ⚠️ Le back Express doit tourner **avant** `npm run dev`.
 
 ### Tests
 
@@ -193,11 +203,17 @@ L'URL du serveur local peut être surchargée via la variable d'env `VITE_LOCAL_
 
 ## Back (`../encyclopedia-punkorum-ironhack-backend`)
 
-- Uniquement `json-server` (pas de code serveur, pas de vraie base de données, pas d'authentification).
-- Chaque ressource de premier niveau du JSON devient une route REST : `GET/POST /bands`, `GET/PUT/PATCH/DELETE /bands/:id`.
-- ⚠️ Les écritures modifient directement le fichier JSON sur le disque.
-- ⚠️ `json-server` est **épinglé en `1.0.0-beta.3`** dans `package.json`. Les versions beta.14 et suivantes ignorent l'`id` envoyé par le client, ce qui casserait `AddBandForm.jsx`. Ne pas le mettre à jour avant d'avoir corrigé ce point (voir « Bugs & idées » dans `PLANNING.md`).
-- Équivalent Spring Boot, pour la comparaison : json-server remplace à lui seul controller + service + repository + base de données. Pratique pour prototyper, mais pas de validation, pas de logique métier, pas de sécurité.
+Express 5 dans **un seul fichier**, `server.js` (~140 lignes) — volontairement lisible d'un bout à l'autre, David doit pouvoir le défendre ligne par ligne. Détail des routes et de la config dans le `README.md` du dépôt back.
+
+Deux choses que json-server ne savait pas faire, et qui justifient son remplacement :
+- **validation** (`validateBand`) : un groupe sans nom est refusé en `400`.
+- **proxy MusicBrainz** (`GET /api/mb/*`) : un navigateur **ne peut pas** envoyer l'en-tête `User-Agent` que MusicBrainz exige (*forbidden header name*) ; un serveur, si.
+
+⚠️ **L'`id` est généré par le serveur** (`randomUUID()`), jamais par le client. `AddBandForm.jsx` lit `response.data`.
+⚠️ **Stockage = `db.json` lu/écrit à chaque requête.** Pas sûr en écriture concurrente, et perdu sur un hébergeur au système de fichiers éphémère (offre gratuite Render). Une vraie base serait l'étape suivante — bonne réponse à préparer pour le jury.
+⚠️ **`db.json` existe en double** : celui du back fait foi, celui du front est un reliquat à supprimer.
+
+Équivalent Spring Boot : `server.js` tient lieu de controller + service + repository. Toujours pas de sécurité ni de vraie base.
 
 ---
 

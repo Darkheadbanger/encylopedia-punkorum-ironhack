@@ -1,0 +1,19 @@
+import type { Band } from "../types";
+import "../styles/MainPage.css";
+import { Link } from "react-router-dom";
+
+function MainPage({bands}: { bands: Band[] }) {
+  return (
+    <main className="main-content">
+      <section className="main-section-container">
+          <p>There are currently {bands.length} bands in Encyclopaedia Punkorum.</p>
+        <div className="main-choice">
+          <Link to="/bands">Bands</Link>
+          <button type="button">Genres</button>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+export default MainPage;

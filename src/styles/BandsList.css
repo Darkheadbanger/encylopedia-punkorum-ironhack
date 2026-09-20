@@ -5,12 +5,12 @@
 }
 
 .band-list-container {
-  border-bottom: 1px #555 solid;
+  border-bottom: 1px var(--color-border) solid;
 }
 
 .band-list-container th,
 .band-list-container td {
-  padding: 0 0.75rem;
+  padding: 0 var(--space-md);
   text-align: left;
   vertical-align: baseline;
 }
@@ -21,11 +21,11 @@
 }
 
 .band-list-container .band-head-list {
-  padding-bottom: 0.75rem;
+  padding-bottom: var(--space-md);
 }
 
 .band-list-container td {
-  color: #afcb89;
+  color: var(--color-accent);
 }
 
 tbody .band-list-container:hover {

@@ -25,32 +25,32 @@
 .forms-search-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-sm);
   width: 100%;
 }
 
 #search {
   flex: 1 1 180px;
   min-width: 0;
-  background-color: rgba(30, 30, 30, 0.85);
-  border: 2px solid #555;
-  color: #fff;
-  padding: 0.5rem 0.75rem;
+  background-color: var(--color-panel);
+  border: 2px solid var(--color-border);
+  color: var(--color-text);
+  padding: var(--space-sm) var(--space-md);
   border-radius: 4px;
   font-size: 1rem;
 }
 
 #search:focus {
   outline: none;
-  border-color: #888;
-  background-color: rgba(40, 40, 40, 0.9);
+  border-color: var(--color-muted);
+  background-color: var(--color-panel-alt);
 }
 
 .forms-search-container select {
-  background-color: rgba(30, 30, 30, 0.85);
-  border: 2px solid #555;
-  color: #fff;
-  padding: 0.5rem 0.75rem;
+  background-color: var(--color-panel);
+  border: 2px solid var(--color-border);
+  color: var(--color-text);
+  padding: var(--space-sm) var(--space-md);
   border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
@@ -58,8 +58,8 @@
 
 .forms-search-container select:focus {
   outline: none;
-  border-color: #888;
-  background-color: rgba(40, 40, 40, 0.9);
+  border-color: var(--color-muted);
+  background-color: var(--color-panel-alt);
 }
 
 /* Scoped to the search form so it does not override the Create/Update buttons */
@@ -74,11 +74,11 @@
   border: none;
   transition: color 0.2s ease;
   cursor: pointer;
-  color: #afcb89;
+  color: var(--color-accent);
 }
 
 .search-container button[type="submit"]:hover {
-  color: #8f333b;
+  color: var(--color-danger);
 }
 
 .info-container {
@@ -90,22 +90,26 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: var(--space-lg);
   justify-content: space-around;
-  color: #afcb89;
+  align-items: center;
+  color: var(--color-accent);
 }
 
 .info-list-site {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: var(--space-lg);
   justify-content: space-around;
   align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .create-band {
-  color: #afcb89;
+  color: var(--color-accent);
   cursor: pointer;
 }
 
@@ -115,15 +119,11 @@
   display: block;
 }
 
-.create-band p {
-  color: #afcb89;
-  margin: 0;
-}
-
 .create-band:hover {
-  color: #8f333b;
+  color: var(--color-danger);
 }
 
-.create-band:hover p {
-  color: #8f333b;
+/* The side links (Help, Rules, Store, Forum) inherit the accent colour from Global.css */
+.info-list-site a {
+  font-weight: 600;
 }

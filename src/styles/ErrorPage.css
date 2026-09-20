@@ -11,13 +11,13 @@
 .error-page-title {
   font-size: 8rem;
   font-weight: bold;
-  color: #afcb89;
+  color: var(--color-accent);
   margin: 0;
 }
 
 .error-page-subtitle {
   font-size: 2rem;
-  color: #fff;
+  color: var(--color-text);
   margin-top: 10px;
   margin-bottom: 20px;
 }
@@ -30,8 +30,8 @@
 
 .error-page-link {
   padding: 12px 30px;
-  background-color: #8f333b;
-  color: #fff;
+  background-color: var(--color-danger);
+  color: var(--color-text);
   text-decoration: none;
   border-radius: 5px;
   font-size: 1rem;
@@ -40,5 +40,5 @@
 }
 
 .error-page-link:hover {
-  background-color: #a83f48;
+  background-color: var(--color-danger-hover);
 }

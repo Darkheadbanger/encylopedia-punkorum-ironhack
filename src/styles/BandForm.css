@@ -1,0 +1,212 @@
+/* Shared styles for both band forms (AddBandForm and UpdateBandForm).
+   They looked identical, so they now use the same classes and the same file. */
+
+.band-form-container {
+  max-width: 900px;
+  margin: var(--space-2xl) auto;
+  padding: var(--space-2xl);
+  background-color: rgba(30, 30, 30, 0.9);
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+}
+
+.band-form-container h2 {
+  color: var(--color-accent);
+  margin-bottom: var(--space-2xl);
+  text-align: center;
+  font-size: 2rem;
+}
+
+.band-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+}
+
+/* Validation / server errors, shown instead of a blocking alert() */
+.form-error {
+  background-color: var(--color-danger);
+  color: var(--color-text);
+  padding: var(--space-lg);
+  border-radius: 4px;
+  text-align: center;
+  margin: 0 0 var(--space-lg);
+}
+
+/* Scoped: .info-section is also used (with another look) in the sidebar */
+.band-form .info-section {
+  background-color: rgba(40, 40, 40, 0.5);
+  padding: var(--space-xl);
+  border-radius: 6px;
+  border: 1px solid #444;
+}
+
+.band-form .info-section h3 {
+  color: var(--color-accent);
+  margin-top: 0;
+  margin-bottom: var(--space-lg);
+  font-size: 1.3rem;
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: var(--space-sm);
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  flex: 1;
+}
+
+.input-group label {
+  color: var(--color-accent);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.input-group input,
+.input-group select {
+  background-color: var(--color-panel);
+  border: 2px solid var(--color-border);
+  color: var(--color-text);
+  padding: var(--space-md);
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.input-group select {
+  cursor: pointer;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  background-color: var(--color-panel-alt);
+}
+
+.input-row {
+  display: flex;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.bigger-input {
+  flex: 2;
+}
+
+.list-item {
+  margin-bottom: var(--space-md);
+}
+
+.list-item .input-row {
+  align-items: flex-end;
+  margin-bottom: 0;
+}
+
+.list-item input,
+.list-item select {
+  margin-bottom: 0;
+}
+
+/* "Add one more album / member" — present in both forms */
+.addmore-btn,
+.remove-btn {
+  padding: var(--space-sm) var(--space-lg);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.addmore-btn {
+  background-color: var(--color-accent);
+  color: #000;
+  margin-top: var(--space-sm);
+}
+
+.addmore-btn:hover {
+  background-color: var(--color-accent-hover);
+  transform: translateY(-2px);
+}
+
+.remove-btn {
+  background-color: var(--color-danger);
+  color: var(--color-text);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.9rem;
+}
+
+.remove-btn:hover {
+  background-color: var(--color-danger-hover);
+}
+
+.remove-btn:disabled {
+  background-color: var(--color-border);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.buttons-container {
+  display: flex;
+  gap: var(--space-lg);
+  justify-content: center;
+  margin-top: var(--space-lg);
+}
+
+/* .submit-btn is "Create" on the add form and "Update" on the update form */
+.submit-btn,
+.cancel-btn {
+  padding: var(--space-lg) var(--space-2xl);
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submit-btn {
+  background-color: var(--color-accent);
+  color: #000;
+}
+
+.submit-btn:hover {
+  background-color: var(--color-accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.cancel-btn {
+  background-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.cancel-btn:hover {
+  background-color: #666;
+}
+
+@media (max-width: 768px) {
+  .band-form-container {
+    margin: var(--space-lg) 0;
+    padding: var(--space-lg);
+  }
+
+  .band-form .info-section {
+    padding: var(--space-lg);
+  }
+
+  .band-form .input-row {
+    flex-direction: column;
+  }
+
+  .band-form .list-item .input-row {
+    align-items: stretch;
+  }
+
+  .buttons-container {
+    flex-wrap: wrap;
+  }
+}
