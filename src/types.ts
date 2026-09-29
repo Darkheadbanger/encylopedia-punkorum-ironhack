@@ -127,3 +127,10 @@ export interface BandFormData {
 
 /** `setBands` as React types it, so children can update the list. */
 export type SetBands = React.Dispatch<React.SetStateAction<Band[]>>;
+
+/** A logged-in account, as /auth/verify describes it. Never holds the password. */
+export interface AuthUser {
+  id: string;
+  email: string;
+  username: string;
+}

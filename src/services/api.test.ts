@@ -5,7 +5,14 @@ import { localBandsAPI, APIFromMusicBrainz, getAllBands } from "./api";
 
 // Replace axios with fake functions: no real HTTP call is made
 vi.mock("axios", () => ({
-  default: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() },
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+    // api.ts registers a request interceptor on import to attach the auth token
+    interceptors: { request: { use: vi.fn() } },
+  },
 }));
 
 const LOCAL = "http://localhost:3001";

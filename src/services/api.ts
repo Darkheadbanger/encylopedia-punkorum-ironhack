@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type {
+  AuthUser,
   Band,
   LocalBand,
   MusicBrainzBand,
@@ -10,6 +11,23 @@ const LOCAL_SERVER_URL = import.meta.env.VITE_LOCAL_SERVER_URL || 'http://localh
 // MusicBrainz now goes through our own backend: a browser cannot send the
 // User-Agent header that MusicBrainz requires, but a server can.
 const MUSICBRAINZ_URL = `${LOCAL_SERVER_URL}/api/mb`;
+
+// Every request carries the token, if there is one. Without this, the backend
+// answers 401 to any write — and we would have to remember the header at each call.
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem('authToken');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+export const authAPI = {
+  signup: (account: { email: string; password: string; username: string }) =>
+    axios.post<AuthUser>(`${LOCAL_SERVER_URL}/auth/signup`, account),
+  login: (credentials: { email: string; password: string }) =>
+    axios.post<{ authToken: string }>(`${LOCAL_SERVER_URL}/auth/login`, credentials),
+  /** Asks the server whether the stored token is still valid, and for whom. */
+  verify: () => axios.get<AuthUser>(`${LOCAL_SERVER_URL}/auth/verify`),
+};
 
 /** What we send when creating or updating a band: everything but the id, which the
  *  server owns. */
