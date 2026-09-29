@@ -9,7 +9,7 @@ function MainPage({bands}: { bands: Band[] }) {
           <p>There are currently {bands.length} bands in Encyclopaedia Punkorum.</p>
         <div className="main-choice">
           <Link to="/bands">Bands</Link>
-          <button type="button">Genres</button>
+          <Link to="/genres">Genres</Link>
         </div>
       </section>
     </main>
