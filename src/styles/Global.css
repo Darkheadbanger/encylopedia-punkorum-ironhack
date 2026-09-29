@@ -1,6 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=New+Rocker&display=swap");
+/* Anton = headline cut from a newspaper. Archivo Narrow = fanzine body text.
+   Special Elite = the IBM golfball typewriter every punk zine was typed on.
+   No blackletter: that is metal's alphabet, not punk's. */
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Narrow:ital,wght@0,400;0,600;0,700;1,400&family=Special+Elite&display=swap");
 
-/* Design tokens — the single source of truth for spacing and colors.
+/* Design tokens — the single source of truth for spacing, colors and type.
    Change a value here and the whole site follows. */
 :root {
   /* Spacing scale: the 6 steps actually used across the app */
@@ -11,16 +14,27 @@
   --space-xl: 1.5rem;
   --space-2xl: 2rem;
 
-  /* Colors */
-  --color-accent: #afcb89;
-  --color-accent-hover: #8fb870;
-  --color-danger: #8f333b;
-  --color-danger-hover: #a83f48;
-  --color-text: #fff;
-  --color-border: #555;
-  --color-muted: #888;
-  --color-panel: rgba(30, 30, 30, 0.85);
-  --color-panel-alt: rgba(40, 40, 40, 0.9);
+  /* Type */
+  --font-display: "Anton", Impact, "Haettenschweiler", sans-serif;
+  --font-body: "Archivo Narrow", "Arial Narrow", Helvetica, sans-serif;
+  --font-type: "Special Elite", "Courier New", monospace;
+
+  /* Colors — Jamie Reid's palette: photocopied black and white, then one
+     colour loud enough to be a provocation. */
+  --color-ink: #0c0c0c; /* toner black */
+  --color-paper: #ece7da; /* photocopy off-white */
+  --color-accent: #ff2d6f; /* Sex Pistols hot pink */
+  --color-accent-hover: #ff6b9b;
+  --color-accent-2: #f5e400; /* acid yellow */
+  --color-danger: #e01b24; /* anarchy red */
+  --color-danger-hover: #ff3a43;
+  --color-text: #f4f1e8; /* newsprint white, never pure #fff */
+  --color-border: #f4f1e8;
+  --color-muted: #9a958a;
+  /* Near-opaque on purpose: small text over the wallpaper is unreadable
+     as soon as the pattern shows through. */
+  --color-panel: rgba(12, 12, 12, 0.96);
+  --color-panel-alt: rgba(24, 24, 24, 0.97);
 }
 
 #root {
@@ -28,9 +42,8 @@
   width: 100%;
   min-height: 100vh;
   padding: var(--space-2xl);
-  font-family: "New Rocker", cursive, system-ui, Avenir, Helvetica, Arial,
-    sans-serif;
-  line-height: 1.5;
+  font-family: var(--font-body);
+  line-height: 1.45;
   font-weight: 400;
 
   font-synthesis: none;
@@ -66,23 +79,53 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--color-ink);
+}
+
+/* The wallpaper, run through a photocopier: colour stripped, midtones crushed.
+   A punk sleeve was whatever image you had, xeroxed until it fell apart. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
   background-image: url("../assets/punk-wallpaper.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
+  filter: grayscale(1) contrast(2.4) brightness(0.42);
+  pointer-events: none;
+  z-index: 0;
 }
 
+/* Halftone dots + the diagonal toner streaks a tired copier leaves behind. */
 body::after {
   content: "";
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(244, 241, 232, 0.09) 1px, transparent 0),
+    repeating-linear-gradient(
+      115deg,
+      transparent 0 26px,
+      rgba(0, 0, 0, 0.28) 26px 28px
+    );
+  background-size: 4px 4px, auto;
   pointer-events: none;
   z-index: 1;
+}
+
+/* Headlines are cut from a newspaper: heavy, condensed, shouted. */
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+  font-weight: 400;
+  margin: 0 0 var(--space-md);
 }
 
 /* Without this, links fall back to the browser's default blue, which fights the
@@ -90,16 +133,23 @@ body::after {
 a {
   color: var(--color-accent);
   text-decoration: none;
+  font-weight: 600;
 }
 
+/* Marker pen, not a polite underline. */
 a:hover {
-  color: var(--color-danger);
+  color: var(--color-accent-2);
   text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 3px;
 }
 
 a:focus-visible,
-button:focus-visible {
-  outline: 2px solid var(--color-accent);
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--color-accent-2);
   outline-offset: 2px;
 }
 
@@ -121,7 +171,7 @@ button:focus-visible {
   grid-area: aside;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-lg);
 }
 
 .punk-archive-logo {
@@ -201,19 +251,75 @@ button:focus-visible {
   margin-top: var(--space-lg);
 }
 
-/* Loading screen shown by App.jsx while the bands are fetched */
+/* Loading screen shown by App.tsx while the bands are fetched */
 .app-loading {
+  font-family: var(--font-type);
   color: var(--color-text);
   text-align: center;
   margin-top: var(--space-2xl);
+  letter-spacing: 0.08em;
 }
 
-/* Shown by App.jsx when the bands could not be loaded */
+/* Shown by App.tsx when the bands could not be loaded.
+   Taped to the page at an angle, like a flyer nobody straightened. */
 .app-error {
   background-color: var(--color-danger);
   color: var(--color-text);
-  padding: var(--space-lg);
-  border-radius: 4px;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: var(--space-md) var(--space-lg);
+  border: 3px solid var(--color-ink);
+  border-radius: 0;
   text-align: center;
-  margin: 0 0 var(--space-lg);
+  margin: 0 0 var(--space-xl);
+  transform: rotate(-0.6deg);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.55);
+}
+
+/* --- Shared punk primitives ------------------------------------------------
+   Nothing here is decorative for its own sake: hard edges, heavy borders and a
+   slight tilt are what a photocopied flyer stuck on a wall actually looks like. */
+
+/* A panel is a piece of paper: square corners, thick edge, hard drop shadow. */
+.punk-panel {
+  background-color: var(--color-panel);
+  border: 3px solid var(--color-border);
+  border-radius: 0;
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* Ransom-note lettering: every character cut from a different page.
+   Applied by JSX that wraps each letter in a <span>. */
+.ransom span {
+  display: inline-block;
+  padding: 0 0.08em;
+  line-height: 1;
+}
+
+.ransom span:nth-child(3n) {
+  font-family: var(--font-type);
+  transform: rotate(-4deg);
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+.ransom span:nth-child(3n + 1) {
+  font-family: var(--font-display);
+  transform: rotate(3deg);
+  color: var(--color-accent-2);
+}
+
+.ransom span:nth-child(4n) {
+  background: var(--color-accent);
+  color: var(--color-ink);
+  transform: rotate(-2deg);
+}
+
+/* Someone who set "reduce motion" does not want a page of tilted boxes either. */
+@media (prefers-reduced-motion: reduce) {
+  .app-error,
+  .ransom span {
+    transform: none;
+  }
 }

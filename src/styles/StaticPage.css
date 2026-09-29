@@ -3,7 +3,7 @@
 .static-page {
   background-color: var(--color-panel);
   border: 2px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: 0;
   padding: var(--space-2xl);
   max-width: 900px;
 }
@@ -77,7 +77,7 @@ dl.static-list dd {
 
 .coming-soon-badge {
   background-color: var(--color-accent);
-  border-radius: 4px;
+  border-radius: 0;
   color: #000;
   display: inline-block;
   font-weight: 600;
@@ -96,6 +96,6 @@ dl.static-list dd {
 .static-highlight {
   background-color: var(--color-panel-alt);
   border-left: 4px solid var(--color-accent);
-  border-radius: 0 4px 4px 0;
+  border-radius: 0;
   padding: var(--space-lg);
 }

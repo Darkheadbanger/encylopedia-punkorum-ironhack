@@ -1,18 +1,28 @@
+/* The band list is a filing card, not a web table: opaque, hard-edged, and
+   readable over the busiest wallpaper. */
 .bands-table {
   width: 100%;
   min-width: 560px;
   border-collapse: collapse;
+  background: var(--color-ink);
+  border: 3px solid var(--color-border);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.75);
 }
 
-.band-list-container {
-  border-bottom: 1px var(--color-border) solid;
+/* Header: a strip of acid yellow stuck across the top of the box */
+thead .band-list-container {
+  background: var(--color-accent-2);
+  border-bottom: 3px solid var(--color-border);
 }
 
-.band-list-container th,
-.band-list-container td {
-  padding: 0 var(--space-md);
+.band-head-list {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-ink);
+  padding: var(--space-sm) var(--space-md);
   text-align: left;
-  vertical-align: baseline;
 }
 
 /* Name and Genre get more room than Country and Status */
@@ -20,19 +30,79 @@
   width: 35%;
 }
 
-.band-list-container .band-head-list {
-  padding-bottom: var(--space-md);
-}
-
 .band-list-container td {
-  color: var(--color-accent);
+  color: var(--color-text);
+  font-size: 0.95rem;
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  vertical-align: middle;
 }
 
+/* 116 rows need a rhythm, or the eye loses its line */
+tbody .band-list-container:nth-child(even) {
+  background: rgba(244, 241, 232, 0.05);
+}
+
+tbody .band-list-container {
+  border-bottom: 1px solid rgba(244, 241, 232, 0.14);
+}
+
+/* The whole row lights up: a highlighter dragged across the page */
 tbody .band-list-container:hover {
-  background-color: rgba(0, 0, 0, 0.6);
+  background: var(--color-accent);
 }
 
-/* More specific than ".band-list-container td", otherwise the status color never shows */
+tbody .band-list-container:hover td,
+tbody .band-list-container:hover .band-name a,
+tbody .band-list-container:hover .still-active,
+tbody .band-list-container:hover .not-active {
+  color: var(--color-ink);
+}
+
+.band-name {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* The band name is the one thing you are meant to click */
+.band-name a {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-paper);
+  text-decoration: none;
+}
+
+.band-name a p {
+  margin: 0;
+}
+
+.band-name a:hover {
+  color: var(--color-ink);
+  background: var(--color-accent-2);
+  text-decoration: none;
+}
+
+.genre {
+  font-family: var(--font-type);
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+/* More specific than ".band-list-container td", otherwise the status never shows */
+.band-list-container .still-active,
+.band-list-container .not-active {
+  font-family: var(--font-type);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
 .band-list-container .still-active {
   color: #5fd35f;
 }
@@ -41,40 +111,35 @@ tbody .band-list-container:hover {
   color: #ff5c5c;
 }
 
-.band-id {
-  text-decoration: none;
-}
-
-.band-id:hover {
-  text-decoration: underline;
-}
-
-.band-name {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  text-decoration: none;
-}
-
+/* Edit and delete are stickers on the row, not floating emoji */
 .edit-table,
 .delete-table {
-  margin-left: 5px;
-  text-decoration: none;
-  font-size: 0.8em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  font-size: 0.75rem;
+  line-height: 1;
   cursor: pointer;
-  transition: transform 0.2s;
+  border: 2px solid var(--color-border);
+  background: var(--color-panel-alt);
+  text-decoration: none;
+  transition: background-color 0.15s ease;
 }
 
 /* The delete icon is a real <button>: remove the default button look */
 .delete-table {
-  background: none;
-  border: none;
   padding: 0;
   font-family: inherit;
 }
 
-.edit-table:hover,
+.edit-table:hover {
+  background: var(--color-accent-2);
+  border-color: var(--color-ink);
+}
+
 .delete-table:hover {
-  transform: scale(1.2);
+  background: var(--color-danger);
+  border-color: var(--color-ink);
 }

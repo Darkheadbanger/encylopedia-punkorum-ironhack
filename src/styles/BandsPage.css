@@ -3,3 +3,25 @@
 .bands-list-page {
   overflow-x: auto;
 }
+
+/* The count above the table: a typed caption, not a headline — the table is
+   what matters here. */
+.bands-list-page > p {
+  font-family: var(--font-type);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  background: var(--color-paper);
+  border: 2px solid var(--color-ink);
+  display: inline-block;
+  padding: var(--space-xs) var(--space-sm);
+  margin: 0 0 var(--space-md);
+  transform: rotate(-0.8deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bands-list-page > p {
+    transform: none;
+  }
+}

@@ -7,7 +7,7 @@
   padding: var(--space-2xl);
   background-color: rgba(30, 30, 30, 0.9);
   border: 2px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 0;
   color: var(--color-text);
 }
 
@@ -29,7 +29,7 @@
   background-color: var(--color-danger);
   color: var(--color-text);
   padding: var(--space-lg);
-  border-radius: 4px;
+  border-radius: 0;
   text-align: center;
   margin: 0 0 var(--space-lg);
 }
@@ -38,7 +38,7 @@
 .band-form .info-section {
   background-color: rgba(40, 40, 40, 0.5);
   padding: var(--space-xl);
-  border-radius: 6px;
+  border-radius: 0;
   border: 1px solid #444;
 }
 
@@ -70,7 +70,7 @@
   border: 2px solid var(--color-border);
   color: var(--color-text);
   padding: var(--space-md);
-  border-radius: 4px;
+  border-radius: 0;
   font-size: 1rem;
   transition: border-color 0.2s;
 }
@@ -115,7 +115,7 @@
 .remove-btn {
   padding: var(--space-sm) var(--space-lg);
   border: none;
-  border-radius: 4px;
+  border-radius: 0;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.2s;
@@ -161,7 +161,7 @@
 .cancel-btn {
   padding: var(--space-lg) var(--space-2xl);
   border: none;
-  border-radius: 4px;
+  border-radius: 0;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;

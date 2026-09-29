@@ -1,23 +1,79 @@
-/* "Bands" is a link and "Genres" a button: both get the same look */
+/* "Bands" is a link and "Genres" a button: both get the same look.
+   Square, heavy, hard-shadowed — a flyer stapled to a wall, not a web card. */
 .main-choice a,
 .main-choice button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 150px;
+  width: 160px;
   height: 100px;
-  border-radius: 25px;
-  border: 2px solid var(--color-border);
-  background-color: var(--color-panel);
+  border-radius: 0;
+  border: 3px solid var(--color-ink);
+  background-color: var(--color-paper);
   cursor: pointer;
-  color: var(--color-accent);
-  font-size: 1.2em;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   text-decoration: none;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.7);
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.main-choice a {
+  transform: rotate(-1.5deg);
+}
+
+.main-choice button {
+  transform: rotate(1.5deg);
 }
 
 .main-choice a:hover,
 .main-choice button:hover {
-  color: var(--color-danger);
-  border-color: var(--color-danger);
+  background-color: var(--color-accent);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.main-choice a:active,
+.main-choice button:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .main-choice a,
+  .main-choice button {
+    transform: none;
+  }
+}
+
+/* The band count is the one sentence on the home page: treat it as a headline
+   strip cut from a paper, not as body copy. */
+.main-section-container p {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3.2vw, 2.6rem);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+  color: var(--color-ink);
+  background: var(--color-paper);
+  border: 3px solid var(--color-ink);
+  box-shadow: 7px 7px 0 var(--color-accent);
+  padding: var(--space-md) var(--space-lg);
+  margin: 0 0 var(--space-2xl);
+  transform: rotate(-1deg);
+}
+
+/* The logo was drawn for a metal archive. Run through the same photocopier as
+   the wallpaper, it stops fighting the rest of the page. */
+.punk-archive-logo img {
+  filter: grayscale(1) contrast(1.6) brightness(1.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .main-section-container p {
+    transform: none;
+  }
 }
