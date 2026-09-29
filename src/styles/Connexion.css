@@ -1,9 +1,12 @@
+/* The login panel: a form photocopied onto the page, stuck on slightly crooked. */
 .connexion-container {
-  border: 2px white solid;
   width: 198px;
   height: auto;
-  padding: 5px 15px 34px 13px;
-  background-color: #381a10;
+  padding: var(--space-lg) var(--space-lg) var(--space-xl);
+  background-color: var(--color-ink);
+  border: 3px solid var(--color-border);
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.6);
+  transform: rotate(-0.8deg);
 }
 
 .connexion-info {
@@ -12,63 +15,130 @@
   gap: var(--space-xs);
 }
 
+/* Typewritten, like a form you were handed at a squat gig. */
 .connexion-info label {
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-family: var(--font-type);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent-2);
 }
 
+/* Paper-white fields: you fill in the photocopy with a pen. */
 .connexion-info input {
-  background-color: var(--color-panel);
-  border: 2px solid var(--color-border);
-  border-radius: 4px;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  border-radius: 0;
   padding: var(--space-xs) var(--space-sm);
   margin-bottom: var(--space-xs);
+  font-family: var(--font-type);
 }
 
 .connexion-info input:focus {
   outline: none;
-  border-color: var(--color-muted);
-  background-color: var(--color-panel-alt);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent);
 }
 
-/* Scoped to the login form so it does not override the Create/Update buttons */
-.connexion-info button[type="submit"] {
+/* Scoped to this panel so it does not override the Create/Update buttons.
+   A sticker slapped on, not a rounded web button. */
+.connexion-info button {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  font-size: 1rem;
-  font-weight: 600;
-  background: none;
-  border: none;
-  transition: color 0.2s ease;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--color-accent);
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  border-radius: 0;
+  padding: var(--space-xs) var(--space-md);
+  margin-top: var(--space-sm);
+  transition: transform 0.1s ease, background-color 0.15s ease;
   cursor: pointer;
-  color: var(--color-accent);
-  align-self: flex-end;
+  align-self: stretch;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.7);
 }
 
-.connexion-info button[type="submit"]:hover {
-  color: var(--color-danger);
+.connexion-info button:hover {
+  background: var(--color-accent-2);
+  transform: translate(-1px, -1px);
+}
+
+.connexion-info button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.7);
+}
+
+.connexion-info button:disabled {
+  background: var(--color-muted);
+  cursor: progress;
+  transform: none;
 }
 
 .connexion-links {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: var(--space-sm);
-  margin-top: var(--space-lg);
-  justify-content: space-around;
+  margin-top: var(--space-sm);
 }
 
 .connexion-links a {
-  font-weight: 600;
-  background: none;
-  border: none;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  color: white;
+  display: block;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--color-danger);
+  color: var(--color-text);
   text-decoration: none;
-  font-size: 0.9em;
+  border: 2px solid var(--color-ink);
+  border-radius: 0;
+  padding: var(--space-xs) var(--space-md);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.7);
+  transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
 .connexion-links a:hover {
-  color: var(--color-danger);
+  background: var(--color-accent-2);
+  color: var(--color-ink);
+  text-decoration: none;
+  transform: translate(-1px, -1px);
+}
+
+.connexion-links a:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.7);
+}
+
+/* Announced by role="alert", so it must also be visible without colour alone */
+.connexion-error {
+  font-family: var(--font-type);
+  background: var(--color-danger);
+  color: var(--color-text);
+  font-size: 0.8rem;
+  margin: var(--space-sm) 0 0;
+  padding: var(--space-xs) var(--space-sm);
+  border: 2px solid var(--color-ink);
+}
+
+.connexion-greeting {
+  font-family: var(--font-type);
+  margin: 0 0 var(--space-sm);
+  font-size: 0.85rem;
+  word-break: break-word;
+  letter-spacing: 0.03em;
+}
+
+.connexion-greeting strong {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  text-transform: uppercase;
+  color: var(--color-accent-2);
+  display: block;
+  letter-spacing: 0.02em;
 }

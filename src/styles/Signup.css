@@ -1,0 +1,120 @@
+/* The signup page: one form, centred, on a wall papered with gig flyers. */
+.signup-page {
+  position: relative;
+  /* The collage sits here and nowhere else: one strong image on the one page
+     with no text to read. Darkened, or the form would be unreadable over it. */
+  background-image:
+    linear-gradient(rgba(12, 12, 12, 0.78), rgba(12, 12, 12, 0.78)),
+    url("../assets/punk-collage.jpg");
+  background-size: cover;
+  background-position: center;
+  border: 3px solid var(--color-border);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.7);
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl) var(--space-lg);
+  overflow: hidden;
+}
+
+/* Flyers pasted over each other until no wall is left showing. Decorative, so
+   it sits behind and never steals a click. */
+.flyer-wall {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: var(--space-lg);
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  gap: var(--space-md);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.flyer-wall li {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.4vw, 2.1rem);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  padding: var(--space-xs) var(--space-md);
+  border: 3px solid var(--color-ink);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.7);
+  opacity: 0.32;
+}
+
+/* Every third flyer was printed on whatever coloured paper was left. */
+.flyer-wall li:nth-child(3n) {
+  background: var(--color-accent);
+  transform: rotate(-3deg);
+}
+
+.flyer-wall li:nth-child(3n + 1) {
+  transform: rotate(2.5deg);
+}
+
+.flyer-wall li:nth-child(4n) {
+  background: var(--color-accent-2);
+  font-family: var(--font-type);
+  transform: rotate(-1.5deg);
+}
+
+.flyer-wall li:nth-child(5n) {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  border-color: var(--color-paper);
+  transform: rotate(4deg);
+}
+
+/* The form sits on top, wider than the sidebar version and straightened up:
+   it is the one thing on the page you are meant to use. */
+.signup-card {
+  position: relative;
+  z-index: 1;
+  width: min(360px, 100%);
+  transform: rotate(-1deg);
+  box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.8);
+}
+
+.signup-card .connexion-info button {
+  align-self: stretch;
+  font-size: 1.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flyer-wall li,
+  .signup-card {
+    transform: none;
+  }
+}
+
+/* Freepik's free licence requires visible credit. */
+.artwork-credit {
+  position: absolute;
+  right: var(--space-sm);
+  bottom: var(--space-sm);
+  margin: 0;
+  z-index: 2;
+  font-family: var(--font-type);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--color-text);
+  background: var(--color-ink);
+  border: 1px solid var(--color-muted);
+  padding: 2px var(--space-xs);
+}
+
+.artwork-credit a {
+  color: var(--color-accent);
+  font-size: inherit;
+}
+
+.artwork-credit a:hover {
+  color: var(--color-accent-2);
+}
