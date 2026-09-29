@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { Band } from "./types";
 import Routers from "./Routers"
 import { getAllBands } from "./services/api";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   const [bands, setBands] = useState<Band[]>([]);
@@ -31,10 +32,10 @@ function App() {
   }
 
   return (
-    <>
+    <AuthProvider>
       {error && <p className="app-error" role="alert">{error}</p>}
       <Routers bands={bands} setBands={setBands}/>
-    </>
+    </AuthProvider>
   );
 }
 

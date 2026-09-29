@@ -1,8 +1,29 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import Routers from "./Routers";
 import { makeLocalBand } from "./test/fixtures";
+import { useAuth } from "./context/AuthContext";
+import type { ReactNode } from "react";
+
+vi.mock("./context/AuthContext", () => ({
+  AuthProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+  useAuth: vi.fn(),
+}));
+
+const session = (isLoggedIn: boolean) => ({
+  user: isLoggedIn ? { id: "1", email: "joey@ramones.com", username: "joey" } : null,
+  isLoggedIn,
+  isLoading: false,
+  login: vi.fn(),
+  signup: vi.fn(),
+  logout: vi.fn(),
+});
+
+// Logged out unless a test says otherwise.
+beforeEach(() => vi.mocked(useAuth).mockReturnValue(session(false) as never));
+
+const logIn = () => vi.mocked(useAuth).mockReturnValue(session(true) as never);
 
 const renderAt = (path: string) =>
   render(
@@ -12,8 +33,10 @@ const renderAt = (path: string) =>
   );
 
 // Each route renders a layout: sidebar (login + random infos) + navbar + page content
-const expectLayout = () => {
-  expect(screen.getByRole("button", { name: "Login" })).toBeInTheDocument();
+const expectLayout = ({ loggedIn = false } = {}) => {
+  // The sidebar shows the login form, or the logout button once signed in.
+  const panel = loggedIn ? "Logout" : "Login";
+  expect(screen.getByRole("button", { name: panel })).toBeInTheDocument();
   expect(screen.getByRole("heading", { name: "Random" })).toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Encyclopedia Punkorum logo" })).toBeInTheDocument();
 };
@@ -38,18 +61,39 @@ describe("Routers", () => {
     expect(screen.getByRole("heading", { level: 2, name: "Sex Pistols" })).toBeInTheDocument();
   });
 
-  it("/addBand shows the add form", () => {
+  it("/addBand shows the add form to a logged-in visitor", () => {
+    logIn();
     renderAt("/addBand");
-    expectLayout();
+    expectLayout({ loggedIn: true });
     expect(
       screen.getByRole("heading", { name: "Add New Band to Encyclopedia Punkorum" })
     ).toBeInTheDocument();
   });
 
-  it("/updateBand/:updateId shows the edit form", () => {
+  it("/addBand sends a logged-out visitor home", () => {
+    renderAt("/addBand");
+    expect(
+      screen.queryByRole("heading", { name: "Add New Band to Encyclopedia Punkorum" })
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Bands" })).toBeInTheDocument(); // the home page
+  });
+
+  it("/updateBand/:updateId shows the edit form to a logged-in visitor", () => {
+    logIn();
     renderAt("/updateBand/local-1");
-    expectLayout();
+    expectLayout({ loggedIn: true });
     expect(screen.getByRole("heading", { name: "Edit Band: Sex Pistols" })).toBeInTheDocument();
+  });
+
+  it("/updateBand/:updateId sends a logged-out visitor home", () => {
+    renderAt("/updateBand/local-1");
+    expect(screen.queryByRole("heading", { name: "Edit Band: Sex Pistols" })).not.toBeInTheDocument();
+  });
+
+  it("/genres shows the genres page", () => {
+    renderAt("/genres");
+    expectLayout();
+    expect(screen.getByRole("heading", { name: "Punk Genres" })).toBeInTheDocument();
   });
 
   it("/help shows the help page", () => {

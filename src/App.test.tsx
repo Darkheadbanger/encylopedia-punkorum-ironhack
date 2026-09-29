@@ -5,7 +5,11 @@ import App from "./App";
 import { getAllBands } from "./services/api";
 import { makeLocalBand, makeMusicBrainzBand } from "./test/fixtures";
 
-vi.mock("./services/api.js", () => ({ getAllBands: vi.fn() }));
+vi.mock("./services/api.js", () => ({
+  getAllBands: vi.fn(),
+  // AuthProvider imports this from the same module
+  authAPI: { login: vi.fn(), signup: vi.fn(), verify: vi.fn() },
+}));
 
 const renderApp = () =>
   render(
