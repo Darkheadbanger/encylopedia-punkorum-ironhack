@@ -21,7 +21,12 @@ function Probe() {
   return (
     <>
       <p data-testid="state">{isLoggedIn ? `in:${user?.username}` : "out"}</p>
-      <button onClick={() => login("joey@ramones.com", "hey-ho-lets-go")}>log in</button>
+      {/* login() rejects on bad credentials — the real form catches it to show the
+          message, so the probe must catch it too, or Vitest reports an unhandled
+          rejection and the whole run exits non-zero. */}
+      <button onClick={() => login("joey@ramones.com", "hey-ho-lets-go").catch(() => {})}>
+        log in
+      </button>
       <button onClick={logout}>log out</button>
     </>
   );

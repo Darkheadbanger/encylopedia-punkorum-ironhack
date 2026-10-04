@@ -3,7 +3,7 @@ import "../styles/RandomInfo.css";
 function RandomInfos() {
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    // Placeholder pour les futurs liens
+    // Placeholder: these browse links are not built yet
   };
 
   return (
