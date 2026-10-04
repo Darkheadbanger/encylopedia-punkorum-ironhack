@@ -9,20 +9,61 @@
   box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.75);
 }
 
-/* Header: a strip of acid yellow stuck across the top of the box */
+/* Header: a strip of acid yellow stuck across the top of the box. It stays put
+   while the list scrolls — with 80 rows and growing, you lose track of which
+   column is which otherwise. */
 thead .band-list-container {
   background: var(--color-accent-2);
   border-bottom: 3px solid var(--color-border);
 }
 
 .band-head-list {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--color-accent-2);
+  padding: 0;
+  text-align: left;
+}
+
+/* The header label IS the sort control: a button, so it is reachable by keyboard
+   and announced as clickable, styled to look like the heading it replaces. */
+.sort-btn {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
   font-family: var(--font-display);
   font-size: 1.05rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--color-ink);
+  background: transparent;
+  border: none;
+  border-radius: 0;
   padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
   text-align: left;
+}
+
+.sort-btn:hover {
+  background: var(--color-accent);
+}
+
+.sort-arrow {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  opacity: 0.65;
+}
+
+/* The sorted column keeps its arrow at full strength */
+[aria-sort="ascending"] .sort-arrow,
+[aria-sort="descending"] .sort-arrow {
+  opacity: 1;
 }
 
 /* Name and Genre get more room than Country and Status */
@@ -52,10 +93,11 @@ tbody .band-list-container:hover {
   background: var(--color-accent);
 }
 
+/* The status badge is deliberately left out: it keeps its own colour and gets a
+   dark background instead, further down. Turning it ink-on-ink would erase it. */
 tbody .band-list-container:hover td,
 tbody .band-list-container:hover .band-name a,
-tbody .band-list-container:hover .still-active,
-tbody .band-list-container:hover .not-active {
+tbody .band-list-container:hover .genre {
   color: var(--color-ink);
 }
 
@@ -87,59 +129,41 @@ tbody .band-list-container:hover .not-active {
   text-decoration: none;
 }
 
+/* 0.85rem: below that, typewriter text over the wallpaper stops being readable */
 .genre {
   font-family: var(--font-type);
-  font-size: 0.8rem;
-  color: var(--color-muted);
+  font-size: 0.85rem;
+  color: #cfc9bb;
 }
 
-/* More specific than ".band-list-container td", otherwise the status never shows */
+/* The status is a stamped badge, not loose coloured text: it reads at a glance
+   down a column of eighty rows. More specific than ".band-list-container td",
+   otherwise the colour never applies. */
 .band-list-container .still-active,
 .band-list-container .not-active {
+  display: inline-block;
   font-family: var(--font-type);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 700;
+  padding: 2px var(--space-sm);
+  border: 2px solid currentColor;
 }
 
 .band-list-container .still-active {
-  color: #5fd35f;
+  color: #6ee06e;
 }
 
 .band-list-container .not-active {
-  color: #ff5c5c;
+  color: #ff6b6b;
 }
 
-/* Edit and delete are stickers on the row, not floating emoji */
-.edit-table,
-.delete-table {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  font-size: 0.75rem;
-  line-height: 1;
-  cursor: pointer;
-  border: 2px solid var(--color-border);
-  background: var(--color-panel-alt);
-  text-decoration: none;
-  transition: background-color 0.15s ease;
+/* On a highlighted row the badge inverts, so it stays legible on hot pink */
+tbody .band-list-container:hover .still-active,
+tbody .band-list-container:hover .not-active {
+  background: var(--color-ink);
 }
 
-/* The delete icon is a real <button>: remove the default button look */
-.delete-table {
-  padding: 0;
-  font-family: inherit;
-}
-
-.edit-table:hover {
-  background: var(--color-accent-2);
-  border-color: var(--color-ink);
-}
-
-.delete-table:hover {
-  background: var(--color-danger);
-  border-color: var(--color-ink);
-}
+/* The edit and delete controls moved to the band's own page: see .band-action
+   in bandsId.css. Nothing here styles them any more. */

@@ -1,7 +1,7 @@
-import { makeBandPayload } from "../test/fixtures";
+import { makeBandPayload, makeBand, makeCandidate, axiosResponse } from "../test/fixtures";
 import { describe, it, expect, vi } from "vitest";
 import axios from "axios";
-import { localBandsAPI, APIFromMusicBrainz, getAllBands } from "./api";
+import { bandsAPI, upstreamAPI, authAPI, getAllBands } from "./api";
 
 // Replace axios with fake functions: no real HTTP call is made
 vi.mock("axios", () => ({
@@ -16,104 +16,98 @@ vi.mock("axios", () => ({
 }));
 
 const LOCAL = "http://localhost:3001";
-// MusicBrainz is reached through our own backend, which adds the User-Agent header
-const MUSICBRAINZ = `${LOCAL}/api/mb`;
 
-describe("localBandsAPI", () => {
+describe("bandsAPI", () => {
   it("getAll calls GET /bands", () => {
-    localBandsAPI.getAll();
+    bandsAPI.getAll();
     expect(axios.get).toHaveBeenCalledWith(`${LOCAL}/bands`);
   });
 
   it("getOne calls GET /bands/:id", () => {
-    localBandsAPI.getOne("42");
+    bandsAPI.getOne("42");
     expect(axios.get).toHaveBeenCalledWith(`${LOCAL}/bands/42`);
   });
 
   it("create calls POST /bands with the band", () => {
     const band = makeBandPayload({ name: "Crass" });
-    localBandsAPI.create(band);
+    bandsAPI.create(band);
     expect(axios.post).toHaveBeenCalledWith(`${LOCAL}/bands`, band);
   });
 
   it("update calls PUT /bands/:id with the band", () => {
     const band = makeBandPayload({ name: "Crass" });
-    localBandsAPI.update("42", band);
+    bandsAPI.update("42", band);
     expect(axios.put).toHaveBeenCalledWith(`${LOCAL}/bands/42`, band);
   });
 
   it("delete calls DELETE /bands/:id", () => {
-    localBandsAPI.delete("42");
+    bandsAPI.delete("42");
     expect(axios.delete).toHaveBeenCalledWith(`${LOCAL}/bands/42`);
   });
 });
 
-describe("APIFromMusicBrainz", () => {
-  it("searchBands uses the punk query and default limit/offset", () => {
-    APIFromMusicBrainz.searchBands();
-    expect(axios.get).toHaveBeenCalledWith(`${MUSICBRAINZ}/artist`, {
-      params: {
-        query: 'tag:"hardcore punk" AND tag:"punk" AND type:group',
-        fmt: "json",
-        limit: 100,
-        offset: 0,
-      },
+// The browser never calls MusicBrainz. It asks our own backend, which searches,
+// translates and stores — so every URL here is on our server.
+describe("upstreamAPI", () => {
+  it("search calls our own /bands/upstream, not musicbrainz.org", () => {
+    upstreamAPI.search("cro-mags");
+
+    expect(axios.get).toHaveBeenCalledWith(`${LOCAL}/bands/upstream`, {
+      params: { q: "cro-mags" },
+    });
+    expect(vi.mocked(axios.get).mock.calls.flat(2).join(" ")).not.toContain("musicbrainz.org");
+  });
+
+  it("import posts the MusicBrainz id to our own /bands/import", () => {
+    upstreamAPI.import("7a2e6b55-f149-4e74-be6a-30a1b1a3e5ae");
+
+    expect(axios.post).toHaveBeenCalledWith(`${LOCAL}/bands/import`, {
+      musicBrainzId: "7a2e6b55-f149-4e74-be6a-30a1b1a3e5ae",
     });
   });
 
-  it("searchBands accepts a custom query, limit and offset", () => {
-    APIFromMusicBrainz.searchBands("ramones", 10, 20);
-    expect(axios.get).toHaveBeenCalledWith(`${MUSICBRAINZ}/artist`, {
-      params: { query: "ramones", fmt: "json", limit: 10, offset: 20 },
-    });
-  });
+  it("returns candidates that already have our shape", async () => {
+    vi.mocked(axios.get).mockResolvedValueOnce(axiosResponse([makeCandidate()]));
 
-  it("getBandDetails asks for release groups and relations", () => {
-    APIFromMusicBrainz.getBandDetails("mb-1");
-    expect(axios.get).toHaveBeenCalledWith(`${MUSICBRAINZ}/artist/mb-1`, {
-      params: { inc: "release-groups+artist-rels", fmt: "json" },
-    });
+    const { data } = await upstreamAPI.search("cro-mags");
+
+    expect(data[0]).toMatchObject({ name: "Cro-Mags", source: "musicbrainz", alreadyImported: false });
   });
 });
 
+describe("authAPI", () => {
+  it("signup, login and verify all go to /auth", () => {
+    authAPI.signup({ email: "joey@ramones.com", password: "hey-ho-lets-go", username: "joey" });
+    authAPI.login({ email: "joey@ramones.com", password: "hey-ho-lets-go" });
+    authAPI.verify();
+
+    expect(axios.post).toHaveBeenCalledWith(`${LOCAL}/auth/signup`, expect.any(Object));
+    expect(axios.post).toHaveBeenCalledWith(`${LOCAL}/auth/login`, expect.any(Object));
+    expect(axios.get).toHaveBeenCalledWith(`${LOCAL}/auth/verify`);
+  });
+});
+
+// This used to merge two sources and report whether MusicBrainz had answered.
+// There is one source now: the database.
 describe("getAllBands", () => {
-  it("merges local and MusicBrainz bands, local ones first, with source and editable flags", async () => {
-    vi.mocked(axios.get).mockImplementation((url) =>
-      url.includes("/api/mb")
-        ? Promise.resolve({ data: { artists: [{ id: "mb-1", name: "Ramones" }] } })
-        : Promise.resolve({ data: [{ id: "local-1", name: "Sex Pistols" }] })
-    );
+  it("returns the bands our API sends, untouched", async () => {
+    const stored = [makeBand(), makeBand({ id: "band-2", name: "Crass" })];
+    vi.mocked(axios.get).mockResolvedValueOnce(axiosResponse(stored));
 
-    const result = await getAllBands();
-
-    expect(result.bands).toEqual([
-      { id: "local-1", name: "Sex Pistols", source: "local", editable: true },
-      { id: "mb-1", name: "Ramones", source: "musicbrainz", editable: false },
-    ]);
-    expect(result.musicBrainzFailed).toBe(false);
+    expect(await getAllBands()).toEqual(stored);
   });
 
-  it("still returns the local bands when MusicBrainz fails", async () => {
-    vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.mocked(axios.get).mockImplementation((url) =>
-      url.includes("/api/mb")
-        ? Promise.reject(new Error("MusicBrainz down"))
-        : Promise.resolve({ data: [{ id: "local-1", name: "Sex Pistols" }] })
-    );
+  it("makes a single request: no second source to merge", async () => {
+    vi.mocked(axios.get).mockClear();
+    vi.mocked(axios.get).mockResolvedValueOnce(axiosResponse([]));
 
-    const result = await getAllBands();
+    await getAllBands();
 
-    expect(result.bands).toEqual([
-      { id: "local-1", name: "Sex Pistols", source: "local", editable: true },
-    ]);
-    // the caller needs to know, so it can warn the user
-    expect(result.musicBrainzFailed).toBe(true);
+    expect(axios.get).toHaveBeenCalledOnce();
   });
 
-  it("throws when the local server fails", async () => {
-    vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.mocked(axios.get).mockRejectedValue(new Error("Network error"));
-
+  it("lets the failure through, so App can say the server is down", async () => {
+    vi.mocked(axios.get).mockRejectedValueOnce(new Error("Network error"));
     await expect(getAllBands()).rejects.toThrow("Network error");
   });
 });

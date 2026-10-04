@@ -7,6 +7,83 @@
   width: 100%;
 }
 
+/* Title on the left, the two actions on the right, on one full-width line. */
+.band-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  width: 100%;
+}
+
+.band-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+/* Stickers slapped on the page, like every other button on the site: square
+   corners, thick ink border, hard shadow. */
+.band-action {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--space-xs) var(--space-md);
+  border: 2px solid var(--color-ink);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.7);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.band-action.is-edit {
+  background: var(--color-accent-2);
+  color: var(--color-ink);
+}
+
+.band-action.is-delete {
+  background: var(--color-danger);
+  color: var(--color-text);
+}
+
+.band-action:hover {
+  background: var(--color-accent);
+  color: var(--color-ink);
+  text-decoration: none;
+  transform: translate(-1px, -1px);
+}
+
+.band-action:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.7);
+}
+
+/* Shown in place of the actions to a visitor who is not logged in. */
+.band-actions-locked {
+  margin: 0;
+  font-family: var(--font-type);
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  letter-spacing: 0.02em;
+}
+
+/* Announced by role="alert", so it must be readable without relying on colour. */
+.band-action-error {
+  width: 100%;
+  margin: 0;
+  padding: var(--space-xs) var(--space-sm);
+  font-family: var(--font-type);
+  font-size: 0.85rem;
+  background: var(--color-danger);
+  color: var(--color-text);
+  border: 2px solid var(--color-ink);
+}
+
 .band-info {
   display: flex;
   flex-direction: row;
@@ -27,9 +104,40 @@
   height: auto;
 }
 
+/* A photocopied print, taped to the page: thick border, hard shadow, square. */
 .bands-photos {
   width: 100%;
   object-fit: cover;
+  border: 3px solid var(--color-border);
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.6);
+  filter: grayscale(0.25) contrast(1.1);
+}
+
+.photo-credit {
+  font-family: var(--font-type);
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  margin: var(--space-xs) 0 0;
+  letter-spacing: 0.02em;
+}
+
+/* Shown when there is no picture, or when the one we had failed to load. An empty
+   frame still holds the layout together. */
+.photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  margin: 0;
+  padding: var(--space-lg);
+  font-family: var(--font-type);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+  text-align: center;
+  background-color: var(--color-panel-alt);
+  border: 3px dashed var(--color-muted);
 }
 
 .band-details-table {

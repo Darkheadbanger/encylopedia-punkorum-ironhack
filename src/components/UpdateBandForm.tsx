@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { localBandsAPI } from "../services/api";
+import { bandsAPI } from "../services/api";
+import type { BandPayload } from "../services/api";
 import { RELEASE_TYPES } from "../types";
-import type { Album, Band, BandFormData, LocalBand, Member, SetBands } from "../types";
+import type { Album, Band, BandFormData, Member, SetBands } from "../types";
 import "../styles/BandForm.css";
 
 function UpdateBandForm({ bands, setBands }: { bands: Band[]; setBands: SetBands }) {
@@ -12,9 +13,10 @@ function UpdateBandForm({ bands, setBands }: { bands: Band[]; setBands: SetBands
   const band = bands.find((band) => band.id === updateId);
 
   const [formData, setFormData] = useState<BandFormData>(() => {
-    if (band && band.source === 'local') {
+    if (band) {
       return {
         name: band.name || "",
+        image: band.image || "",
         country: band.country || "",
         location: band.location || "",
         status: band.status || "Active",
@@ -30,6 +32,7 @@ function UpdateBandForm({ bands, setBands }: { bands: Band[]; setBands: SetBands
     }else{
         return {
         name: "",
+        image: "",
         country: "",
         location: "",
         status: "Active",
@@ -45,20 +48,9 @@ function UpdateBandForm({ bands, setBands }: { bands: Band[]; setBands: SetBands
     }
   });
 
-  // `|| []` guards against a local band saved without an albums/members array
-  const [albums, setAlbums] = useState<Album[]>(() => {
-    if (band && band.source === 'local') {
-      return band.albums || [];
-    }
-    return []
-  });
-
-  const [members, setMembers] = useState<Member[]>(() => {
-    if (band && band.source === 'local') {
-      return band.members || [];
-    }
-    return []
-  });
+  // `?? []` guards against a band saved without an albums/members array
+  const [albums, setAlbums] = useState<Album[]>(() => band?.albums ?? []);
+  const [members, setMembers] = useState<Member[]>(() => band?.members ?? []);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -66,17 +58,9 @@ function UpdateBandForm({ bands, setBands }: { bands: Band[]; setBands: SetBands
     return <p>Band not found</p>;
   }
 
-  if (band.source !== 'local') {
-    return (
-      <div className="band-form-container">
-        <h2>Cannot Edit MusicBrainz Bands</h2>
-        <p>This band is from MusicBrainz and cannot be edited.</p>
-        <button type="button" onClick={() => navigate("/bands")} className="cancel-btn">
-          Back to Bands
-        </button>
-      </div>
-    );
-  }
+  // There used to be a refusal here for MusicBrainz bands. Nothing is read from
+  // MusicBrainz any more: an ingested band is stored in our database like any
+  // other, so every band on the site can be edited.
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
@@ -130,22 +114,26 @@ function UpdateBandForm({ bands, setBands }: { bands: Band[]; setBands: SetBands
     }
     setError(null);
 
-    const bandToUpdate: Omit<LocalBand, 'id'> = {
-      ...band,
+    // `source` and `musicBrainzId` are deliberately left out: the server keeps the
+    // provenance it already holds and ignores them if sent.
+    const { id, source, musicBrainzId, ...stored } = band;
+    const bandToUpdate: BandPayload = {
+      ...stored,
       ...formData,
       // trim() removes the space the pre-filled join(", ") adds back on every edit
       genre: formData.genre.split(",").map(genre => genre.trim()).filter(genre => genre),
       disbanded: formData.disbanded || null,
+      // Emptying the field removes the picture, rather than storing ""
+      image: formData.image.trim() || null,
       albums: albums.filter(album => album.title),
       members: members.filter(member => member.name)
     };
 
-    localBandsAPI.update(band.id, bandToUpdate)
+    bandsAPI.update(band.id, bandToUpdate)
       .then((response) => {
         // Use what the server stored, not what we sent
-        const savedBand: LocalBand = { ...response.data, source: "local", editable: true };
         setBands((existedBands) =>
-          existedBands.map((thisBand) => (thisBand.id === band.id ? savedBand : thisBand)),
+          existedBands.map((thisBand) => (thisBand.id === band.id ? response.data : thisBand)),
         );
         navigate(`/bands/${band.id}`);
       })
@@ -202,6 +190,20 @@ function UpdateBandForm({ bands, setBands }: { bands: Band[]; setBands: SetBands
                   value={formData.location}
                   onChange={handleChange}
                   placeholder="London, New York..."
+                />
+              </div>
+            </div>
+
+            <div className="input-row">
+              <div className="input-group">
+                <label htmlFor="image">Photo URL</label>
+                <input
+                  type="url"
+                  name="image"
+                  id="image"
+                  value={formData.image}
+                  onChange={handleChange}
+                  placeholder="https://..."
                 />
               </div>
             </div>

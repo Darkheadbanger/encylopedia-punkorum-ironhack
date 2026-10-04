@@ -11,10 +11,12 @@ function HelpPage() {
       <section>
         <h3>Where do the bands come from?</h3>
         <p>
-          The encyclopedia mixes two sources. Bands added by the community are stored in
-          our own database and can be edited or deleted. The rest come from{" "}
-          <strong>MusicBrainz</strong>, an open music database — those are read-only, so
-          they show no edit or delete button.
+          Every band you see is stored in our own database, and every one of them can be
+          edited or deleted. Some were typed in by the community; others were{" "}
+          <strong>imported from MusicBrainz</strong>, an open music database, through the{" "}
+          <Link to="/search">search page</Link>. An imported band is credited on its own
+          page, but it is ours from then on — nothing is read from MusicBrainz while you
+          browse.
         </p>
       </section>
 
@@ -29,11 +31,13 @@ function HelpPage() {
       </section>
 
       <section>
-        <h3>Why can't I edit some bands?</h3>
+        <h3>How do I import a band from MusicBrainz?</h3>
         <p>
-          Bands imported from MusicBrainz belong to their project, not ours. To correct
-          one of them, edit it on MusicBrainz — the change will appear here on the next
-          load.
+          Type its name in the search box at the top. The{" "}
+          <Link to="/search">search page</Link> shows what we already hold, then what
+          MusicBrainz knows. <strong>Import</strong> copies the band — with its
+          discography and its line-up — into our database, where you can correct it like
+          any other entry. You need an account to import.
         </p>
       </section>
 

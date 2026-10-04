@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { localBandsAPI } from "../services/api";
+import { bandsAPI } from "../services/api";
+import type { BandPayload } from "../services/api";
 import { RELEASE_TYPES } from "../types";
-import type { Album, BandFormData, LocalBand, Member, SetBands } from "../types";
+import type { Album, BandFormData, Member, SetBands } from "../types";
 import "../styles/BandForm.css";
 
 function AddBandForm({ setBands }: { setBands: SetBands }) {
@@ -10,6 +11,7 @@ function AddBandForm({ setBands }: { setBands: SetBands }) {
   
   const [formData, setFormData] = useState<BandFormData>({
     name: "",
+    image: "",
     country: "",
     location: "",
     status: "Active",
@@ -77,24 +79,23 @@ function AddBandForm({ setBands }: { setBands: SetBands }) {
     }
     setError(null);
 
-    // No id here: the server generates it and returns the stored band
-    const bandToAdd: Omit<LocalBand, 'id'> = {
+    // No id and no source here: the server owns both. A band created through this
+    // form is "manual" by definition.
+    const bandToAdd: BandPayload = {
       ...formData,
       // trim() removes the space in "punk, hardcore" -> ["punk", "hardcore"]
       genre: formData.genre.split(",").map(genre => genre.trim()).filter(genre => genre),
       disbanded: formData.disbanded || null,
-      image: null,
+      // An empty field means "no picture", which the schema stores as null
+      image: formData.image.trim() || null,
       albums: albums.filter(album => album.title),
       members: members.filter(member => member.name),
-      source: "local",
-      editable: true
     };
 
-    localBandsAPI.create(bandToAdd)
+    bandsAPI.create(bandToAdd)
       .then((response) => {
         // Use what the server stored, not what we sent: the id is its decision
-        const savedBand: LocalBand = { ...response.data, source: "local", editable: true };
-        setBands((existedBands) => [savedBand, ...existedBands]);
+        setBands((existedBands) => [response.data, ...existedBands]);
         navigate("/bands");
       })
       .catch((error) => {
@@ -150,6 +151,20 @@ function AddBandForm({ setBands }: { setBands: SetBands }) {
                 value={formData.location}
                 onChange={handleChange}
                 placeholder="London, New York..."
+              />
+            </div>
+          </div>
+
+          <div className="input-row">
+            <div className="input-group">
+              <label htmlFor="image">Photo URL</label>
+              <input
+                type="url"
+                name="image"
+                id="image"
+                value={formData.image}
+                onChange={handleChange}
+                placeholder="https://..."
               />
             </div>
           </div>

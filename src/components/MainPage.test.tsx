@@ -3,7 +3,7 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import MainPage from "./MainPage";
-import { makeLocalBand, makeMusicBrainzBand } from "../test/fixtures";
+import { makeBand, makeIngestedBand } from "../test/fixtures";
 
 const renderMainPage = (bands: Band[]) =>
   render(
@@ -14,7 +14,7 @@ const renderMainPage = (bands: Band[]) =>
 
 describe("MainPage", () => {
   it("shows how many bands are in the encyclopedia", () => {
-    renderMainPage([makeLocalBand(), makeMusicBrainzBand()]);
+    renderMainPage([makeBand(), makeIngestedBand()]);
     expect(screen.getByText("There are currently 2 bands in Encyclopaedia Punkorum.")).toBeInTheDocument();
   });
 

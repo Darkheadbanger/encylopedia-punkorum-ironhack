@@ -1,12 +1,12 @@
-import { axiosResponse, makeLocalBand } from "../test/fixtures";
+import { axiosResponse, makeBand } from "../test/fixtures";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import AddBandForm from "./AddBandForm";
-import { localBandsAPI } from "../services/api";
+import { bandsAPI } from "../services/api";
 
-vi.mock("../services/api", () => ({ localBandsAPI: { create: vi.fn() } }));
+vi.mock("../services/api", () => ({ bandsAPI: { create: vi.fn() } }));
 
 // A fake /bands page lets us check where the form navigates
 const renderForm = (setBands = vi.fn()) =>
@@ -22,8 +22,8 @@ const renderForm = (setBands = vi.fn()) =>
 describe("AddBandForm", () => {
   it("creates the band, adds it to the state and goes to /bands", async () => {
     // The server answers with the band it stored — that is what must land in the state
-    vi.mocked(localBandsAPI.create).mockResolvedValue(
-      axiosResponse(makeLocalBand({ id: "server-id", name: "Crass", country: "GB" })),
+    vi.mocked(bandsAPI.create).mockResolvedValue(
+      axiosResponse(makeBand({ id: "server-id", name: "Crass", country: "GB" })),
     );
     const setBands = vi.fn();
     const user = userEvent.setup();
@@ -35,11 +35,14 @@ describe("AddBandForm", () => {
     await user.type(screen.getByLabelText("Album title"), "The Feeding of the 5000");
     await user.click(screen.getByRole("button", { name: "Create Band" }));
 
-    // No id is sent: the server generates it
-    expect(localBandsAPI.create).toHaveBeenCalledWith(
+    // Neither the id nor the provenance is sent: the server owns both
+    expect(bandsAPI.create).toHaveBeenCalledWith(
       expect.not.objectContaining({ id: expect.anything() })
     );
-    expect(localBandsAPI.create).toHaveBeenCalledWith(
+    expect(bandsAPI.create).toHaveBeenCalledWith(
+      expect.not.objectContaining({ source: expect.anything() })
+    );
+    expect(bandsAPI.create).toHaveBeenCalledWith(
       expect.objectContaining({
         name: "Crass",
         country: "GB",
@@ -48,8 +51,6 @@ describe("AddBandForm", () => {
         disbanded: null,
         albums: [{ title: "The Feeding of the 5000", year: "", type: "Album" }],
         members: [], // empty member rows are removed
-        source: "local",
-        editable: true,
       })
     );
     expect(await screen.findByText("Bands page")).toBeInTheDocument();
@@ -65,12 +66,12 @@ describe("AddBandForm", () => {
     fireEvent.submit(screen.getByRole("button", { name: "Create Band" }).closest("form")!);
 
     expect(screen.getByRole("alert")).toHaveTextContent("You must enter the band name!");
-    expect(localBandsAPI.create).not.toHaveBeenCalled();
+    expect(bandsAPI.create).not.toHaveBeenCalled();
   });
 
   it("shows an error message when the API fails", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.mocked(localBandsAPI.create).mockRejectedValue(new Error("Server down"));
+    vi.mocked(bandsAPI.create).mockRejectedValue(new Error("Server down"));
     const user = userEvent.setup();
     renderForm();
 

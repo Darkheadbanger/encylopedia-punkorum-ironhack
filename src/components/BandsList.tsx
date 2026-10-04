@@ -1,40 +1,20 @@
 import "../styles/BandsList.css";
 import { Link } from "react-router-dom";
-import { localBandsAPI } from "../services/api";
-import type { Band, SetBands } from "../types";
+import type { Band } from "../types";
 
-function BandsList({band, setBands}: { band: Band; setBands: SetBands }) {
-  
-  // Gérer les deux structures : locale (JSON Server) et MusicBrainz
-  let genreMusic: string;
-  let status: string;
-  let isActiveClass: string;
-  
-  if (band.source === 'local') {
-    // Structure locale
-    genreMusic = band.genre.length ? band.genre.join(" ") : "N/A";
-    status = band.status || "N/A";
-    isActiveClass = band.status === "Active" ? "still-active" : "not-active";
-  } else {
-    // Structure MusicBrainz
-    genreMusic = band.tags 
-      ? band.tags.map((genre) => genre.name)
-          .filter((genre) => genre.match("punk") || genre.match("hardcore") || genre.match("grindcore") || genre.match("emo") || genre.match("powerviolene"))
-          .join(" ")
-      : "N/A";
-    status = band["life-span"]?.ended === null ? "Still Active" : "Split-up";
-    isActiveClass = band["life-span"]?.ended === null ? "still-active" : "not-active";
-  }
+// Genres are multi-word ("punk rock", "New York Punk"), so a space alone would
+// run them together into one unreadable line.
+const GENRE_SEPARATOR = " · ";
 
-  const deleteButton = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
-    if(window.confirm(`Delete ${band.name}`)){
-      localBandsAPI.delete(band.id)
-      .then(() => setBands((theBands) => theBands.filter((theBand) => theBand.id !== band.id)))
-      .catch(error => console.error(error))
-    }
-  }
+// A row is a summary and nothing else: editing and deleting live on the band's own
+// page, where the buttons can be labelled instead of being two tiny icons.
+//
+// There used to be a second branch here for bands coming straight from MusicBrainz,
+// which had a different shape. They are ingested into our database now, so every
+// band reaching this component looks the same.
+function BandsList({band}: { band: Band }) {
+  const genres = band.genre.length ? band.genre.join(GENRE_SEPARATOR) : "N/A";
+  const isActive = band.status === "Active";
 
   // One table row: the <table> and <tbody> are in BandsPage
   return (
@@ -44,13 +24,11 @@ function BandsList({band, setBands}: { band: Band; setBands: SetBands }) {
           <Link to={`/bands/${band.id}`} >
             <p>{band.name}</p>
           </Link>
-          {band.editable && <Link to={`/updateBand/${band.id}`} className="edit-table" aria-label={`Edit ${band.name}`}>✏️</Link>}
-          {band.editable && <button type="button" className="delete-table" onClick={deleteButton} aria-label={`Delete ${band.name}`}>🗑️</button>}
         </div>
       </td>
       <td>{band.country || "N/A"}</td>
-      <td className="genre">{genreMusic}</td>
-      <td className={isActiveClass}>{status}</td>
+      <td className="genre">{genres}</td>
+      <td className={isActive ? "still-active" : "not-active"}>{band.status || "N/A"}</td>
     </tr>
   );
 }

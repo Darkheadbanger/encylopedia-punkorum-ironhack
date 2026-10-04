@@ -5,10 +5,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import UpdateBandForm from "./UpdateBandForm";
-import { localBandsAPI } from "../services/api";
-import { makeLocalBand, makeMusicBrainzBand } from "../test/fixtures";
+import { bandsAPI } from "../services/api";
+import { makeBand, makeIngestedBand } from "../test/fixtures";
 
-vi.mock("../services/api", () => ({ localBandsAPI: { update: vi.fn() } }));
+vi.mock("../services/api", () => ({ bandsAPI: { update: vi.fn() } }));
 
 // Fake destination pages let us check where the form navigates
 const renderForm = (bands: Band[], id: string, setBands: SetBands = vi.fn()) =>
@@ -24,25 +24,25 @@ const renderForm = (bands: Band[], id: string, setBands: SetBands = vi.fn()) =>
 
 describe("UpdateBandForm", () => {
   it("shows 'Band not found' for an unknown id", () => {
-    renderForm([makeLocalBand()], "unknown");
+    renderForm([makeBand()], "unknown");
     expect(screen.getByText("Band not found")).toBeInTheDocument();
   });
 
-  it("refuses to edit a MusicBrainz band and offers to go back", async () => {
-    const user = userEvent.setup();
-    renderForm([makeMusicBrainzBand()], "mb-1");
+  // This used to refuse the edit. An ingested band lives in our database, so the
+  // form fills in with its data like any other.
+  it("edits an ingested band like any other", () => {
+    renderForm([makeIngestedBand()], "band-2");
 
-    expect(screen.getByRole("heading", { name: "Cannot Edit MusicBrainz Bands" })).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Back to Bands" }));
-    expect(screen.getByText("Bands page")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Edit Band: Cro-Mags" })).toBeInTheDocument();
+    expect(screen.getByLabelText(/Band Name/i)).toHaveValue("Cro-Mags");
   });
 
   // Regression test: typing in the form used to mutate the objects held by the
   // `bands` state, so edits survived Cancel. The form must never touch them.
   it("does not modify the band in the bands state while typing", async () => {
     const user = userEvent.setup();
-    const band = makeLocalBand();
-    renderForm([band], "local-1");
+    const band = makeBand();
+    renderForm([band], "band-1");
 
     await user.clear(screen.getByLabelText("Album title"));
     await user.type(screen.getByLabelText("Album title"), "Hacked");
@@ -54,7 +54,7 @@ describe("UpdateBandForm", () => {
   });
 
   it("is pre-filled with the band data", () => {
-    renderForm([makeLocalBand()], "local-1");
+    renderForm([makeBand()], "band-1");
     expect(screen.getByLabelText("Band Name *")).toHaveValue("Sex Pistols");
     expect(screen.getByLabelText("Country")).toHaveValue("GB");
     expect(screen.getByLabelText("Status")).toHaveValue("Split-up");
@@ -64,27 +64,32 @@ describe("UpdateBandForm", () => {
   });
 
   it("saves the changes, updates the state and goes to the band page", async () => {
-    const band = makeLocalBand();
+    const band = makeBand();
     // The server answers with the band it stored — that is what must land in the state
-    vi.mocked(localBandsAPI.update).mockResolvedValue(
+    vi.mocked(bandsAPI.update).mockResolvedValue(
       axiosResponse({ ...band, name: "The Sex Pistols" }),
     );
     const setBands = vi.fn();
     const user = userEvent.setup();
-    renderForm([band], "local-1", setBands);
+    renderForm([band], "band-1", setBands);
 
     const nameInput = screen.getByLabelText("Band Name *");
     await user.clear(nameInput);
     await user.type(nameInput, "The Sex Pistols");
     await user.click(screen.getByRole("button", { name: "Update Band" }));
 
-    expect(localBandsAPI.update).toHaveBeenCalledWith(
-      "local-1",
-      expect.objectContaining({ id: "local-1", name: "The Sex Pistols", source: "local" })
+    expect(bandsAPI.update).toHaveBeenCalledWith(
+      "band-1",
+      expect.objectContaining({ name: "The Sex Pistols" })
+    );
+    // The id goes in the URL, and the provenance stays the server's business
+    expect(bandsAPI.update).toHaveBeenCalledWith(
+      "band-1",
+      expect.not.objectContaining({ id: expect.anything(), source: expect.anything() })
     );
     expect(await screen.findByText("Details page")).toBeInTheDocument();
     // setBands receives an updater: only the edited band changes
-    const other = makeLocalBand({ id: "local-2", name: "Crass" });
+    const other = makeBand({ id: "band-2", name: "Crass" });
     const updated = setBands.mock.calls[0][0]([band, other]);
     expect(updated[0].name).toBe("The Sex Pistols");
     expect(updated[1]).toBe(other);
@@ -92,11 +97,11 @@ describe("UpdateBandForm", () => {
 
   it("goes back to the band page on Cancel", async () => {
     const user = userEvent.setup();
-    renderForm([makeLocalBand()], "local-1");
+    renderForm([makeBand()], "band-1");
 
     await user.click(screen.getByRole("button", { name: "Cancel" }));
 
     expect(screen.getByText("Details page")).toBeInTheDocument();
-    expect(localBandsAPI.update).not.toHaveBeenCalled();
+    expect(bandsAPI.update).not.toHaveBeenCalled();
   });
 });

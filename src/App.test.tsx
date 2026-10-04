@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import App from "./App";
 import { getAllBands } from "./services/api";
-import { makeLocalBand, makeMusicBrainzBand } from "./test/fixtures";
+import { makeBand, makeIngestedBand } from "./test/fixtures";
 
 vi.mock("./services/api.js", () => ({
   getAllBands: vi.fn(),
@@ -26,29 +26,21 @@ describe("App", () => {
   });
 
   it("shows the home page with the number of bands once loaded", async () => {
-    vi.mocked(getAllBands).mockResolvedValue({
-      bands: [makeLocalBand(), makeMusicBrainzBand()],
-      musicBrainzFailed: false,
-    });
+    vi.mocked(getAllBands).mockResolvedValue([makeBand(), makeIngestedBand()]);
     renderApp();
     expect(
       await screen.findByText("There are currently 2 bands in Encyclopaedia Punkorum.")
     ).toBeInTheDocument();
   });
 
-  it("warns when MusicBrainz is unavailable but still shows the local bands", async () => {
-    vi.mocked(getAllBands).mockResolvedValue({
-      bands: [makeLocalBand()],
-      musicBrainzFailed: true,
-    });
+  // There is no second source to warn about any more: MusicBrainz is ingested by
+  // the backend, so a band is either in our database or nowhere.
+  it("never warns about MusicBrainz: nothing is read from it at display time", async () => {
+    vi.mocked(getAllBands).mockResolvedValue([makeIngestedBand()]);
     renderApp();
 
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "MusicBrainz is unavailable"
-    );
-    expect(
-      screen.getByText("There are currently 1 bands in Encyclopaedia Punkorum.")
-    ).toBeInTheDocument();
+    await screen.findByText("There are currently 1 bands in Encyclopaedia Punkorum.");
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 
   it("still shows the app (with 0 bands) when loading fails", async () => {
@@ -59,5 +51,6 @@ describe("App", () => {
     expect(
       await screen.findByText("There are currently 0 bands in Encyclopaedia Punkorum.")
     ).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent(/Could not load the bands/);
   });
 });

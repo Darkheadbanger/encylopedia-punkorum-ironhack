@@ -1,0 +1,126 @@
+/* The search page: two panels of photocopied paper, like the rest of the site. */
+.search-title {
+  font-size: 1.6rem;
+  margin-bottom: var(--space-lg);
+}
+
+.search-panel {
+  background-color: var(--color-panel);
+  border: 3px solid var(--color-border);
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.6);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.search-panel h3 {
+  font-size: 1.25rem;
+  color: var(--color-accent-2);
+  margin-bottom: var(--space-md);
+}
+
+.search-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* One candidate per line, with the action pushed to the right. */
+.search-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid rgba(244, 241, 232, 0.2);
+}
+
+.search-list li > :last-child {
+  margin-left: auto;
+}
+
+.search-name,
+.search-list a {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.search-name {
+  color: var(--color-text);
+}
+
+/* 0.85rem, like the genre tags: smaller than this is unreadable over the
+   wallpaper. */
+.search-meta,
+.search-note,
+.search-none,
+.search-empty {
+  font-family: var(--font-type);
+  font-size: 0.85rem;
+  color: var(--color-text);
+  letter-spacing: 0.02em;
+}
+
+.search-note {
+  color: var(--color-muted);
+}
+
+.search-empty {
+  display: block;
+  background-color: var(--color-panel);
+  border: 3px solid var(--color-border);
+  padding: var(--space-lg);
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* A sticker, like every other button on the site. */
+.search-import {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--color-accent);
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  border-radius: 0;
+  padding: var(--space-xs) var(--space-md);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.search-import:hover {
+  background: var(--color-accent-2);
+  transform: translate(-1px, -1px);
+}
+
+.search-import:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.7);
+}
+
+.search-imported {
+  font-family: var(--font-type);
+  font-size: 0.85rem;
+  color: var(--color-accent-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Announced by role="alert", so it must read without relying on colour. */
+.search-error {
+  font-family: var(--font-type);
+  font-size: 0.85rem;
+  background: var(--color-danger);
+  color: var(--color-text);
+  padding: var(--space-xs) var(--space-sm);
+  border: 2px solid var(--color-ink);
+  margin: 0 0 var(--space-md);
+}

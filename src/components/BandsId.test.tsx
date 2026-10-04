@@ -1,36 +1,46 @@
 import { axiosResponse } from "../test/fixtures";
-import type { Band } from "../types";
-import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import type { Band, SetBands } from "../types";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { ReactNode } from "react";
+import { useAuth } from "../context/AuthContext";
+import { session } from "../test/renderPage";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import BandsId from "./BandsId";
-import { APIFromMusicBrainz } from "../services/api";
-import { makeLocalBand, makeMusicBrainzBand } from "../test/fixtures";
+import { bandsAPI } from "../services/api";
+import { makeBand, makeIngestedBand } from "../test/fixtures";
 
-vi.mock("../services/api", () => ({ APIFromMusicBrainz: { getBandDetails: vi.fn() } }));
+vi.mock("../services/api", () => ({ bandsAPI: { delete: vi.fn() } }));
 
-// BandsId reads :bandsId from the URL, so it needs a real route
-const renderDetails = (bands: Band[], id: string) =>
+vi.mock("../context/AuthContext", () => ({
+  AuthProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+  useAuth: vi.fn(),
+}));
+
+// Logged in unless a test says otherwise: the actions are what this file is about.
+beforeEach(() => vi.mocked(useAuth).mockReturnValue(session(true) as never));
+
+// BandsId reads :bandsId from the URL, so it needs a real route. /bands is declared
+// too, so the redirect after a deletion can be observed.
+const renderDetails = (bands: Band[], id: string, setBands: SetBands = vi.fn()) =>
   render(
     <MemoryRouter initialEntries={[`/bands/${id}`]}>
       <Routes>
-        <Route path="/bands/:bandsId" element={<BandsId bands={bands} />} />
+        <Route path="/bands/:bandsId" element={<BandsId bands={bands} setBands={setBands} />} />
+        <Route path="/bands" element={<p>Bands list</p>} />
       </Routes>
     </MemoryRouter>
   );
 
-// BandsId waits 1 second before calling MusicBrainz
-const AFTER_API_CALL = { timeout: 3000 };
-
-describe("BandsId — local band", () => {
+describe("BandsId", () => {
   it("shows 'Band not found' for an unknown id", () => {
-    renderDetails([makeLocalBand()], "unknown");
+    renderDetails([makeBand()], "unknown");
     expect(screen.getByText("Band not found")).toBeInTheDocument();
   });
 
   it("shows the band information", () => {
-    renderDetails([makeLocalBand()], "local-1");
+    renderDetails([makeBand()], "band-1");
     expect(screen.getByRole("heading", { level: 2, name: "Sex Pistols" })).toBeInTheDocument();
     expect(screen.getByText("London")).toBeInTheDocument();
     expect(screen.getByText("1975 - 1978")).toBeInTheDocument();
@@ -38,15 +48,14 @@ describe("BandsId — local band", () => {
     expect(screen.getByText("English punk rock band")).toBeInTheDocument();
   });
 
-  it("shows the albums from db.json without calling MusicBrainz", () => {
-    renderDetails([makeLocalBand()], "local-1");
+  it("shows the albums straight from the band, with nothing to fetch", () => {
+    renderDetails([makeBand()], "band-1");
     expect(screen.getByText("Never Mind the Bollocks")).toBeInTheDocument();
-    expect(APIFromMusicBrainz.getBandDetails).not.toHaveBeenCalled();
   });
 
   it("shows the members once the Members tab is opened", async () => {
     const user = userEvent.setup();
-    renderDetails([makeLocalBand()], "local-1");
+    renderDetails([makeBand()], "band-1");
 
     // Discography is the tab shown first
     expect(screen.queryByText("Johnny Rotten")).not.toBeInTheDocument();
@@ -59,12 +68,12 @@ describe("BandsId — local band", () => {
 
   it("lists the other bands under a musician's name", async () => {
     const user = userEvent.setup();
-    const band = makeLocalBand({
+    const band = makeBand({
       members: [
         { name: "Sid Vicious", instrument: "bass", period: "1977-1978", otherBands: ["Siouxsie and the Banshees", "The Flowers of Romance"] },
       ],
     });
-    renderDetails([band], "local-1");
+    renderDetails([band], "band-1");
 
     await user.click(screen.getByRole("tab", { name: "Members" }));
 
@@ -75,14 +84,14 @@ describe("BandsId — local band", () => {
 
   it("filters the discography by release type", async () => {
     const user = userEvent.setup();
-    const band = makeLocalBand({
+    const band = makeBand({
       albums: [
         { title: "Never Mind the Bollocks", year: "1977", type: "Full-length" },
         { title: "Live at Chelmsford", year: "1990", type: "Live album" },
         { title: "Spunk", year: "1977", type: "Demo" },
       ],
     });
-    renderDetails([band], "local-1");
+    renderDetails([band], "band-1");
 
     // "Complete" shows everything
     expect(screen.getByText("Never Mind the Bollocks")).toBeInTheDocument();
@@ -98,7 +107,7 @@ describe("BandsId — local band", () => {
 
   it("says so when a category has no release", async () => {
     const user = userEvent.setup();
-    renderDetails([makeLocalBand()], "local-1");
+    renderDetails([makeBand()], "band-1");
 
     await user.click(screen.getByRole("button", { name: "Demos" }));
 
@@ -108,7 +117,7 @@ describe("BandsId — local band", () => {
   it("truncates a long history behind a Read more button", async () => {
     const user = userEvent.setup();
     const description = `${"The Sex Pistols formed in London in 1975. ".repeat(19)}They split in 1978.`;
-    renderDetails([makeLocalBand({ description })], "local-1");
+    renderDetails([makeBand({ description })], "band-1");
 
     expect(screen.getByRole("heading", { name: "History" })).toBeInTheDocument();
     // Truncated: the last sentence is not shown yet
@@ -121,115 +130,192 @@ describe("BandsId — local band", () => {
   });
 
   it("shows a short history without a Read more button", () => {
-    renderDetails([makeLocalBand({ description: "A short history." })], "local-1");
+    renderDetails([makeBand({ description: "A short history." })], "band-1");
     expect(screen.getByText("A short history.")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Read more" })).not.toBeInTheDocument();
   });
 
   it("shows no History section when the band has no description", () => {
-    renderDetails([makeLocalBand()], "local-1");
+    renderDetails([makeBand()], "band-1");
     expect(screen.queryByRole("heading", { name: "History" })).not.toBeInTheDocument();
   });
 
   it("shows the band photo", () => {
-    renderDetails([makeLocalBand()], "local-1");
+    renderDetails([makeBand()], "band-1");
     expect(screen.getByAltText("Sex Pistols punk band")).toHaveAttribute("src", "https://example.com/pistols.jpg");
   });
 
   it("shows 'Photos coming soon' when there is no image", () => {
-    renderDetails([makeLocalBand({ image: null })], "local-1");
+    renderDetails([makeBand({ image: null })], "band-1");
     expect(screen.getByText("Photos coming soon")).toBeInTheDocument();
   });
 
   it("uses the local Misfits picture for the Misfits", () => {
-    renderDetails([makeLocalBand({ name: "Misfits", image: null })], "local-1");
+    renderDetails([makeBand({ name: "Misfits", image: null })], "band-1");
     expect(screen.getByAltText("Misfits punk band")).toBeInTheDocument();
   });
 });
 
-describe("BandsId — MusicBrainz band", () => {
-  it("loads studio albums and members from MusicBrainz", async () => {
-    vi.mocked(APIFromMusicBrainz.getBandDetails).mockResolvedValue(
-      axiosResponse({
-        relations: [
-          { type: "member of band", artist: { name: "Joey Ramone" }, begin: "1974", end: "1996", attributes: ["lead vocals"] },
-          { type: "producer", artist: { name: "Not A Member" } },
-        ],
-        "release-groups": [
-          { id: "r1", title: "Leave Home", "primary-type": "Album", "secondary-types": [], "first-release-date": "1977-01-10" },
-          { id: "r2", title: "It's Alive", "primary-type": "Album", "secondary-types": ["Live"] },
-          { id: "r3", title: "Blitzkrieg Bop", "primary-type": "Single", "secondary-types": [] },
-        ],
-      }),
-    );
-    renderDetails([makeMusicBrainzBand()], "mb-1");
-
-    expect(screen.getByText("Loading discography...")).toBeInTheDocument();
-    expect(await screen.findByText("Leave Home", {}, AFTER_API_CALL)).toBeInTheDocument();
-
-    expect(APIFromMusicBrainz.getBandDetails).toHaveBeenCalledWith("mb-1");
-    // "Complete" now shows every release, like Encyclopaedia Metallum
-    expect(screen.getByText("It's Alive")).toBeInTheDocument();
-    expect(screen.getByText("Blitzkrieg Bop")).toBeInTheDocument();
-    expect(screen.getByText("New York")).toBeInTheDocument();
-    expect(screen.getByText("Active")).toBeInTheDocument();
+// The edit and delete controls used to sit in every row of the bands table. They
+// now live here, where there is room to label them.
+describe("BandsId — editing and deleting", () => {
+  it("links to the update form", () => {
+    renderDetails([makeBand()], "band-1");
+    expect(screen.getByRole("link", { name: "Edit this band" }))
+      .toHaveAttribute("href", "/updateBand/band-1");
   });
 
-  it("maps MusicBrainz release types onto the discography categories", async () => {
+  it("deletes the band, drops it from the list and goes back to /bands", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    vi.mocked(bandsAPI.delete).mockResolvedValue(axiosResponse(undefined));
+    const setBands = vi.fn();
+    const band = makeBand();
     const user = userEvent.setup();
-    vi.mocked(APIFromMusicBrainz.getBandDetails).mockResolvedValue(
-      axiosResponse({
-        "release-groups": [
-          { id: "r1", title: "Leave Home", "primary-type": "Album", "secondary-types": [], "first-release-date": "1977-01-10" },
-          { id: "r2", title: "It's Alive", "primary-type": "Album", "secondary-types": ["Live"] },
-          { id: "r3", title: "Blitzkrieg Bop", "primary-type": "Single", "secondary-types": [] },
-        ],
-      }),
-    );
-    renderDetails([makeMusicBrainzBand()], "mb-1");
-    await screen.findByText("Leave Home", {}, AFTER_API_CALL);
+    renderDetails([band], "band-1", setBands);
 
-    // "Album" with no secondary type becomes "Full-length", so it lands in Main
-    await user.click(screen.getByRole("button", { name: "Main" }));
-    expect(screen.getByText("Leave Home")).toBeInTheDocument();
-    expect(screen.queryByText("It's Alive")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Delete this band" }));
 
-    // the secondary type "Live" wins over the primary type "Album"
-    await user.click(screen.getByRole("button", { name: "Lives" }));
-    expect(screen.getByText("It's Alive")).toBeInTheDocument();
-    expect(screen.queryByText("Leave Home")).not.toBeInTheDocument();
+    expect(bandsAPI.delete).toHaveBeenCalledWith("band-1");
+    await waitFor(() => expect(setBands).toHaveBeenCalled());
+    // setBands receives an updater function: check it removes only this band
+    const other = makeBand({ id: "band-2", name: "Crass" });
+    const updater = setBands.mock.calls[0][0];
+    expect(updater([band, other])).toEqual([other]);
+
+    expect(await screen.findByText("Bands list")).toBeInTheDocument();
   });
 
-  it("only lists actual band members, not producers", async () => {
+  it("does nothing when the deletion is cancelled", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(false);
     const user = userEvent.setup();
-    vi.mocked(APIFromMusicBrainz.getBandDetails).mockResolvedValue(
-      axiosResponse({
-        relations: [
-          { type: "member of band", artist: { name: "Joey Ramone" }, begin: "1974", end: "1996", attributes: ["lead vocals"] },
-          { type: "producer", artist: { name: "Not A Member" } },
-        ],
-      }),
-    );
-    renderDetails([makeMusicBrainzBand()], "mb-1");
-    await screen.findByRole("tab", { name: "Members" });
+    renderDetails([makeBand()], "band-1");
 
-    await user.click(screen.getByRole("tab", { name: "Members" }));
+    await user.click(screen.getByRole("button", { name: "Delete this band" }));
 
-    expect(await screen.findByText("Joey Ramone", {}, AFTER_API_CALL)).toBeInTheDocument();
-    expect(screen.queryByText("Not A Member")).not.toBeInTheDocument();
+    expect(bandsAPI.delete).not.toHaveBeenCalled();
+    expect(screen.queryByText("Bands list")).not.toBeInTheDocument();
   });
 
-  it("shows empty messages when the MusicBrainz call fails", async () => {
-    const user = userEvent.setup();
+  it("keeps the band and says so when the server refuses the deletion", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
     vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.mocked(APIFromMusicBrainz.getBandDetails).mockRejectedValue(new Error("Network error"));
-    renderDetails([makeMusicBrainzBand()], "mb-1");
+    vi.mocked(bandsAPI.delete).mockRejectedValue(new Error("401"));
+    const setBands = vi.fn();
+    const user = userEvent.setup();
+    renderDetails([makeBand()], "band-1", setBands);
 
-    expect(
-      await screen.findByText("No releases in this category", {}, AFTER_API_CALL)
-    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Delete this band" }));
 
-    await user.click(screen.getByRole("tab", { name: "Members" }));
-    expect(screen.getByText("No members information")).toBeInTheDocument();
+    expect(await screen.findByRole("alert")).toHaveTextContent(/could not be deleted/i);
+    expect(setBands).not.toHaveBeenCalled();
+    expect(screen.queryByText("Bands list")).not.toBeInTheDocument();
+  });
+});
+
+
+// What used to be a second, read-only rendering path. An ingested band now goes
+// through exactly the same code as a hand-written one — it only carries a credit.
+describe("BandsId — an ingested band", () => {
+  it("can be edited and deleted like any other", () => {
+    renderDetails([makeIngestedBand()], "band-2");
+
+    expect(screen.getByRole("link", { name: "Edit this band" }))
+      .toHaveAttribute("href", "/updateBand/band-2");
+    expect(screen.getByRole("button", { name: "Delete this band" })).toBeInTheDocument();
+  });
+
+  it("credits MusicBrainz and links back to the source", () => {
+    renderDetails([makeIngestedBand()], "band-2");
+
+    const credit = screen.getByRole("link", { name: "MusicBrainz" });
+    expect(credit).toHaveAttribute(
+      "href",
+      "https://musicbrainz.org/artist/7a2e6b55-f149-4e74-be6a-30a1b1a3e5ae"
+    );
+    expect(credit).toHaveAttribute("target", "_blank");
+  });
+
+  it("shows no credit on a band someone typed in", () => {
+    renderDetails([makeBand()], "band-1");
+    expect(screen.queryByRole("link", { name: "MusicBrainz" })).not.toBeInTheDocument();
+  });
+
+  it("shows its discography with no loading step: it is already in our database", () => {
+    const band = makeIngestedBand({
+      albums: [{ title: "The Age of Quarrel", year: "1986", type: "Full-length" }],
+    });
+    renderDetails([band], "band-2");
+
+    expect(screen.getByText("The Age of Quarrel")).toBeInTheDocument();
+    expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
+  });
+});
+
+// The API answers 401 to a write without a token, so showing the buttons to a
+// visitor would only offer an action that cannot work.
+describe("BandsId — actions require an account", () => {
+  it("hides Edit and Delete from a visitor who is not logged in", () => {
+    vi.mocked(useAuth).mockReturnValue(session(false) as never);
+    renderDetails([makeBand()], "band-1");
+
+    expect(screen.queryByRole("link", { name: "Edit this band" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Delete this band" })).not.toBeInTheDocument();
+  });
+
+  it("says why, and offers the way in", () => {
+    vi.mocked(useAuth).mockReturnValue(session(false) as never);
+    renderDetails([makeBand()], "band-1");
+
+    // The sentence is split by the link, so the two halves are checked apart
+    expect(screen.getByText(/to edit or delete this band/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Log in" })).toHaveAttribute("href", "/signup");
+  });
+
+  it("shows both once logged in", () => {
+    renderDetails([makeBand()], "band-1");
+
+    expect(screen.getByRole("link", { name: "Edit this band" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Delete this band" })).toBeInTheDocument();
+    expect(screen.queryByText(/to edit or delete this band/i)).not.toBeInTheDocument();
+  });
+
+  // The band itself must still be readable: an encyclopedia is for consulting.
+  it("still shows everything else to a visitor", () => {
+    vi.mocked(useAuth).mockReturnValue(session(false) as never);
+    renderDetails([makeBand()], "band-1");
+
+    expect(screen.getByRole("heading", { level: 2, name: "Sex Pistols" })).toBeInTheDocument();
+    expect(screen.getByText("Never Mind the Bollocks")).toBeInTheDocument();
+  });
+});
+
+// The Cover Art Archive answers 404 when it holds no sleeve for a release, and the
+// 54 hand-written bands have no picture at all. Neither case may show a broken
+// image icon.
+describe("BandsId — artwork", () => {
+  it("shows the picture when there is one", () => {
+    renderDetails([makeBand()], "band-1");
+    expect(screen.getByAltText("Sex Pistols punk band"))
+      .toHaveAttribute("src", "https://example.com/pistols.jpg");
+  });
+
+  it("replaces a picture that fails to load with the placeholder", () => {
+    renderDetails([makeBand({ image: "https://coverartarchive.org/release-group/none/front-500" })], "band-1");
+
+    fireEvent.error(screen.getByAltText("Sex Pistols punk band"));
+
+    expect(screen.queryByAltText("Sex Pistols punk band")).not.toBeInTheDocument();
+    expect(screen.getByText("Photos coming soon")).toBeInTheDocument();
+  });
+
+  it("credits the Cover Art Archive when the picture comes from there", () => {
+    renderDetails([makeIngestedBand({ image: "https://coverartarchive.org/release-group/rg-1/front-500" })], "band-2");
+
+    expect(screen.getByText(/cover art archive/i)).toBeInTheDocument();
+  });
+
+  it("adds no credit for a picture someone pasted in by hand", () => {
+    renderDetails([makeBand()], "band-1");
+    expect(screen.queryByText(/cover art archive/i)).not.toBeInTheDocument();
   });
 });

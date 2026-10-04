@@ -11,17 +11,14 @@ function App() {
 
   useEffect(() => {
     getAllBands()
-      .then(({ bands: allBands, musicBrainzFailed }) => {
+      .then((allBands) => {
         setBands(allBands);
-        if (musicBrainzFailed) {
-          setError("MusicBrainz is unavailable — showing your own bands only.");
-        }
         setLoading(false);
       })
       .catch(error => {
         console.error('Error loading bands:', error);
-        // The local server is the one that really matters: tell the user instead of
-        // showing an empty site with no explanation.
+        // There is one source now, so a failure here means an empty site: say so
+        // instead of showing nothing with no explanation.
         setError("Could not load the bands. Is the local server running?");
         setLoading(false);
       });

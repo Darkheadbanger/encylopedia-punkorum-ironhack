@@ -1,19 +1,25 @@
 import { useState } from "react";
 import logoImage from "../assets/encyclopedia-punkorum-logo.png";
 import "../styles/Navbar.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
+  const navigate = useNavigate();
+
   // Must match an <option value>, otherwise the controlled <select> has no matching option
   const [selectSearch, setSelectSearch] = useState("bands");
+  const [term, setTerm] = useState("");
 
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectSearch(event.target.value);
   };
 
-  // No search logic yet: stop the browser from reloading the whole app on submit
+  // preventDefault stops the browser from reloading the whole app; the router
+  // takes it from there. An empty term goes nowhere: /search?q= searches nothing.
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!term.trim()) return;
+    navigate(`/search?q=${encodeURIComponent(term.trim())}`);
   };
 
   return (
@@ -29,6 +35,8 @@ function Navbar() {
               type="text"
               name="search"
               id="search"
+              value={term}
+              onChange={(event) => setTerm(event.target.value)}
               placeholder={"Select the " + selectSearch}
             />
             <select value={selectSearch} onChange={handleSelect} aria-label="Search category">

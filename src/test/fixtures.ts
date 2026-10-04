@@ -1,11 +1,16 @@
 import type { AxiosResponse } from "axios";
-import type { LocalBand, MusicBrainzBand } from "../types";
+import type { Band, UpstreamCandidate } from "../types";
 
 // Fake bands shared by the tests.
 // Functions (not constants) so every test gets a fresh copy it can safely modify.
+//
+// There used to be two makers, one per band shape. MusicBrainz is ingested by the
+// backend now, so there is a single shape — and a maker for a band that has been
+// found upstream but not imported yet.
 
-export const makeLocalBand = (overrides: Partial<LocalBand> = {}): LocalBand => ({
-  id: "local-1",
+export const makeBand = (overrides: Partial<Band> = {}): Band => ({
+  id: "band-1",
+  source: "manual",
   name: "Sex Pistols",
   country: "GB",
   location: "London",
@@ -17,36 +22,48 @@ export const makeLocalBand = (overrides: Partial<LocalBand> = {}): LocalBand => 
   image: "https://example.com/pistols.jpg",
   albums: [{ title: "Never Mind the Bollocks", year: "1977", type: "Album" }],
   members: [{ name: "Johnny Rotten", instrument: "vocals", period: "1975-1978" }],
-  source: "local",
-  editable: true,
   type: "Group",
   ...overrides,
 });
 
-// Same shape as an artist returned by the MusicBrainz search API
-export const makeMusicBrainzBand = (overrides: Partial<MusicBrainzBand> = {}): MusicBrainzBand => ({
-  id: "mb-1",
-  name: "Ramones",
-  country: "US",
-  type: "Group",
-  disambiguation: "",
-  tags: [{ name: "punk" }, { name: "rock" }, { name: "hardcore punk" }],
-  "life-span": { begin: "1974", ended: null },
-  "begin-area": { name: "New York" },
-  source: "musicbrainz",
-  editable: false,
-  ...overrides,
-});
+/** A band that was ingested from MusicBrainz — editable all the same.
+ *  Its data is what the mapper would really produce: no description, no label,
+ *  no image, because MusicBrainz has none of those. */
+export const makeIngestedBand = (overrides: Partial<Band> = {}): Band =>
+  makeBand({
+    id: "band-2",
+    name: "Cro-Mags",
+    source: "musicbrainz",
+    musicBrainzId: "7a2e6b55-f149-4e74-be6a-30a1b1a3e5ae",
+    country: "US",
+    location: "New York",
+    status: "Active",
+    formed: "1981",
+    disbanded: null,
+    genre: ["hardcore punk", "crossover thrash"],
+    disambiguation: "New York hardcore band",
+    image: null,
+    albums: [{ title: "The Age of Quarrel", year: "1986", type: "Full-length" }],
+    members: [{ name: "Harley Flanagan", instrument: "bass", period: "1981-" }],
+    ...overrides,
+  });
+
+/** A search result: our shape already, with no id because nothing is stored yet. */
+export const makeCandidate = (overrides: Partial<UpstreamCandidate> = {}): UpstreamCandidate => {
+  const { id: unused, ...band } = makeIngestedBand();
+  return { ...band, alreadyImported: false, ...overrides };
+};
 
 // A mocked axios call only ever needs `data`. Building a full AxiosResponse in every
 // test would be noise, so the cast lives here once, clearly labelled.
 export const axiosResponse = <T>(data: T) =>
   ({ data }) as AxiosResponse<T>;
 
-/** What the forms send to the API: a local band without its id. */
+/** What the forms send to the API: a band without the fields the server owns. */
 export const makeBandPayload = (
-  overrides: Partial<LocalBand> = {},
-): Omit<LocalBand, "id"> => {
-  const { id: _id, ...payload } = makeLocalBand(overrides);
+  overrides: Partial<Band> = {},
+): Omit<Band, "id" | "source" | "musicBrainzId"> => {
+  const { id: unusedId, source: unusedSource, musicBrainzId: unusedMb, ...payload } =
+    makeBand(overrides);
   return payload;
 };

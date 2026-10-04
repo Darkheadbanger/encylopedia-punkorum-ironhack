@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import Routers from "./Routers";
-import { makeLocalBand } from "./test/fixtures";
+import { makeBand } from "./test/fixtures";
 import { useAuth } from "./context/AuthContext";
 import type { ReactNode } from "react";
 
@@ -28,7 +28,7 @@ const logIn = () => vi.mocked(useAuth).mockReturnValue(session(true) as never);
 const renderAt = (path: string) =>
   render(
     <MemoryRouter initialEntries={[path]}>
-      <Routers bands={[makeLocalBand()]} setBands={vi.fn()} />
+      <Routers bands={[makeBand()]} setBands={vi.fn()} />
     </MemoryRouter>
   );
 
@@ -56,7 +56,7 @@ describe("Routers", () => {
   });
 
   it("/bands/:bandsId shows the band details", () => {
-    renderAt("/bands/local-1");
+    renderAt("/bands/band-1");
     expectLayout();
     expect(screen.getByRole("heading", { level: 2, name: "Sex Pistols" })).toBeInTheDocument();
   });
@@ -80,13 +80,13 @@ describe("Routers", () => {
 
   it("/updateBand/:updateId shows the edit form to a logged-in visitor", () => {
     logIn();
-    renderAt("/updateBand/local-1");
+    renderAt("/updateBand/band-1");
     expectLayout({ loggedIn: true });
     expect(screen.getByRole("heading", { name: "Edit Band: Sex Pistols" })).toBeInTheDocument();
   });
 
   it("/updateBand/:updateId sends a logged-out visitor home", () => {
-    renderAt("/updateBand/local-1");
+    renderAt("/updateBand/band-1");
     expect(screen.queryByRole("heading", { name: "Edit Band: Sex Pistols" })).not.toBeInTheDocument();
   });
 
