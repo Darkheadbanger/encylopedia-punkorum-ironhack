@@ -2,6 +2,7 @@ import { useState } from "react";
 import "../styles/bandsId.css"
 import { Link, useNavigate, useParams } from "react-router-dom";
 import misfitsImage from "../assets/misfits.jpg";
+import BandReviews from "./BandReviews";
 import { bandsAPI } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { DISCOGRAPHY_FILTERS } from "../types";
@@ -251,6 +252,10 @@ function BandsId({bands, setBands}: { bands: Band[]; setBands: SetBands }) {
           </div>
         )}
       </section>
+
+      {/* Reviews fetch themselves: unlike the band, they are not in the list the
+          app already holds, and they change without the band changing. */}
+      <BandReviews bandId={band.id} />
     </>
   );
 }

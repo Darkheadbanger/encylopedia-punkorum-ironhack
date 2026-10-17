@@ -1,4 +1,9 @@
+import { Link } from "react-router-dom";
 import "../styles/RandomInfo.css";
+
+// Encyclopaedia Metallum's sidebar, which this one copies, is a browse menu. Most
+// of ours is still a promise: the links that lead nowhere call preventDefault
+// rather than pretending. The Reviews pair is the first to actually lead somewhere.
 
 function RandomInfos() {
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -29,8 +34,8 @@ function RandomInfos() {
         <section className="info-section">
           <h3>Reviews</h3>
           <ul className="info-links">
-            <li><a href="#" onClick={handleClick}>Latest</a></li>
-            <li><a href="#" onClick={handleClick}>Top Rated</a></li>
+            <li><Link to="/reviews">Latest</Link></li>
+            <li><Link to="/reviews?sort=rating">Top Rated</Link></li>
           </ul>
         </section>
 

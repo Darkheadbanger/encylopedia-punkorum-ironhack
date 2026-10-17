@@ -11,7 +11,18 @@ import BandsId from "./BandsId";
 import { bandsAPI } from "../services/api";
 import { makeBand, makeIngestedBand } from "../test/fixtures";
 
-vi.mock("../services/api", () => ({ bandsAPI: { delete: vi.fn() } }));
+// reviewsAPI is here because the page now carries a Reviews section, which fetches
+// on its own. BandReviews.test.tsx is where it is actually tested; here it only has
+// to exist and answer with nothing.
+vi.mock("../services/api", () => ({
+  bandsAPI: { delete: vi.fn() },
+  reviewsAPI: {
+    forBand: vi.fn().mockResolvedValue({ data: [] }),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+  },
+}));
 
 vi.mock("../context/AuthContext", () => ({
   AuthProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
@@ -266,9 +277,10 @@ describe("BandsId — actions require an account", () => {
     vi.mocked(useAuth).mockReturnValue(session(false) as never);
     renderDetails([makeBand()], "band-1");
 
-    // The sentence is split by the link, so the two halves are checked apart
+    // The sentence is split by the link, so the two halves are checked apart.
+    // getAllByRole because the Reviews section invites a visitor to log in too.
     expect(screen.getByText(/to edit or delete this band/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Log in" })).toHaveAttribute("href", "/signup");
+    expect(screen.getAllByRole("link", { name: "Log in" })[0]).toHaveAttribute("href", "/signup");
   });
 
   it("shows both once logged in", () => {

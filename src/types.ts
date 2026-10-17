@@ -114,3 +114,32 @@ export interface AuthUser {
   email: string;
   username: string;
 }
+
+/** The author of a review, as the API sends them: the username and nothing else.
+ *  The backend populates only that field — an email address has no business on a
+ *  public page. */
+export interface ReviewAuthor {
+  id: string;
+  username: string;
+}
+
+/** What a member thinks of a band. Written by a member, editable and deletable by
+ *  that member alone — the backend answers 403 to anyone else. */
+export interface Review {
+  id: string;
+  content: string;
+  /** One to five whole stars. */
+  rating: number;
+  author: ReviewAuthor;
+  /** The band's id. Not populated: the page already knows which band it is on. */
+  band: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** What the review form sends. The author comes from the token, never from here. */
+export interface ReviewPayload {
+  band: string;
+  rating: number;
+  content: string;
+}

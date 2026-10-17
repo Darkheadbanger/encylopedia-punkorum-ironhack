@@ -1,5 +1,5 @@
 import type { AxiosResponse } from "axios";
-import type { Band, UpstreamCandidate } from "../types";
+import type { Band, Review, UpstreamCandidate } from "../types";
 
 // Fake bands shared by the tests.
 // Functions (not constants) so every test gets a fresh copy it can safely modify.
@@ -67,3 +67,17 @@ export const makeBandPayload = (
     makeBand(overrides);
   return payload;
 };
+
+/** A review of band-1, signed by the user that session(true) logs in — so a test
+ *  gets the author's own view by default, and someone else's by overriding
+ *  `author`. That distinction is the whole point of the model. */
+export const makeReview = (overrides: Partial<Review> = {}): Review => ({
+  id: "review-1",
+  content: "Three chords and the truth, still the loudest record of 1977.",
+  rating: 5,
+  author: { id: "1", username: "joey" },
+  band: "band-1",
+  createdAt: "2026-10-17T10:00:00.000Z",
+  updatedAt: "2026-10-17T10:00:00.000Z",
+  ...overrides,
+});

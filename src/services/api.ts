@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { AuthUser, Band, UpstreamCandidate } from '../types';
+import type { AuthUser, Band, Review, ReviewPayload, UpstreamCandidate } from '../types';
 
 const LOCAL_SERVER_URL = import.meta.env.VITE_LOCAL_SERVER_URL || 'http://localhost:3001';
 
@@ -50,6 +50,24 @@ export const upstreamAPI = {
     axios.post<Band>(`${LOCAL_SERVER_URL}/bands/import`, { musicBrainzId }),
 };
 
+
+// What members think of a band.
+//
+// Reading needs no account, like the bands. Writing does. Changing or deleting
+// one needs to BE its author: the server compares the review to the token and
+// answers 403 otherwise, so the page only ever offers those buttons on your own.
+export const reviewsAPI = {
+  /** One band's reviews, newest first. */
+  forBand: (bandId: string) =>
+    axios.get<Review[]>(`${LOCAL_SERVER_URL}/reviews`, { params: { band: bandId } }),
+  /** Every review on the site, newest first. */
+  getAll: () => axios.get<Review[]>(`${LOCAL_SERVER_URL}/reviews`),
+  create: (review: ReviewPayload) =>
+    axios.post<Review>(`${LOCAL_SERVER_URL}/reviews`, review),
+  update: (id: string, review: Partial<ReviewPayload>) =>
+    axios.put<Review>(`${LOCAL_SERVER_URL}/reviews/${id}`, review),
+  delete: (id: string) => axios.delete<void>(`${LOCAL_SERVER_URL}/reviews/${id}`),
+};
 /** Every band in the encyclopedia, newest first. */
 export const getAllBands = async (): Promise<Band[]> => {
   const { data } = await bandsAPI.getAll();

@@ -10,6 +10,7 @@ import HelpPage from "./layouts/HelpPage";
 import RulesPage from "./layouts/RulesPage";
 import StorePage from "./layouts/StorePage";
 import ForumPage from "./layouts/ForumPage";
+import ReviewsPage from "./layouts/ReviewsPage";
 import GenresPage from "./layouts/GenresPage";
 import SearchPage from "./layouts/SearchPage";
 import Signup from "./pages/Auth/Signup";
@@ -25,6 +26,7 @@ function Routers({bands, setBands}: { bands: Band[]; setBands: SetBands }) {
         <Route path="/addBand" element={<PrivateRoute><AddBand setBands={setBands}/></PrivateRoute>} />
         <Route path="/updateBand/:updateId" element={<PrivateRoute><UpdateBand bands={bands} setBands={setBands}/></PrivateRoute>} />
         <Route path="/genres" element={<GenresPage/>} />
+        <Route path="/reviews" element={<ReviewsPage bands={bands}/>} />
         <Route path="/search" element={<SearchPage bands={bands} setBands={setBands}/>} />
         <Route path="/help" element={<HelpPage/>} />
         <Route path="/rules" element={<RulesPage/>} />
