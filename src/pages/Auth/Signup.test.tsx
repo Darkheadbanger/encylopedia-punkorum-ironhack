@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Signup from "./Signup";
 import { useAuth } from "../../context/AuthContext";
 
@@ -94,5 +94,42 @@ describe("Signup", () => {
       "href",
       "/"
     );
+  });
+});
+
+// The page used to stay exactly as it was after a successful signup — same form,
+// same empty space, no word of confirmation — even though the account had been
+// created and the member logged in. A visitor could only conclude it had failed.
+describe("Signup — where it leaves you", () => {
+  /** Signup at /signup, with a recognisable home page to land on. */
+  const renderWithHome = () =>
+    render(
+      <MemoryRouter initialEntries={["/signup"]}>
+        <Routes>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/" element={<p>The encyclopedia</p>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+  it("sends the new member to the encyclopedia", async () => {
+    signup.mockResolvedValue(undefined);
+    renderWithHome();
+    await fill();
+
+    await userEvent.click(screen.getByRole("button", { name: /create account/i }));
+
+    expect(await screen.findByText("The encyclopedia")).toBeInTheDocument();
+  });
+
+  it("keeps them on the form when the account could not be created", async () => {
+    signup.mockRejectedValue(new Error("This email is already in use."));
+    renderWithHome();
+    await fill();
+
+    await userEvent.click(screen.getByRole("button", { name: /create account/i }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("This email is already in use.");
+    expect(screen.queryByText("The encyclopedia")).not.toBeInTheDocument();
   });
 });

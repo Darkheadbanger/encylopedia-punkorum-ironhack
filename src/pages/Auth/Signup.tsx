@@ -1,7 +1,7 @@
 // Creating an account. A successful signup logs the visitor straight in.
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "../../styles/LoginPanel.css";
 import "../../styles/Signup.css";
@@ -20,6 +20,7 @@ const FLYERS = [
 
 function Signup() {
   const { signup } = useAuth();
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,6 +40,10 @@ function Signup() {
     setBusy(true);
     try {
       await signup(email, password, username);
+      // signup() logs the new member straight in, so this page has nothing left to
+      // say. Without the redirect the form simply sat there, unchanged, and the
+      // visitor had every reason to think it had failed — and to sign up again.
+      navigate("/");
     } catch (problem) {
       setError((problem as Error).message);
     } finally {
