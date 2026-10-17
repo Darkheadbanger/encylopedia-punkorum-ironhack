@@ -565,8 +565,8 @@ export const FAMILIES: Family[] = [
       },
     ],
     related: [
-      "Punk français", "French hardcore", "Paris hardcore", "Punk basque", "Punk breton",
-      "Rock alternatif français", "Punk antifasciste", "Belgian hardcore",
+      "French punk", "French hardcore", "Paris hardcore", "Basque punk", "Breton punk",
+      "French alternative rock", "Anti-fascist punk", "Belgian hardcore",
       "German hardcore", "Italian hardcore", "Spanish punk", "Catalan punk",
       "Greek punk", "Balkan punk", "Polish punk", "Russian punk", "Soviet punk",
       "Turkish punk", "Palestinian punk", "Middle Eastern punk", "South African punk",
