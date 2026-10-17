@@ -5,9 +5,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import "../../styles/Connexion.css";
+import "../../styles/LoginPanel.css";
 
-function Connexion() {
+function LoginPanel() {
   const { user, isLoggedIn, login, logout } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,9 +31,9 @@ function Connexion() {
 
   if (isLoggedIn) {
     return (
-      <aside className="connexion-container">
-        <div className="connexion-info">
-          <p className="connexion-greeting">Logged in as <strong>{user?.username}</strong></p>
+      <aside className="login-panel-container">
+        <div className="login-panel-info">
+          <p className="login-panel-greeting">Logged in as <strong>{user?.username}</strong></p>
           <button type="button" onClick={logout}>Logout</button>
         </div>
       </aside>
@@ -41,8 +41,8 @@ function Connexion() {
   }
 
   return (
-    <aside className="connexion-container">
-      <form className="connexion-info" onSubmit={handleSubmit}>
+    <aside className="login-panel-container">
+      <form className="login-panel-info" onSubmit={handleSubmit}>
         <label htmlFor="email">Email</label>
         <input
           type="email"
@@ -64,8 +64,8 @@ function Connexion() {
           required
         />
         <button type="submit" disabled={busy}>Login</button>
-        {error && <p className="connexion-error" role="alert">{error}</p>}
-        <div className="connexion-links">
+        {error && <p className="login-panel-error" role="alert">{error}</p>}
+        <div className="login-panel-links">
           <Link to="/signup">Create an account</Link>
         </div>
       </form>
@@ -73,4 +73,4 @@ function Connexion() {
   );
 }
 
-export default Connexion;
+export default LoginPanel;

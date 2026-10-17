@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import Connexion from "./Connexion";
+import LoginPanel from "./LoginPanel";
 import { useAuth } from "../../context/AuthContext";
 
 vi.mock("../../context/AuthContext", () => ({ useAuth: vi.fn() }));
@@ -19,24 +19,24 @@ const loggedIn = {
   logout,
 };
 
-const renderConnexion = () =>
+const renderLoginPanel = () =>
   render(
     <MemoryRouter>
-      <Connexion />
+      <LoginPanel />
     </MemoryRouter>
   );
 
 beforeEach(() => vi.mocked(useAuth).mockReturnValue(loggedOut as never));
 
-describe("Connexion, logged out", () => {
+describe("LoginPanel, logged out", () => {
   it("shows an email field and a password field", () => {
-    renderConnexion();
+    renderLoginPanel();
     expect(screen.getByLabelText("Email")).toHaveAttribute("type", "email");
     expect(screen.getByLabelText("Password")).toHaveAttribute("type", "password");
   });
 
   it("offers a real link to create an account", () => {
-    renderConnexion();
+    renderLoginPanel();
     expect(screen.getByRole("link", { name: "Create an account" })).toHaveAttribute(
       "href",
       "/signup"
@@ -45,7 +45,7 @@ describe("Connexion, logged out", () => {
 
   it("sends the credentials on submit", async () => {
     login.mockResolvedValue(undefined);
-    renderConnexion();
+    renderLoginPanel();
 
     await userEvent.type(screen.getByLabelText("Email"), "joey@ramones.com");
     await userEvent.type(screen.getByLabelText("Password"), "hey-ho-lets-go");
@@ -56,7 +56,7 @@ describe("Connexion, logged out", () => {
 
   it("shows a message when the credentials are refused", async () => {
     login.mockRejectedValue(new Error("401"));
-    renderConnexion();
+    renderLoginPanel();
 
     await userEvent.type(screen.getByLabelText("Email"), "joey@ramones.com");
     await userEvent.type(screen.getByLabelText("Password"), "wrong");
@@ -66,29 +66,29 @@ describe("Connexion, logged out", () => {
   });
 
   it("shows no logout button", () => {
-    renderConnexion();
+    renderLoginPanel();
     expect(screen.queryByRole("button", { name: "Logout" })).not.toBeInTheDocument();
   });
 });
 
-describe("Connexion, logged in", () => {
+describe("LoginPanel, logged in", () => {
   beforeEach(() => vi.mocked(useAuth).mockReturnValue(loggedIn as never));
 
   it("greets the user and offers to log out", () => {
-    renderConnexion();
+    renderLoginPanel();
     expect(screen.getByText(/joey/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Logout" })).toBeInTheDocument();
   });
 
   it("hides the login form entirely", () => {
-    renderConnexion();
+    renderLoginPanel();
     expect(screen.queryByLabelText("Email")).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Password")).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Create an account" })).not.toBeInTheDocument();
   });
 
   it("logs out when the button is clicked", async () => {
-    renderConnexion();
+    renderLoginPanel();
     await userEvent.click(screen.getByRole("button", { name: "Logout" }));
     await waitFor(() => expect(logout).toHaveBeenCalled());
   });

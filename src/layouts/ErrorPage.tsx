@@ -1,5 +1,5 @@
 import Navbar from "../components/Navbar";
-import Connexion from "../pages/Auth/Connexion";
+import LoginPanel from "../pages/Auth/LoginPanel";
 import RandomInfos from "../components/RandomInfos";
 // Imported under another name: calling it <ErrorPage /> here would render this layout itself, forever
 import NotFound from "../components/ErrorPage";
@@ -7,9 +7,9 @@ import NotFound from "../components/ErrorPage";
 function ErrorPage() {
   return (
     <>
-      <div className="header-connexion">
+      <div className="header-login-panel">
         <div className="aside-container">
-          <Connexion />
+          <LoginPanel />
           <RandomInfos />
         </div>
         <Navbar />

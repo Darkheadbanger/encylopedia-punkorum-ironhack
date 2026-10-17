@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Navbar from "../components/Navbar";
-import Connexion from "../pages/Auth/Connexion";
+import LoginPanel from "../pages/Auth/LoginPanel";
 import RandomInfos from "../components/RandomInfos";
 import "../styles/StaticPage.css";
 
@@ -8,9 +8,9 @@ import "../styles/StaticPage.css";
 // here once instead of being copy-pasted four times.
 function StaticPage({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="header-connexion">
+    <div className="header-login-panel">
       <div className="aside-container">
-        <Connexion />
+        <LoginPanel />
         <RandomInfos />
       </div>
       <Navbar />

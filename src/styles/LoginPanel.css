@@ -1,5 +1,5 @@
 /* The login panel: a form photocopied onto the page, stuck on slightly crooked. */
-.connexion-container {
+.login-panel-container {
   width: 198px;
   height: auto;
   padding: var(--space-lg) var(--space-lg) var(--space-xl);
@@ -9,14 +9,14 @@
   transform: rotate(-0.8deg);
 }
 
-.connexion-info {
+.login-panel-info {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
 }
 
 /* Typewritten, like a form you were handed at a squat gig. */
-.connexion-info label {
+.login-panel-info label {
   font-family: var(--font-type);
   font-size: 0.8rem;
   letter-spacing: 0.06em;
@@ -25,7 +25,7 @@
 }
 
 /* Paper-white fields: you fill in the photocopy with a pen. */
-.connexion-info input {
+.login-panel-info input {
   background-color: var(--color-paper);
   color: var(--color-ink);
   border: 2px solid var(--color-ink);
@@ -35,7 +35,7 @@
   font-family: var(--font-type);
 }
 
-.connexion-info input:focus {
+.login-panel-info input:focus {
   outline: none;
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px var(--color-accent);
@@ -43,7 +43,7 @@
 
 /* Scoped to this panel so it does not override the Create/Update buttons.
    A sticker slapped on, not a rounded web button. */
-.connexion-info button {
+.login-panel-info button {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -63,30 +63,30 @@
   box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.7);
 }
 
-.connexion-info button:hover {
+.login-panel-info button:hover {
   background: var(--color-accent-2);
   transform: translate(-1px, -1px);
 }
 
-.connexion-info button:active {
+.login-panel-info button:active {
   transform: translate(2px, 2px);
   box-shadow: 0 0 0 rgba(0, 0, 0, 0.7);
 }
 
-.connexion-info button:disabled {
+.login-panel-info button:disabled {
   background: var(--color-muted);
   cursor: progress;
   transform: none;
 }
 
-.connexion-links {
+.login-panel-links {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
   margin-top: var(--space-sm);
 }
 
-.connexion-links a {
+.login-panel-links a {
   display: block;
   text-align: center;
   font-family: var(--font-display);
@@ -103,20 +103,20 @@
   transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
-.connexion-links a:hover {
+.login-panel-links a:hover {
   background: var(--color-accent-2);
   color: var(--color-ink);
   text-decoration: none;
   transform: translate(-1px, -1px);
 }
 
-.connexion-links a:active {
+.login-panel-links a:active {
   transform: translate(2px, 2px);
   box-shadow: 0 0 0 rgba(0, 0, 0, 0.7);
 }
 
 /* Announced by role="alert", so it must also be visible without colour alone */
-.connexion-error {
+.login-panel-error {
   font-family: var(--font-type);
   background: var(--color-danger);
   color: var(--color-text);
@@ -126,7 +126,7 @@
   border: 2px solid var(--color-ink);
 }
 
-.connexion-greeting {
+.login-panel-greeting {
   font-family: var(--font-type);
   margin: 0 0 var(--space-sm);
   font-size: 0.85rem;
@@ -134,7 +134,7 @@
   letter-spacing: 0.03em;
 }
 
-.connexion-greeting strong {
+.login-panel-greeting strong {
   font-family: var(--font-display);
   font-size: 1.15rem;
   text-transform: uppercase;

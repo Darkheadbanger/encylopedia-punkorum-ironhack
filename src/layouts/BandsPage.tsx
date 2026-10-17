@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Band } from "../types";
 import Navbar from "../components/Navbar";
-import Connexion from "../pages/Auth/Connexion";
+import LoginPanel from "../pages/Auth/LoginPanel";
 import RandomInfos from "../components/RandomInfos";
 import BandsList from "../components/BandsList";
 import "../styles/BandsPage.css"
@@ -44,9 +44,9 @@ function BandsPage({bands}: { bands: Band[] }) {
 
   return (
     <>
-      <div className="header-connexion">
+      <div className="header-login-panel">
         <div className="aside-container">
-          <Connexion />
+          <LoginPanel />
           <RandomInfos />
         </div>
         <Navbar />

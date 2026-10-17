@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import "../../styles/Connexion.css";
+import "../../styles/LoginPanel.css";
 import "../../styles/Signup.css";
 
 const MIN_PASSWORD = 8; // must match the User schema on the backend
@@ -54,8 +54,8 @@ function Signup() {
         ))}
       </ul>
 
-      <aside className="connexion-container signup-card">
-      <form className="connexion-info" onSubmit={handleSubmit}>
+      <aside className="login-panel-container signup-card">
+      <form className="login-panel-info" onSubmit={handleSubmit}>
         <label htmlFor="username">Username</label>
         <input
           type="text"
@@ -87,8 +87,8 @@ function Signup() {
           required
         />
         <button type="submit" disabled={busy}>Create account</button>
-        {error && <p className="connexion-error" role="alert">{error}</p>}
-        <div className="connexion-links">
+        {error && <p className="login-panel-error" role="alert">{error}</p>}
+        <div className="login-panel-links">
           <Link to="/">Already have an account?</Link>
         </div>
       </form>

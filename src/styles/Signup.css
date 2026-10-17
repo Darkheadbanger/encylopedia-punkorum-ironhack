@@ -82,7 +82,7 @@
   box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.8);
 }
 
-.signup-card .connexion-info button {
+.signup-card .login-panel-info button {
   align-self: stretch;
   font-size: 1.25rem;
 }

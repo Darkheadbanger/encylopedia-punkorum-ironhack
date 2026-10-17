@@ -147,12 +147,24 @@ describe("SearchResults — importing", () => {
     expect(screen.queryByRole("button", { name: /import/i })).not.toBeInTheDocument();
   });
 
-  // POST /bands/import answers 401 without a token, so the button would only fail.
-  it("asks a visitor to log in instead of showing a button that cannot work", async () => {
+  // Searching MusicBrainz is a contribution tool: both /bands/upstream and
+  // /bands/import answer 401 without a token, and every query spends one of the
+  // requests MusicBrainz allows us. So a visitor never sees the panel at all.
+  it("hides the MusicBrainz panel from a visitor and invites them to log in", async () => {
     renderSearch("?q=cro-mags", { loggedIn: false });
 
-    expect(await screen.findByText(/log in to import/i)).toBeInTheDocument();
+    expect(await screen.findByText(/log in/i)).toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: /on musicbrainz/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /import/i })).not.toBeInTheDocument();
+  });
+
+  // The 401 it would answer must never be reported as a MusicBrainz outage.
+  it("does not even ask the API when nobody is logged in", async () => {
+    renderSearch("?q=cro-mags", { loggedIn: false });
+
+    expect(await screen.findByText(/log in/i)).toBeInTheDocument();
+    expect(upstreamAPI.search).not.toHaveBeenCalled();
+    expect(screen.queryByText(/could not reach musicbrainz/i)).not.toBeInTheDocument();
   });
 
   it("keeps the candidate and says so when the import fails", async () => {

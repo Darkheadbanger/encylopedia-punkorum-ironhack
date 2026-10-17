@@ -69,7 +69,10 @@
   color: var(--color-muted);
 }
 
-.search-empty {
+/* The invitation shown in place of the MusicBrainz panel to a visitor who is not
+   logged in: same panel, deliberately quieter — it is not an error. */
+.search-empty,
+.search-members-only {
   display: block;
   background-color: var(--color-panel);
   border: 3px solid var(--color-border);

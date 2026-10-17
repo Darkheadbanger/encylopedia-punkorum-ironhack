@@ -11,6 +11,13 @@ import "../styles/Search.css";
 // searches, translates and — on Import — stores the band. A candidate becomes an
 // ordinary band of the site, editable and deletable, and is read from our own
 // database from then on.
+//
+// Searching the encyclopedia is public. Searching MusicBrainz is not: it is a
+// contribution tool, only a member can import what it finds, and every query
+// spends one of the requests MusicBrainz allows us (about one per second). So the
+// whole panel is hidden from a visitor who is not logged in — which also means
+// GET /bands/upstream is never called anonymously, where it would answer 401 and
+// look like a MusicBrainz outage.
 
 /** Does this band of ours match what was typed, in its name, genres or label? */
 const matches = (band: Band, term: string) =>
@@ -30,7 +37,8 @@ function SearchResults({ bands, setBands }: { bands: Band[]; setBands: SetBands 
   const [importError, setImportError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!term) return; // nothing typed: no request
+    if (!term) return;        // nothing typed: no request
+    if (!isLoggedIn) return;  // the panel is hidden anyway, and the API would say 401
 
     setIsSearching(true);
     setSearchError(null);
@@ -44,7 +52,7 @@ function SearchResults({ bands, setBands }: { bands: Band[]; setBands: SetBands 
         setCandidates([]);
       })
       .finally(() => setIsSearching(false));
-  }, [term]);
+  }, [term, isLoggedIn]);
 
   const ours = term ? bands.filter((band) => matches(band, term)) : [];
 
@@ -69,7 +77,8 @@ function SearchResults({ bands, setBands }: { bands: Band[]; setBands: SetBands 
   if (!term) {
     return (
       <p className="search-empty">
-        Type a band name in the search box above to look it up — here and on MusicBrainz.
+        Type a band name in the search box above to look it up
+        {isLoggedIn ? " — here and on MusicBrainz." : " in the encyclopedia."}
       </p>
     );
   }
@@ -96,6 +105,11 @@ function SearchResults({ bands, setBands }: { bands: Band[]; setBands: SetBands 
         )}
       </section>
 
+      {!isLoggedIn ? (
+        <p className="search-note search-members-only">
+          <Link to="/signup">Log in</Link> to also search MusicBrainz and import bands from it.
+        </p>
+      ) : (
       <section className="search-panel" aria-label="On MusicBrainz">
         <h3>On MusicBrainz</h3>
 
@@ -133,7 +147,7 @@ function SearchResults({ bands, setBands }: { bands: Band[]; setBands: SetBands 
                   </Link>
                 ) : candidate.alreadyImported ? (
                   <span className="search-imported">Already in the encyclopedia</span>
-                ) : isLoggedIn ? (
+                ) : (
                   <button
                     type="button"
                     className="search-import"
@@ -141,14 +155,13 @@ function SearchResults({ bands, setBands }: { bands: Band[]; setBands: SetBands 
                   >
                     Import
                   </button>
-                ) : (
-                  <span className="search-note">Log in to import this band</span>
                 )}
               </li>
             );
           })}
         </ul>
       </section>
+      )}
     </>
   );
 }
