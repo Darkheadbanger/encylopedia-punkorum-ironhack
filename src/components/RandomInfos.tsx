@@ -1,33 +1,41 @@
 import { Link } from "react-router-dom";
 import "../styles/RandomInfo.css";
 
-// Encyclopaedia Metallum's sidebar, which this one copies, is a browse menu. Most
-// of ours is still a promise: the links that lead nowhere call preventDefault
-// rather than pretending. The Reviews pair is the first to actually lead somewhere.
+// Encyclopaedia Metallum's sidebar, which this one copies, is a browse menu.
+// Most of ours is not built yet, and used to pretend otherwise: every entry
+// looked like a link, and clicking one did nothing at all.
+//
+// An entry that leads nowhere is no longer a link. It is greyed out and carries
+// a title, so hovering says why rather than leaving the visitor to guess. The
+// ones that do lead somewhere stay ordinary links.
+
+const SOON = "Coming soon";
+
+/** A browse entry that is not built yet: visibly inactive, and says so on hover. */
+const Soon = ({ label }: { label: string }) => (
+  <li>
+    <span className="info-link-soon" title={SOON}>{label}</span>
+  </li>
+);
 
 function RandomInfos() {
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    // Placeholder: these browse links are not built yet
-  };
-
   return (
     <aside className="randominfos-container">
       <div className="randominfos-info">
         <section className="info-section">
           <h3>Bands</h3>
           <ul className="info-links">
-            <li><a href="#" onClick={handleClick}>Alphabetical</a></li>
-            <li><a href="#" onClick={handleClick}>Country</a></li>
-            <li><a href="#" onClick={handleClick}>Genre</a></li>
+            <Soon label="Alphabetical" />
+            <Soon label="Country" />
+            <Soon label="Genre" />
           </ul>
         </section>
 
         <section className="info-section">
           <h3>Labels</h3>
           <ul className="info-links">
-            <li><a href="#" onClick={handleClick}>Alphabetical</a></li>
-            <li><a href="#" onClick={handleClick}>Country</a></li>
+            <Soon label="Alphabetical" />
+            <Soon label="Country" />
           </ul>
         </section>
 
@@ -42,8 +50,8 @@ function RandomInfos() {
         <section className="info-section">
           <h3>Random</h3>
           <ul className="info-links">
-            <li><a href="#" onClick={handleClick}>Random Band</a></li>
-            <li><a href="#" onClick={handleClick}>Random Album</a></li>
+            <Soon label="Random Band" />
+            <Soon label="Random Album" />
           </ul>
         </section>
       </div>

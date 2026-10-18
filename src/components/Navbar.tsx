@@ -2,12 +2,17 @@ import { useState } from "react";
 import logoImage from "../assets/encyclopedia-punkorum-logo.png";
 import "../styles/Navbar.css";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  DEFAULT_CATEGORY,
+  GOOGLE,
+  SEARCH_CATEGORIES,
+} from "../searchCategories";
 
 function Navbar() {
   const navigate = useNavigate();
 
   // Must match an <option value>, otherwise the controlled <select> has no matching option
-  const [selectSearch, setSelectSearch] = useState("bands");
+  const [selectSearch, setSelectSearch] = useState<string>(DEFAULT_CATEGORY);
   const [term, setTerm] = useState("");
 
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -16,10 +21,26 @@ function Navbar() {
 
   // preventDefault stops the browser from reloading the whole app; the router
   // takes it from there. An empty term goes nowhere: /search?q= searches nothing.
+  //
+  // The chosen category travels with the term. It used to be dropped here, so
+  // every option searched band names and the dropdown was decoration.
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!term.trim()) return;
-    navigate(`/search?q=${encodeURIComponent(term.trim())}`);
+    const query = term.trim();
+    if (!query) return;
+
+    // Google is not one of our categories: it leaves the site, in a new tab so
+    // the encyclopedia stays where it was.
+    if (selectSearch === GOOGLE) {
+      window.open(
+        `https://www.google.com/search?q=${encodeURIComponent(`${query} punk band`)}`,
+        "_blank",
+        "noopener,noreferrer"
+      );
+      return;
+    }
+
+    navigate(`/search?q=${encodeURIComponent(query)}&in=${selectSearch}`);
   };
 
   return (
@@ -39,15 +60,13 @@ function Navbar() {
               onChange={(event) => setTerm(event.target.value)}
               placeholder={"Select the " + selectSearch}
             />
+            {/* "Songs Title" is gone: we hold no songs, and an option that can
+                only ever return nothing is the same lie in another place. */}
             <select value={selectSearch} onChange={handleSelect} aria-label="Search category">
-              <option value="bands">Bands</option>
-              <option value="genres">Music Genre</option>
-              <option value="themes">Themes</option>
-              <option value="albums">Albums Title</option>
-              <option value="songs">Songs Title</option>
-              <option value="labels">Label</option>
-              <option value="artists">Artist</option>
-              <option value="google">Google</option>
+              {Object.entries(SEARCH_CATEGORIES).map(([value, { label }]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+              <option value={GOOGLE}>Google</option>
             </select>
           </div>
           <button type="submit">Submit</button>

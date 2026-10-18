@@ -3,6 +3,12 @@ import { Link, useSearchParams } from "react-router-dom";
 import { upstreamAPI } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import type { Band, SetBands, UpstreamCandidate } from "../types";
+import {
+  DEFAULT_CATEGORY,
+  SEARCH_CATEGORIES,
+  isSearchCategory,
+  matchesIn,
+} from "../searchCategories";
 import "../styles/Search.css";
 
 // The search page, and the only place MusicBrainz is mentioned at all.
@@ -19,15 +25,16 @@ import "../styles/Search.css";
 // GET /bands/upstream is never called anonymously, where it would answer 401 and
 // look like a MusicBrainz outage.
 
-/** Does this band of ours match what was typed, in its name, genres or label? */
-const matches = (band: Band, term: string) =>
-  [band.name, band.label ?? "", ...band.genre].join(" ").toLowerCase().includes(term);
-
 function SearchResults({ bands, setBands }: { bands: Band[]; setBands: SetBands }) {
   const [searchParams] = useSearchParams();
   const { isLoggedIn } = useAuth();
 
   const term = (searchParams.get("q") ?? "").trim().toLowerCase();
+
+  // Which fields to look in, from the dropdown beside the search box. An unknown
+  // or missing value falls back to band names, so an old link still works.
+  const inParam = searchParams.get("in");
+  const category = isSearchCategory(inParam) ? inParam : DEFAULT_CATEGORY;
 
   const [candidates, setCandidates] = useState<UpstreamCandidate[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -54,7 +61,7 @@ function SearchResults({ bands, setBands }: { bands: Band[]; setBands: SetBands 
       .finally(() => setIsSearching(false));
   }, [term, isLoggedIn]);
 
-  const ours = term ? bands.filter((band) => matches(band, term)) : [];
+  const ours = term ? bands.filter((band) => matchesIn(band, term, category)) : [];
 
   const handleImport = (candidate: UpstreamCandidate) => {
     const musicBrainzId = candidate.musicBrainzId;
@@ -85,7 +92,14 @@ function SearchResults({ bands, setBands }: { bands: Band[]; setBands: SetBands 
 
   return (
     <>
-      <h2 className="search-title">Search: "{searchParams.get("q")}"</h2>
+      {/* The category is named, so a search that finds nothing says which field
+          it looked in rather than leaving the visitor to wonder. */}
+      <h2 className="search-title">
+        Search: "{searchParams.get("q")}"
+        {category !== DEFAULT_CATEGORY && (
+          <span className="search-category"> in {SEARCH_CATEGORIES[category].label}</span>
+        )}
+      </h2>
 
       <section className="search-panel" aria-label={`In the encyclopedia (${ours.length})`}>
         <h3>In the encyclopedia ({ours.length})</h3>

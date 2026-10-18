@@ -71,3 +71,18 @@
     transform: none;
   }
 }
+
+/* A browse entry that is not built yet. Same place, same size, visibly inactive:
+   greyed out, no hover colour, no pointer. The title attribute does the rest —
+   the browser's own tooltip says "Coming soon" on hover, which is cheaper and
+   more reliable than a tooltip of our own. */
+.info-link-soon {
+  font-family: var(--font-type);
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  display: block;
+  padding: 2px var(--space-xs);
+  border-left: 3px solid transparent;
+  cursor: not-allowed;
+}

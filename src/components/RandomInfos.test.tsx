@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import RandomInfos from "./RandomInfos";
 
@@ -27,10 +27,20 @@ describe("RandomInfos", () => {
       .toHaveAttribute("href", "/reviews?sort=rating");
   });
 
-  it("the other links are still placeholders: clicking them does not navigate", () => {
+  // They used to look like links and do nothing when clicked. An entry that
+  // leads nowhere is no longer a link at all: it is greyed out, and its title
+  // says why on hover rather than leaving the visitor to guess.
+  it.each(["Alphabetical", "Country", "Genre", "Random Band", "Random Album"])(
+    "%s is not offered as a link",
+    (label) => {
+      renderSidebar();
+      expect(screen.queryByRole("link", { name: label })).not.toBeInTheDocument();
+    }
+  );
+
+  it("says why on hover, in the browser's own tooltip", () => {
     renderSidebar();
-    // fireEvent returns false when the click handler called preventDefault()
-    const notPrevented = fireEvent.click(screen.getByRole("link", { name: "Random Band" }));
-    expect(notPrevented).toBe(false);
+    expect(screen.getByText("Random Band")).toHaveAttribute("title", "Coming soon");
+    expect(screen.getAllByTitle("Coming soon")).toHaveLength(7);
   });
 });

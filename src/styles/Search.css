@@ -127,3 +127,12 @@
   border: 2px solid var(--color-ink);
   margin: 0 0 var(--space-md);
 }
+
+/* "in Music Genre" after the term: quieter than the term itself, because it
+   answers a question the visitor only asks when nothing comes back. */
+.search-category {
+  font-family: var(--font-type);
+  font-size: 0.8em;
+  color: var(--color-muted);
+  text-transform: none;
+}
