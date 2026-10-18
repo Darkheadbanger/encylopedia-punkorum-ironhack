@@ -1,14 +1,11 @@
-import { axiosResponse } from "../test/fixtures";
 import type { Band, SetBands } from "../types";
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import UpdateBandForm from "./UpdateBandForm";
-import { bandsAPI } from "../services/api";
+import { captures } from "../test/server";
 import { makeBand, makeIngestedBand } from "../test/fixtures";
-
-vi.mock("../services/api", () => ({ bandsAPI: { update: vi.fn() } }));
 
 // Fake destination pages let us check where the form navigates
 const renderForm = (bands: Band[], id: string, setBands: SetBands = vi.fn()) =>
@@ -66,9 +63,7 @@ describe("UpdateBandForm", () => {
   it("saves the changes, updates the state and goes to the band page", async () => {
     const band = makeBand();
     // The server answers with the band it stored — that is what must land in the state
-    vi.mocked(bandsAPI.update).mockResolvedValue(
-      axiosResponse({ ...band, name: "The Sex Pistols" }),
-    );
+    const sent = captures("put", "/bands/band-1", { ...band, name: "The Sex Pistols" });
     const setBands = vi.fn();
     const user = userEvent.setup();
     renderForm([band], "band-1", setBands);
@@ -78,13 +73,10 @@ describe("UpdateBandForm", () => {
     await user.type(nameInput, "The Sex Pistols");
     await user.click(screen.getByRole("button", { name: "Update Band" }));
 
-    expect(bandsAPI.update).toHaveBeenCalledWith(
-      "band-1",
-      expect.objectContaining({ name: "The Sex Pistols" })
-    );
-    // The id goes in the URL, and the provenance stays the server's business
-    expect(bandsAPI.update).toHaveBeenCalledWith(
-      "band-1",
+    // The body that really went to /bands/band-1. The id travels in the URL, and
+    // the provenance stays the server's business.
+    expect(sent[0]).toEqual(expect.objectContaining({ name: "The Sex Pistols" }));
+    expect(sent[0]).toEqual(
       expect.not.objectContaining({ id: expect.anything(), source: expect.anything() })
     );
     expect(await screen.findByText("Details page")).toBeInTheDocument();
@@ -96,12 +88,14 @@ describe("UpdateBandForm", () => {
   });
 
   it("goes back to the band page on Cancel", async () => {
+    const sent = captures("put", "/bands/band-1", makeBand());
     const user = userEvent.setup();
     renderForm([makeBand()], "band-1");
 
     await user.click(screen.getByRole("button", { name: "Cancel" }));
 
     expect(screen.getByText("Details page")).toBeInTheDocument();
-    expect(bandsAPI.update).not.toHaveBeenCalled();
+    // Recorded, not assumed: an unhandled request fails the request, not the test.
+    await waitFor(() => expect(sent).toHaveLength(0));
   });
 });

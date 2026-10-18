@@ -1,7 +1,11 @@
 import axios from 'axios';
 import type { AuthUser, Band, Review, ReviewPayload, UpstreamCandidate } from '../types';
 
-const LOCAL_SERVER_URL = import.meta.env.VITE_LOCAL_SERVER_URL || 'http://localhost:3001';
+/** Where our API lives. Exported so the tests intercept the SAME address this
+ *  file builds its URLs from: hard-coding it there made the whole suite fail
+ *  the moment VITE_LOCAL_SERVER_URL pointed anywhere else. */
+export const LOCAL_SERVER_URL =
+  import.meta.env.VITE_LOCAL_SERVER_URL || 'http://localhost:3001';
 
 // Every request carries the token, if there is one. Without this, the backend
 // answers 401 to any write — and we would have to remember the header at each call.

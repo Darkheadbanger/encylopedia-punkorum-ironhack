@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { bandsAPI } from "../services/api";
 import type { BandPayload } from "../services/api";
+import { errorMessage } from "../services/errorMessage";
 import { RELEASE_TYPES } from "../types";
 import type { Album, BandFormData, Member, SetBands } from "../types";
 import "../styles/BandForm.css";
@@ -25,7 +26,7 @@ function AddBandForm({ setBands }: { setBands: SetBands }) {
     label: ""
   });
 
-  const [albums, setAlbums] = useState<Album[]>([{ title: "", year: "", type: "Album" }]);
+  const [albums, setAlbums] = useState<Album[]>([{ title: "", year: "", type: RELEASE_TYPES[0] }]);
   const [members, setMembers] = useState<Member[]>([{ name: "", instrument: "", period: "" }]);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,7 +53,7 @@ function AddBandForm({ setBands }: { setBands: SetBands }) {
     ));
   };
 
-  const albumEmpty = { title: "", year: "", type: "Album" };
+  const albumEmpty = { title: "", year: "", type: RELEASE_TYPES[0] };
   const addAlbum = () => {
     setAlbums([...albums, albumEmpty]);
   };
@@ -100,7 +101,7 @@ function AddBandForm({ setBands }: { setBands: SetBands }) {
       })
       .catch((error) => {
         console.error(error);
-        setError("Could not save the band. Is the local server running?");
+        setError(errorMessage(error, "Could not save the band. Is the server running?"));
       });
   };
 

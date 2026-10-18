@@ -30,6 +30,10 @@ function BandsId({bands, setBands}: { bands: Band[]; setBands: SetBands }) {
   // hand-pasted URL can rot. Either way, a broken image icon is worse than none.
   const [imageFailed, setImageFailed] = useState(false);
 
+  // None of the state above survives a move from one band to another: BandsIdPage
+  // keys this component on the route parameter, so React mounts a fresh one. See
+  // the comment there for what carried over before.
+
   if (!band) {
     return <p>Band not found</p>;
   }
@@ -88,8 +92,13 @@ function BandsId({bands, setBands}: { bands: Band[]; setBands: SetBands }) {
               </button>
             </div>
           ) : (
+            // The login form is on every page, in the panel: that is the whole
+            // point of putting it there. So this sentence points AT it rather
+            // than away, and the link says what it actually opens — an account
+            // to create, not a login page, which does not exist.
             <p className="band-actions-locked">
-              <Link to="/signup">Log in</Link> to edit or delete this band.
+              Log in to edit or delete this band, or{" "}
+              <Link to="/signup">create an account</Link>.
             </p>
           )}
         </div>

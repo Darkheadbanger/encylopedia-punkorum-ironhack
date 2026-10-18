@@ -29,7 +29,14 @@ export default defineConfig([
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
-        { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^_' },
+        {
+          varsIgnorePattern: '^[A-Z_]',
+          argsIgnorePattern: '^_',
+          // `const { id, source, ...rest } = band` is how this codebase drops the
+          // fields the server owns before sending a payload. The named siblings are
+          // unused ON PURPOSE — that is the whole point of writing them down.
+          ignoreRestSiblings: true,
+        },
       ],
       // The whole point of the TypeScript migration: no silent "any".
       '@typescript-eslint/no-explicit-any': 'error',

@@ -11,7 +11,7 @@ const crass = makeBand({
   genre: ["anarcho-punk", "art punk"],
   themes: "anarchism, pacifism, feminism",
   label: "Crass Records",
-  albums: [{ title: "Stations of the Crass", year: "1979", type: "Album" }],
+  albums: [{ title: "Stations of the Crass", year: "1979", type: "Full-length" }],
   members: [{ name: "Steve Ignorant", instrument: "vocals", period: "1977-1984" }],
 });
 

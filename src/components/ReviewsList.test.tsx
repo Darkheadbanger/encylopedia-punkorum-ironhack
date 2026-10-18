@@ -3,12 +3,8 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import ReviewsList from "./ReviewsList";
-import { reviewsAPI } from "../services/api";
-import { makeBand, makeReview, axiosResponse } from "../test/fixtures";
-
-vi.mock("../services/api", () => ({
-  reviewsAPI: { getAll: vi.fn(), forBand: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-}));
+import { answers, refuses } from "../test/server";
+import { makeBand, makeReview } from "../test/fixtures";
 
 const renderList = (query = "", bands = [makeBand()]) =>
   render(
@@ -24,7 +20,7 @@ const harsh = makeReview({ id: "r-harsh", rating: 2, content: "Overrated and ove
 const kind = makeReview({ id: "r-kind", rating: 5, content: "Still the loudest record of 1977." });
 
 beforeEach(() => {
-  vi.mocked(reviewsAPI.getAll).mockResolvedValue(axiosResponse([harsh, kind]));
+  answers("/reviews", [harsh, kind]);
 });
 
 afterEach(() => vi.restoreAllMocks());
@@ -85,7 +81,7 @@ describe("ReviewsList", () => {
   });
 
   it("invites the first review when there is none", async () => {
-    vi.mocked(reviewsAPI.getAll).mockResolvedValue(axiosResponse([]));
+    answers("/reviews", []);
     renderList();
 
     expect(await screen.findByText(/nobody has reviewed anything yet/i)).toBeInTheDocument();
@@ -93,7 +89,7 @@ describe("ReviewsList", () => {
 
   it("says so when the API is down, instead of pretending there are none", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.mocked(reviewsAPI.getAll).mockRejectedValue(new Error("500"));
+    refuses("get", "/reviews", "Something went wrong on the server.", 500);
     renderList();
 
     expect(await screen.findByRole("alert")).toHaveTextContent(/could not be loaded/i);

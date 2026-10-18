@@ -31,7 +31,19 @@ const toError = (error: unknown, fallback: string) => {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // The token is read ONCE, at mount, and both the initial isLoading and the
+  // effect below use that same value.
+  //
+  // Reading it twice is a trap: isLoading starts true because a token was there
+  // at render, then the effect re-reads at commit time, finds it gone — another
+  // tab logged out in between — returns early, and isLoading stays true forever.
+  // The page then shows "Checking your session..." until a reload.
+  const [storedToken] = useState(() => localStorage.getItem(TOKEN_KEY));
+
+  // Loading only while there is a token to check. Starting at true and switching
+  // it off inside the effect meant one extra render with the app held behind a
+  // spinner for a visitor who was never logged in.
+  const [isLoading, setIsLoading] = useState(Boolean(storedToken));
 
   const forget = () => {
     localStorage.removeItem(TOKEN_KEY);
@@ -45,14 +57,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    if (!localStorage.getItem(TOKEN_KEY)) {
-      setIsLoading(false); // nothing stored, nothing to ask the server
-      return;
-    }
+    // The same value isLoading was initialised from, so the two can never disagree.
+    if (!storedToken) return; // nothing stored, nothing to ask
+
+    // Asking the server who a stored token belongs to is a real side effect — a
+    // network call on mount — not state derived from props. Nothing is set
+    // synchronously: every setState here runs when the request comes back, which
+    // the linter cannot see through loadUser().
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadUser()
       .catch(forget) // expired, forged, or the account is gone
       .finally(() => setIsLoading(false));
-  }, []);
+    // storedToken is read once at mount and never changes: this runs exactly once.
+  }, [storedToken]);
 
   const login = async (email: string, password: string) => {
     let token: string;
@@ -89,6 +106,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// react-refresh wants a file to export components OR other things, never both,
+// because mixing them makes hot reloading fall back to a full page reload. The
+// textbook fix is to move this hook to its own file — but 28 files import it,
+// including every test that mocks "../context/AuthContext", and the only thing
+// gained is a faster refresh while editing this one file. The provider and its
+// hook belong together; the cost of separating them does not pay for itself.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const value = useContext(AuthContext);
   if (!value) throw new Error("useAuth must be used inside an <AuthProvider>.");

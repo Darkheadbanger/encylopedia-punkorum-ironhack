@@ -260,6 +260,13 @@ textarea:focus-visible {
   letter-spacing: 0.08em;
 }
 
+/* The lines that appear when the wait drags on. Quieter than the first one:
+   they explain, they do not announce. */
+.app-loading-note {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  margin-top: var(--space-sm);
+}
 /* Shown by App.tsx when the bands could not be loaded.
    Taped to the page at an angle, like a flyer nobody straightened. */
 .app-error {

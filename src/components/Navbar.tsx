@@ -6,6 +6,7 @@ import {
   DEFAULT_CATEGORY,
   GOOGLE,
   SEARCH_CATEGORIES,
+  isSearchCategory,
 } from "../searchCategories";
 
 function Navbar() {
@@ -14,6 +15,13 @@ function Navbar() {
   // Must match an <option value>, otherwise the controlled <select> has no matching option
   const [selectSearch, setSelectSearch] = useState<string>(DEFAULT_CATEGORY);
   const [term, setTerm] = useState("");
+
+  // The placeholder used to print the raw key — "Select the bands", "Select the
+  // labels" — instead of the label shown in the dropdown.
+  const placeholderFor = (value: string) => {
+    if (value === GOOGLE) return "Search Google for a punk band";
+    return "Search by " + (isSearchCategory(value) ? SEARCH_CATEGORIES[value].label : "name");
+  };
 
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectSearch(event.target.value);
@@ -58,7 +66,7 @@ function Navbar() {
               id="search"
               value={term}
               onChange={(event) => setTerm(event.target.value)}
-              placeholder={"Select the " + selectSearch}
+              placeholder={placeholderFor(selectSearch)}
             />
             {/* "Songs Title" is gone: we hold no songs, and an option that can
                 only ever return nothing is the same lie in another place. */}

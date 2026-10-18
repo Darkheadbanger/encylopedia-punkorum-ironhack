@@ -37,7 +37,11 @@ export type DiscographyFilter = keyof typeof DISCOGRAPHY_FILTERS;
 export interface Album {
   title: string;
   year: string;
-  /** Older entries used free text ("Album"), so this stays a plain string. */
+  /** Stays a plain string: a band ingested from MusicBrainz can carry a type we
+   *  do not list ("Soundtrack", "Interview"), and refusing it would lose the
+   *  release. Seeded data is normalised to RELEASE_TYPES — db.json.test.ts in the
+   *  backend fails if it drifts, because when it did, 141 of 151 releases showed
+   *  under "Complete" and nowhere else. */
   type: string;
 }
 

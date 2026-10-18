@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { reviewsAPI } from "../services/api";
+import { errorMessage } from "../services/errorMessage";
 import { useAuth } from "../context/AuthContext";
 import type { Review } from "../types";
 import "../styles/Reviews.css";
@@ -80,7 +81,7 @@ function BandReviews({ bandId }: { bandId: string }) {
       resetForm();
     } catch (error) {
       console.error(error);
-      setFormError("This review could not be saved. Are you still logged in?");
+      setFormError(errorMessage(error, "This review could not be saved. Are you still logged in?"));
     } finally {
       setBusy(false);
     }
@@ -98,7 +99,7 @@ function BandReviews({ bandId }: { bandId: string }) {
       })
       .catch((error) => {
         console.error(error);
-        setFormError("This review could not be deleted.");
+        setFormError(errorMessage(error, "This review could not be deleted."));
       });
   };
 
@@ -164,7 +165,7 @@ function BandReviews({ bandId }: { bandId: string }) {
         </form>
       ) : (
         <p className="reviews-locked">
-          <Link to="/signup">Log in</Link> to review this band.
+          Log in to review this band, or <Link to="/signup">create an account</Link>.
         </p>
       )}
 

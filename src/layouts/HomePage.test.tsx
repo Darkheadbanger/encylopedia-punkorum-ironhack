@@ -1,17 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { screen } from "@testing-library/react";
-import type { ReactNode } from "react";
-import { useAuth } from "../context/AuthContext";
-import { renderPage, session, expectShell } from "../test/renderPage";
+import { renderPage, expectShell } from "../test/renderPage";
 import { makeBand } from "../test/fixtures";
 import HomePage from "./HomePage";
 
-vi.mock("../context/AuthContext", () => ({
-  AuthProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
-  useAuth: vi.fn(),
-}));
-
-beforeEach(() => vi.mocked(useAuth).mockReturnValue(session() as never));
+// The real <AuthProvider> runs here: nothing about authentication is faked.
+afterEach(() => vi.restoreAllMocks());
 
 describe("HomePage", () => {
   it("shows the shell and the two entry points", () => {

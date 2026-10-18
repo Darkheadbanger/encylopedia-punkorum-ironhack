@@ -1,89 +1,147 @@
-import { makeBandPayload, makeBand, makeCandidate, axiosResponse } from "../test/fixtures";
-import { describe, it, expect, vi } from "vitest";
-import axios from "axios";
+import { describe, it, expect } from "vitest";
 import { bandsAPI, upstreamAPI, authAPI, getAllBands } from "./api";
+import { makeBandPayload, makeBand, makeCandidate } from "../test/fixtures";
+import { API, server } from "../test/server";
+import { http, HttpResponse } from "msw";
 
-// Replace axios with fake functions: no real HTTP call is made
-vi.mock("axios", () => ({
-  default: {
-    get: vi.fn(),
-    post: vi.fn(),
-    put: vi.fn(),
-    delete: vi.fn(),
-    // api.ts registers a request interceptor on import to attach the auth token
-    interceptors: { request: { use: vi.fn() } },
-  },
-}));
+// This file used to replace axios with vi.fn()s and assert on the arguments it
+// was handed. That proved api.ts called a function with a string — not that a
+// request went anywhere, not that the URL was right, and above all not that the
+// token interceptor attached anything.
+//
+// MSW answers the real request instead, so every test below reads what actually
+// left the browser: method, path, query string, body, headers.
 
-const LOCAL = "http://localhost:3001";
+/** Records everything the browser sends to `path`, whatever the method. */
+const recordAll = () => {
+  const seen: { method: string; url: string; body: unknown; auth: string | null }[] = [];
+  const capture = async ({ request }: { request: Request }) => {
+    const body = ["POST", "PUT", "PATCH"].includes(request.method)
+      ? await request.clone().json().catch(() => null)
+      : null;
+    seen.push({
+      method: request.method,
+      url: request.url,
+      body,
+      auth: request.headers.get("Authorization"),
+    });
+    return HttpResponse.json([]);
+  };
 
-describe("bandsAPI", () => {
-  it("getAll calls GET /bands", () => {
-    bandsAPI.getAll();
-    expect(axios.get).toHaveBeenCalledWith(`${LOCAL}/bands`);
+  server.use(
+    http.get(`${API}/*`, capture),
+    http.post(`${API}/*`, capture),
+    http.put(`${API}/*`, capture),
+    http.delete(`${API}/*`, capture),
+  );
+  return seen;
+};
+
+describe("bandsAPI — where each call really goes", () => {
+  it.each([
+    ["getAll", () => bandsAPI.getAll(), "GET", "/bands"],
+    ["getOne", () => bandsAPI.getOne("42"), "GET", "/bands/42"],
+    ["delete", () => bandsAPI.delete("42"), "DELETE", "/bands/42"],
+  ])("%s sends %s %s", async (_name, call, method, path) => {
+    const seen = recordAll();
+
+    await call();
+
+    expect(seen[0].method).toBe(method);
+    expect(seen[0].url).toBe(`${API}${path}`);
   });
 
-  it("getOne calls GET /bands/:id", () => {
-    bandsAPI.getOne("42");
-    expect(axios.get).toHaveBeenCalledWith(`${LOCAL}/bands/42`);
-  });
-
-  it("create calls POST /bands with the band", () => {
+  it("create posts the band to /bands", async () => {
+    const seen = recordAll();
     const band = makeBandPayload({ name: "Crass" });
-    bandsAPI.create(band);
-    expect(axios.post).toHaveBeenCalledWith(`${LOCAL}/bands`, band);
+
+    await bandsAPI.create(band);
+
+    expect(seen[0].method).toBe("POST");
+    expect(seen[0].url).toBe(`${API}/bands`);
+    expect(seen[0].body).toEqual(band);
   });
 
-  it("update calls PUT /bands/:id with the band", () => {
+  it("update puts the band to /bands/:id", async () => {
+    const seen = recordAll();
     const band = makeBandPayload({ name: "Crass" });
-    bandsAPI.update("42", band);
-    expect(axios.put).toHaveBeenCalledWith(`${LOCAL}/bands/42`, band);
+
+    await bandsAPI.update("42", band);
+
+    expect(seen[0].method).toBe("PUT");
+    expect(seen[0].url).toBe(`${API}/bands/42`);
+    expect(seen[0].body).toEqual(band);
+  });
+});
+
+// The interceptor is the reason to test at this level at all: a mocked axios
+// never runs it, so nothing used to check that writes carry the token.
+describe("the token interceptor", () => {
+  it("attaches the stored token to every request", async () => {
+    localStorage.setItem("authToken", "a-stored-token");
+    const seen = recordAll();
+
+    await bandsAPI.getAll();
+
+    expect(seen[0].auth).toBe("Bearer a-stored-token");
   });
 
-  it("delete calls DELETE /bands/:id", () => {
-    bandsAPI.delete("42");
-    expect(axios.delete).toHaveBeenCalledWith(`${LOCAL}/bands/42`);
+  it("sends no Authorization header when nobody is logged in", async () => {
+    const seen = recordAll();
+
+    await bandsAPI.getAll();
+
+    expect(seen[0].auth).toBeNull();
   });
 });
 
 // The browser never calls MusicBrainz. It asks our own backend, which searches,
 // translates and stores — so every URL here is on our server.
 describe("upstreamAPI", () => {
-  it("search calls our own /bands/upstream, not musicbrainz.org", () => {
-    upstreamAPI.search("cro-mags");
+  it("searches our own backend, never musicbrainz.org", async () => {
+    const seen = recordAll();
 
-    expect(axios.get).toHaveBeenCalledWith(`${LOCAL}/bands/upstream`, {
-      params: { q: "cro-mags" },
-    });
-    expect(vi.mocked(axios.get).mock.calls.flat(2).join(" ")).not.toContain("musicbrainz.org");
+    await upstreamAPI.search("cro-mags");
+
+    expect(seen[0].url).toBe(`${API}/bands/upstream?q=cro-mags`);
+    expect(seen[0].url).not.toContain("musicbrainz.org");
   });
 
-  it("import posts the MusicBrainz id to our own /bands/import", () => {
-    upstreamAPI.import("7a2e6b55-f149-4e74-be6a-30a1b1a3e5ae");
+  it("posts the MusicBrainz id to our own /bands/import", async () => {
+    const seen = recordAll();
 
-    expect(axios.post).toHaveBeenCalledWith(`${LOCAL}/bands/import`, {
-      musicBrainzId: "7a2e6b55-f149-4e74-be6a-30a1b1a3e5ae",
-    });
+    await upstreamAPI.import("7a2e6b55-f149-4e74-be6a-30a1b1a3e5ae");
+
+    expect(seen[0].url).toBe(`${API}/bands/import`);
+    expect(seen[0].body).toEqual({ musicBrainzId: "7a2e6b55-f149-4e74-be6a-30a1b1a3e5ae" });
   });
 
   it("returns candidates that already have our shape", async () => {
-    vi.mocked(axios.get).mockResolvedValueOnce(axiosResponse([makeCandidate()]));
+    server.use(http.get(`${API}/bands/upstream`, () => HttpResponse.json([makeCandidate()])));
 
     const { data } = await upstreamAPI.search("cro-mags");
 
-    expect(data[0]).toMatchObject({ name: "Cro-Mags", source: "musicbrainz", alreadyImported: false });
+    expect(data[0]).toMatchObject({
+      name: "Cro-Mags",
+      source: "musicbrainz",
+      alreadyImported: false,
+    });
   });
 });
 
 describe("authAPI", () => {
-  it("signup, login and verify all go to /auth", () => {
-    authAPI.signup({ email: "joey@ramones.com", password: "hey-ho-lets-go", username: "joey" });
-    authAPI.login({ email: "joey@ramones.com", password: "hey-ho-lets-go" });
-    authAPI.verify();
+  it("sends signup, login and verify to /auth", async () => {
+    const seen = recordAll();
 
-    expect(axios.post).toHaveBeenCalledWith(`${LOCAL}/auth/signup`, expect.any(Object));
-    expect(axios.post).toHaveBeenCalledWith(`${LOCAL}/auth/login`, expect.any(Object));
-    expect(axios.get).toHaveBeenCalledWith(`${LOCAL}/auth/verify`);
+    await authAPI.signup({ email: "joey@ramones.com", password: "hey-ho-lets-go", username: "joey" });
+    await authAPI.login({ email: "joey@ramones.com", password: "hey-ho-lets-go" });
+    await authAPI.verify();
+
+    expect(seen.map((call) => `${call.method} ${call.url}`)).toEqual([
+      `POST ${API}/auth/signup`,
+      `POST ${API}/auth/login`,
+      `GET ${API}/auth/verify`,
+    ]);
   });
 });
 
@@ -92,22 +150,22 @@ describe("authAPI", () => {
 describe("getAllBands", () => {
   it("returns the bands our API sends, untouched", async () => {
     const stored = [makeBand(), makeBand({ id: "band-2", name: "Crass" })];
-    vi.mocked(axios.get).mockResolvedValueOnce(axiosResponse(stored));
+    server.use(http.get(`${API}/bands`, () => HttpResponse.json(stored)));
 
     expect(await getAllBands()).toEqual(stored);
   });
 
   it("makes a single request: no second source to merge", async () => {
-    vi.mocked(axios.get).mockClear();
-    vi.mocked(axios.get).mockResolvedValueOnce(axiosResponse([]));
+    const seen = recordAll();
 
     await getAllBands();
 
-    expect(axios.get).toHaveBeenCalledOnce();
+    expect(seen).toHaveLength(1);
   });
 
   it("lets the failure through, so App can say the server is down", async () => {
-    vi.mocked(axios.get).mockRejectedValueOnce(new Error("Network error"));
-    await expect(getAllBands()).rejects.toThrow("Network error");
+    server.use(http.get(`${API}/bands`, () => HttpResponse.error()));
+
+    await expect(getAllBands()).rejects.toThrow();
   });
 });

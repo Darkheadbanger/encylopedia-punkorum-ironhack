@@ -1,29 +1,28 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
-import type { ReactNode } from "react";
-import { useAuth } from "../context/AuthContext";
-import { session, expectShell } from "../test/renderPage";
+import { AuthProvider } from "../context/AuthContext";
+import { expectShell } from "../test/renderPage";
 import { makeBand } from "../test/fixtures";
 import BandsIdPage from "./BandsIdPage";
 
-vi.mock("../context/AuthContext", () => ({
-  AuthProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
-  useAuth: vi.fn(),
-}));
+// The real <AuthProvider> runs here: nothing about authentication is faked.
+afterEach(() => vi.restoreAllMocks());
 
-beforeEach(() => vi.mocked(useAuth).mockReturnValue(session() as never));
-
-// This layout's child reads :bandsId, so the id has to come from a real route.
+// This layout's child reads :bandsId, so the id has to come from a real route —
+// which is why this file builds its own router instead of using renderPage().
+// The real <AuthProvider> wraps it all the same.
 const renderAt = (id: string) =>
   render(
     <MemoryRouter initialEntries={[`/bands/${id}`]}>
-      <Routes>
-        <Route
-          path="/bands/:bandsId"
-          element={<BandsIdPage bands={[makeBand()]} setBands={vi.fn()} />}
-        />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route
+            path="/bands/:bandsId"
+            element={<BandsIdPage bands={[makeBand()]} setBands={vi.fn()} />}
+          />
+        </Routes>
+      </AuthProvider>
     </MemoryRouter>
   );
 

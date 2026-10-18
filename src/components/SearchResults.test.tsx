@@ -2,52 +2,53 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
-import type { ReactNode } from "react";
 import SearchResults from "./SearchResults";
-import { upstreamAPI } from "../services/api";
-import { useAuth } from "../context/AuthContext";
-import { makeBand, makeCandidate, makeIngestedBand, axiosResponse } from "../test/fixtures";
-import { session } from "../test/renderPage";
-
-vi.mock("../services/api", () => ({
-  upstreamAPI: { search: vi.fn(), import: vi.fn() },
-}));
-
-vi.mock("../context/AuthContext", () => ({
-  AuthProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
-  useAuth: vi.fn(),
-}));
+import { answers, captures, refuses, watches } from "../test/server";
+import { AuthProvider } from "../context/AuthContext";
+import { makeBand, makeCandidate, makeIngestedBand } from "../test/fixtures";
+import { signedIn, settleAuth } from "../test/renderPage";
 
 const renderSearch = (
   query: string,
   { bands = [makeBand()], setBands = vi.fn(), loggedIn = true } = {},
 ) => {
-  vi.mocked(useAuth).mockReturnValue(session(loggedIn) as never);
+  // "Logged in" means a token the server accepts, as in the browser.
+  signedIn(loggedIn);
   return render(
     <MemoryRouter initialEntries={[`/search${query}`]}>
-      <Routes>
-        <Route path="/search" element={<SearchResults bands={bands} setBands={setBands} />} />
-        <Route path="/bands/:bandsId" element={<p>Band page</p>} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/search" element={<SearchResults bands={bands} setBands={setBands} />} />
+          <Route path="/bands/:bandsId" element={<p>Band page</p>} />
+        </Routes>
+      </AuthProvider>
     </MemoryRouter>
   );
 };
 
+// Every test can read what actually went out: watches() records the URLs, which
+// is how "the browser never asked" is now proved — no request, not an uncalled stub.
+//
+// Absence always needs a settle step first. The recorder is filled a tick after
+// the render, so checking it synchronously could never fail, whatever the code did.
+let asked: string[];
 beforeEach(() => {
-  vi.mocked(upstreamAPI.search).mockResolvedValue(axiosResponse([makeCandidate()]));
+  asked = watches("/bands/upstream", [makeCandidate()]);
 });
 
 describe("SearchResults — no search yet", () => {
-  it("invites the visitor to type instead of searching for nothing", () => {
+  it("invites the visitor to type instead of searching for nothing", async () => {
     renderSearch("");
 
     expect(screen.getByText(/type a band name/i)).toBeInTheDocument();
-    expect(upstreamAPI.search).not.toHaveBeenCalled();
+    await settleAuth();
+    expect(asked).toHaveLength(0);
   });
 
-  it("ignores a term made of spaces", () => {
+  it("ignores a term made of spaces", async () => {
     renderSearch("?q=%20%20");
-    expect(upstreamAPI.search).not.toHaveBeenCalled();
+    await settleAuth();
+    expect(asked).toHaveLength(0);
   });
 });
 
@@ -84,7 +85,8 @@ describe("SearchResults — candidates from MusicBrainz", () => {
   it("asks our own backend, never MusicBrainz directly", async () => {
     renderSearch("?q=cro-mags");
 
-    await waitFor(() => expect(upstreamAPI.search).toHaveBeenCalledWith("cro-mags"));
+    await waitFor(() => expect(asked).toHaveLength(1));
+    expect(asked[0]).toContain("q=cro-mags");
   });
 
   it("shows what the backend returns, already in our shape", async () => {
@@ -98,7 +100,7 @@ describe("SearchResults — candidates from MusicBrainz", () => {
   });
 
   it("says so when MusicBrainz knows nobody by that name", async () => {
-    vi.mocked(upstreamAPI.search).mockResolvedValue(axiosResponse([]));
+    answers("/bands/upstream", []);
     renderSearch("?q=zzzz");
 
     expect(await screen.findByText(/nothing on musicbrainz/i)).toBeInTheDocument();
@@ -108,7 +110,7 @@ describe("SearchResults — candidates from MusicBrainz", () => {
   // the whole point of keeping MusicBrainz out of the band list.
   it("reports a failure in this panel only", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.mocked(upstreamAPI.search).mockRejectedValue(new Error("502"));
+    refuses("get", "/bands/upstream", "MusicBrainz could not be reached.", 502);
     renderSearch("?q=cro-mags");
 
     expect(await screen.findByRole("alert")).toHaveTextContent(/could not reach musicbrainz/i);
@@ -120,14 +122,14 @@ describe("SearchResults — candidates from MusicBrainz", () => {
 describe("SearchResults — importing", () => {
   it("imports the band, adds it to the list and offers its page", async () => {
     const imported = makeIngestedBand();
-    vi.mocked(upstreamAPI.import).mockResolvedValue(axiosResponse(imported));
+    const sent = captures("post", "/bands/import", imported);
     const setBands = vi.fn();
     const user = userEvent.setup();
     renderSearch("?q=cro-mags", { setBands });
 
     await user.click(await screen.findByRole("button", { name: /import/i }));
 
-    expect(upstreamAPI.import).toHaveBeenCalledWith("7a2e6b55-f149-4e74-be6a-30a1b1a3e5ae");
+    expect(sent[0]).toEqual({ musicBrainzId: "7a2e6b55-f149-4e74-be6a-30a1b1a3e5ae" });
     await waitFor(() => expect(setBands).toHaveBeenCalled());
     // The band is added at the top, without dropping the others
     const existing = makeBand();
@@ -138,9 +140,7 @@ describe("SearchResults — importing", () => {
   });
 
   it("offers no Import button for a band we already hold", async () => {
-    vi.mocked(upstreamAPI.search).mockResolvedValue(
-      axiosResponse([makeCandidate({ alreadyImported: true })])
-    );
+    answers("/bands/upstream", [makeCandidate({ alreadyImported: true })]);
     renderSearch("?q=cro-mags");
 
     expect(await screen.findByText(/already in the encyclopedia/i)).toBeInTheDocument();
@@ -163,20 +163,22 @@ describe("SearchResults — importing", () => {
     renderSearch("?q=cro-mags", { loggedIn: false });
 
     expect(await screen.findByText(/log in/i)).toBeInTheDocument();
-    expect(upstreamAPI.search).not.toHaveBeenCalled();
+    await settleAuth();
+    expect(asked).toHaveLength(0);
     expect(screen.queryByText(/could not reach musicbrainz/i)).not.toBeInTheDocument();
   });
 
   it("keeps the candidate and says so when the import fails", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.mocked(upstreamAPI.import).mockRejectedValue(new Error("409"));
+    refuses("post", "/bands/import", "This band is already in the encyclopedia.", 409);
     const setBands = vi.fn();
     const user = userEvent.setup();
     renderSearch("?q=cro-mags", { setBands });
 
     await user.click(await screen.findByRole("button", { name: /import/i }));
 
-    expect(await screen.findByRole("alert")).toHaveTextContent(/could not be imported/i);
+    // The server now gets the last word: its own sentence, not our fallback.
+    expect(await screen.findByRole("alert")).toHaveTextContent(/already in the encyclopedia/i);
     expect(setBands).not.toHaveBeenCalled();
   });
 });

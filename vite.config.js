@@ -8,6 +8,6 @@ export default defineConfig({
   test: {
     // jsdom = a fake browser in Node, so components can render without Firefox
     environment: 'jsdom',
-    setupFiles: './src/setupTests.js',
+    setupFiles: './src/setupTests.ts',
   },
 })

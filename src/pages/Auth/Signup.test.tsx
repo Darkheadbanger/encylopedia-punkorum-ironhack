@@ -1,13 +1,28 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Signup from "./Signup";
-import { useAuth } from "../../context/AuthContext";
+import { AuthProvider } from "../../context/AuthContext";
+import { accepts, answers, captures, refuses } from "../../test/server";
+import { MEMBER } from "../../test/renderPage";
 
-vi.mock("../../context/AuthContext", () => ({ useAuth: vi.fn() }));
-
-const signup = vi.fn();
+// The real <AuthProvider> runs here. Creating an account goes through the whole
+// chain — POST /auth/signup, then the login it triggers, then GET /auth/verify —
+// so only those three HTTP calls are stubbed.
+let sent: unknown[];
+const signup = {
+  succeeds() {
+    sent = captures("post", "/auth/signup", MEMBER);
+    accepts("/auth/login", { authToken: "a-real-token" });
+    answers("/auth/verify", MEMBER);
+  },
+  // No captures() here: server.use prepends, so the refusal would always win and
+  // the recorder would stay empty — an assertion on it could only pass vacuously.
+  fails(message: string) {
+    refuses("post", "/auth/signup", message, 400);
+  },
+};
 
 const fill = async () => {
   await userEvent.type(screen.getByLabelText("Username"), "joey");
@@ -18,20 +33,16 @@ const fill = async () => {
 const renderSignup = () =>
   render(
     <MemoryRouter>
-      <Signup />
+      <AuthProvider>
+        <Signup />
+    </AuthProvider>
     </MemoryRouter>
   );
 
-beforeEach(() =>
-  vi.mocked(useAuth).mockReturnValue({
-    user: null,
-    isLoggedIn: false,
-    isLoading: false,
-    login: vi.fn(),
-    logout: vi.fn(),
-    signup,
-  } as never)
-);
+afterEach(() => {
+  vi.restoreAllMocks();
+  localStorage.clear();
+});
 
 describe("Signup", () => {
   it("asks for a username, an email and a password", () => {
@@ -42,6 +53,7 @@ describe("Signup", () => {
   });
 
   it("warns that the password is too short before calling the server", async () => {
+    signup.succeeds(); // spied, so "never called" means something
     renderSignup();
     await userEvent.type(screen.getByLabelText("Username"), "joey");
     await userEvent.type(screen.getByLabelText("Email"), "joey@ramones.com");
@@ -49,20 +61,24 @@ describe("Signup", () => {
     await userEvent.click(screen.getByRole("button", { name: "Create account" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent(/8/);
-    expect(signup).not.toHaveBeenCalled(); // a pointless round trip avoided
+    expect(sent).toHaveLength(0); // a pointless round trip avoided
   });
 
   it("sends the account on submit", async () => {
-    signup.mockResolvedValue(undefined);
+    signup.succeeds();
     renderSignup();
     await fill();
     await userEvent.click(screen.getByRole("button", { name: "Create account" }));
 
-    expect(signup).toHaveBeenCalledWith("joey@ramones.com", "hey-ho-lets-go", "joey");
+    expect(sent[0]).toEqual({
+      email: "joey@ramones.com",
+      password: "hey-ho-lets-go",
+      username: "joey",
+    });
   });
 
   it("shows the reason the server refused", async () => {
-    signup.mockRejectedValue(new Error("This email is already in use."));
+    signup.fails("This email is already in use.");
     renderSignup();
     await fill();
     await userEvent.click(screen.getByRole("button", { name: "Create account" }));
@@ -105,15 +121,17 @@ describe("Signup — where it leaves you", () => {
   const renderWithHome = () =>
     render(
       <MemoryRouter initialEntries={["/signup"]}>
-        <Routes>
+        <AuthProvider>
+          <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/" element={<p>The encyclopedia</p>} />
         </Routes>
+      </AuthProvider>
       </MemoryRouter>
     );
 
   it("sends the new member to the encyclopedia", async () => {
-    signup.mockResolvedValue(undefined);
+    signup.succeeds();
     renderWithHome();
     await fill();
 
@@ -123,7 +141,7 @@ describe("Signup — where it leaves you", () => {
   });
 
   it("keeps them on the form when the account could not be created", async () => {
-    signup.mockRejectedValue(new Error("This email is already in use."));
+    signup.fails("This email is already in use.");
     renderWithHome();
     await fill();
 

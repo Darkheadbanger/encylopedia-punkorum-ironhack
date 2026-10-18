@@ -36,7 +36,7 @@ describe("Navbar", () => {
   it("starts with the 'bands' search category", () => {
     renderNavbar();
     expect(screen.getByRole("combobox", { name: "Search category" })).toHaveValue("bands");
-    expect(screen.getByLabelText("Search:")).toHaveAttribute("placeholder", "Select the bands");
+    expect(screen.getByLabelText("Search:")).toHaveAttribute("placeholder", "Search by Bands");
   });
 
   it("updates the search placeholder when another category is selected", async () => {
@@ -46,7 +46,7 @@ describe("Navbar", () => {
 
     await user.selectOptions(screen.getByRole("combobox", { name: "Search category" }), "genres");
 
-    expect(screen.getByLabelText("Search:")).toHaveAttribute("placeholder", "Select the genres");
+    expect(screen.getByLabelText("Search:")).toHaveAttribute("placeholder", "Search by Music Genre");
   });
 
   // The form used to call preventDefault() and stop there: typing a band name did

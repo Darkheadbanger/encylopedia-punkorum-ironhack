@@ -1,4 +1,3 @@
-import type { AxiosResponse } from "axios";
 import type { Band, Review, UpstreamCandidate } from "../types";
 
 // Fake bands shared by the tests.
@@ -20,7 +19,7 @@ export const makeBand = (overrides: Partial<Band> = {}): Band => ({
   genre: ["punk rock", "proto-punk"],
   disambiguation: "English punk rock band",
   image: "https://example.com/pistols.jpg",
-  albums: [{ title: "Never Mind the Bollocks", year: "1977", type: "Album" }],
+  albums: [{ title: "Never Mind the Bollocks", year: "1977", type: "Full-length" }],
   members: [{ name: "Johnny Rotten", instrument: "vocals", period: "1975-1978" }],
   type: "Group",
   ...overrides,
@@ -53,11 +52,6 @@ export const makeCandidate = (overrides: Partial<UpstreamCandidate> = {}): Upstr
   const { id: unused, ...band } = makeIngestedBand();
   return { ...band, alreadyImported: false, ...overrides };
 };
-
-// A mocked axios call only ever needs `data`. Building a full AxiosResponse in every
-// test would be noise, so the cast lives here once, clearly labelled.
-export const axiosResponse = <T>(data: T) =>
-  ({ data }) as AxiosResponse<T>;
 
 /** What the forms send to the API: a band without the fields the server owns. */
 export const makeBandPayload = (

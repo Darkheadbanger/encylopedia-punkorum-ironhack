@@ -2,9 +2,18 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { bandsAPI } from "../services/api";
 import type { BandPayload } from "../services/api";
+import { errorMessage } from "../services/errorMessage";
 import { RELEASE_TYPES } from "../types";
 import type { Album, Band, BandFormData, Member, SetBands } from "../types";
 import "../styles/BandForm.css";
+
+/** The options a release-type dropdown must offer: the ones we know, plus the
+ *  one this release already has when it is not among them. Dropping it would
+ *  make the browser show a different type than the one in state. */
+const releaseTypesFor = (current: string): readonly string[] =>
+  current && !(RELEASE_TYPES as readonly string[]).includes(current)
+    ? [current, ...RELEASE_TYPES]
+    : RELEASE_TYPES;
 
 function UpdateBandForm({ bands, setBands }: { bands: Band[]; setBands: SetBands }) {
   const navigate = useNavigate();
@@ -87,7 +96,7 @@ function UpdateBandForm({ bands, setBands }: { bands: Band[]; setBands: SetBands
     ));
   };
 
-  const albumEmpty = { title: "", year: "", type: "Album" };
+  const albumEmpty = { title: "", year: "", type: RELEASE_TYPES[0] };
   const addAlbum = () => {
     setAlbums([...albums, albumEmpty]);
   };
@@ -139,7 +148,7 @@ function UpdateBandForm({ bands, setBands }: { bands: Band[]; setBands: SetBands
       })
       .catch((error) => {
         console.error(error);
-        setError("Could not update the band. Is the local server running?");
+        setError(errorMessage(error, "Could not update the band. Is the server running?"));
       });
   };
 
@@ -286,6 +295,47 @@ function UpdateBandForm({ bands, setBands }: { bands: Band[]; setBands: SetBands
                 />
               </div>
             </div>
+
+            {/* These three were held in state and sent back untouched, but had no
+                input here: a history or a label typed when the band was created
+                could never be corrected afterwards. */}
+            <div className="input-row">
+              <div className="input-group">
+                <label htmlFor="themes">Lyrical themes</label>
+                <input
+                  type="text"
+                  name="themes"
+                  id="themes"
+                  value={formData.themes}
+                  onChange={handleChange}
+                  placeholder="Anarchy, Boredom, Society"
+                />
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="label">Current label</label>
+                <input
+                  type="text"
+                  name="label"
+                  id="label"
+                  value={formData.label}
+                  onChange={handleChange}
+                  placeholder="Virgin Records"
+                />
+              </div>
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="description">History</label>
+              <textarea
+                name="description"
+                id="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows={8}
+                placeholder="How the band formed, what they did, how it ended..."
+              />
+            </div>
           </section>
 
           {/* Albums */}
@@ -324,7 +374,12 @@ function UpdateBandForm({ bands, setBands }: { bands: Band[]; setBands: SetBands
                         albumChange(index, "type", e.target.value)
                       }
                     >
-                      {RELEASE_TYPES.map((releaseType) => (
+                      {/* A band ingested from MusicBrainz can carry a type we do
+                          not list — "Soundtrack", "Interview". Without its own
+                          option the browser showed the first one instead, so the
+                          form displayed a type the release did not have, and one
+                          touch of the dropdown rewrote it silently. */}
+                      {releaseTypesFor(album.type).map((releaseType) => (
                         <option key={releaseType} value={releaseType}>{releaseType}</option>
                       ))}
                     </select>

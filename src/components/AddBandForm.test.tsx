@@ -1,12 +1,10 @@
-import { axiosResponse, makeBand } from "../test/fixtures";
+import { makeBand } from "../test/fixtures";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import AddBandForm from "./AddBandForm";
-import { bandsAPI } from "../services/api";
-
-vi.mock("../services/api", () => ({ bandsAPI: { create: vi.fn() } }));
+import { captures, isDown } from "../test/server";
 
 // A fake /bands page lets us check where the form navigates
 const renderForm = (setBands = vi.fn()) =>
@@ -22,9 +20,7 @@ const renderForm = (setBands = vi.fn()) =>
 describe("AddBandForm", () => {
   it("creates the band, adds it to the state and goes to /bands", async () => {
     // The server answers with the band it stored — that is what must land in the state
-    vi.mocked(bandsAPI.create).mockResolvedValue(
-      axiosResponse(makeBand({ id: "server-id", name: "Crass", country: "GB" })),
-    );
+    const sent = captures("post", "/bands", makeBand({ id: "server-id", name: "Crass", country: "GB" }));
     const setBands = vi.fn();
     const user = userEvent.setup();
     renderForm(setBands);
@@ -36,20 +32,17 @@ describe("AddBandForm", () => {
     await user.click(screen.getByRole("button", { name: "Create Band" }));
 
     // Neither the id nor the provenance is sent: the server owns both
-    expect(bandsAPI.create).toHaveBeenCalledWith(
-      expect.not.objectContaining({ id: expect.anything() })
-    );
-    expect(bandsAPI.create).toHaveBeenCalledWith(
-      expect.not.objectContaining({ source: expect.anything() })
-    );
-    expect(bandsAPI.create).toHaveBeenCalledWith(
+    // The body that really went over the wire — not a stand-in’s arguments.
+    expect(sent[0]).toEqual(expect.not.objectContaining({ id: expect.anything() }));
+    expect(sent[0]).toEqual(expect.not.objectContaining({ source: expect.anything() }));
+    expect(sent[0]).toEqual(
       expect.objectContaining({
         name: "Crass",
         country: "GB",
         status: "Active",
         genre: ["anarcho-punk", "hardcore"],
         disbanded: null,
-        albums: [{ title: "The Feeding of the 5000", year: "", type: "Album" }],
+        albums: [{ title: "The Feeding of the 5000", year: "", type: "Full-length" }],
         members: [], // empty member rows are removed
       })
     );
@@ -59,19 +52,22 @@ describe("AddBandForm", () => {
     expect(updater([{ id: "old" }])[0]).toMatchObject({ id: "server-id", name: "Crass" });
   });
 
-  it("refuses to submit without a band name", () => {
+  it("refuses to submit without a band name", async () => {
+    const sent = captures("post", "/bands", makeBand());
     renderForm();
 
     // fireEvent.submit skips the browser's "required" check, so we reach our own check
     fireEvent.submit(screen.getByRole("button", { name: "Create Band" }).closest("form")!);
 
     expect(screen.getByRole("alert")).toHaveTextContent("You must enter the band name!");
-    expect(bandsAPI.create).not.toHaveBeenCalled();
+    // Recorded, not assumed: an unhandled request only fails the REQUEST, which
+    // the component would swallow. The recorder is what proves nothing was sent.
+    await waitFor(() => expect(sent).toHaveLength(0));
   });
 
   it("shows an error message when the API fails", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.mocked(bandsAPI.create).mockRejectedValue(new Error("Server down"));
+    isDown("post", "/bands"); // the server is not answering at all
     const user = userEvent.setup();
     renderForm();
 

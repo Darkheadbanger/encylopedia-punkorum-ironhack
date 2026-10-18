@@ -1,37 +1,68 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { screen } from "@testing-library/react";
-import type { ReactNode } from "react";
-import { useAuth } from "../context/AuthContext";
-import { renderPage, session, expectShell } from "../test/renderPage";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { AuthProvider } from "../context/AuthContext";
+import { signedIn, whenSignedIn, expectShell } from "../test/renderPage";
+import { captures } from "../test/server";
 import { makeBand } from "../test/fixtures";
 import UpdateBand from "./UpdateBand";
 
-vi.mock("../context/AuthContext", () => ({
-  AuthProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
-  useAuth: vi.fn(),
-}));
+// The form used to be replaced by a <p> printing the type of its props. That
+// checked the layout handed something down — not that the two fit together. The
+// real form renders here, which also means the route has to be real: the form
+// reads :updateId from the URL to find the band it edits.
 
-// UpdateBandForm has its own test file; mocked here so this one only checks that
-// the layout passes both props through.
-vi.mock("../components/UpdateBandForm", () => ({
-  default: ({ bands, setBands }: { bands: { name: string }[]; setBands: unknown }) => (
-    <p>update form, {bands.length} band(s), setBands: {typeof setBands}</p>
-  ),
-}));
-
-beforeEach(() => vi.mocked(useAuth).mockReturnValue(session(true) as never));
+const renderAt = (id: string, bands = [makeBand()], setBands = vi.fn()) => {
+  signedIn(true);
+  return render(
+    <MemoryRouter initialEntries={[`/updateBand/${id}`]}>
+      <AuthProvider>
+        <Routes>
+          <Route
+            path="/updateBand/:updateId"
+            element={<UpdateBand bands={bands} setBands={setBands} />}
+          />
+          <Route path="/bands/:bandsId" element={<p>Band page</p>} />
+        </Routes>
+      </AuthProvider>
+    </MemoryRouter>
+  );
+};
 
 describe("UpdateBand", () => {
-  it("shows the shell around the update form", () => {
-    renderPage(<UpdateBand bands={[makeBand()]} setBands={vi.fn()} />);
+  it("shows the shell around the update form", async () => {
+    renderAt("band-1");
+    await whenSignedIn();
 
     expectShell({ loggedIn: true });
-    expect(screen.getByText(/update form/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Edit Band: Sex Pistols" })).toBeInTheDocument();
   });
 
-  // The form finds the band to edit in this list: an empty one means a blank form.
-  it("hands the bands and setBands down to the form", () => {
-    renderPage(<UpdateBand bands={[makeBand()]} setBands={vi.fn()} />);
-    expect(screen.getByText("update form, 1 band(s), setBands: function")).toBeInTheDocument();
+  // The form finds the band to edit in this list: the layout handing it down is
+  // what makes the fields arrive filled in rather than blank.
+  it("hands the bands down, so the form opens on the right one", async () => {
+    renderAt("band-1");
+    await whenSignedIn();
+
+    expect(screen.getByLabelText("Band Name *")).toHaveValue("Sex Pistols");
+    expect(screen.getByLabelText("Country")).toHaveValue("GB");
+  });
+
+  it("hands setBands down, so an edit reaches the list", async () => {
+    const band = makeBand();
+    const sent = captures("put", "/bands/band-1", { ...band, name: "The Sex Pistols" });
+    const setBands = vi.fn();
+    renderAt("band-1", [band], setBands);
+    await whenSignedIn();
+
+    const name = screen.getByLabelText("Band Name *");
+    await userEvent.clear(name);
+    await userEvent.type(name, "The Sex Pistols");
+    await userEvent.click(screen.getByRole("button", { name: "Update Band" }));
+
+    expect(sent[0]).toEqual(expect.objectContaining({ name: "The Sex Pistols" }));
+    const updated = setBands.mock.calls[0][0]([band]);
+    expect(updated[0].name).toBe("The Sex Pistols");
   });
 });

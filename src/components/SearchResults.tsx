@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { upstreamAPI } from "../services/api";
+import { errorMessage } from "../services/errorMessage";
 import { useAuth } from "../context/AuthContext";
 import type { Band, SetBands, UpstreamCandidate } from "../types";
 import {
@@ -36,29 +37,45 @@ function SearchResults({ bands, setBands }: { bands: Band[]; setBands: SetBands 
   const inParam = searchParams.get("in");
   const category = isSearchCategory(inParam) ? inParam : DEFAULT_CATEGORY;
 
-  const [candidates, setCandidates] = useState<UpstreamCandidate[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchError, setSearchError] = useState<string | null>(null);
+  // The answer carries the term it answers, so nothing has to be cleared when the
+  // term changes: results for another term simply do not match and are not shown.
+  // A MusicBrainz call takes about a second, so two searches in a row leave two in
+  // flight and they can land out of order — the older one would otherwise overwrite
+  // the newer, and stop the spinner while the real request was still running.
+  const [answer, setAnswer] = useState<{
+    term: string;
+    candidates: UpstreamCandidate[];
+    error: string | null;
+  } | null>(null);
   /** musicBrainzId -> the band once imported, so the row can link to it. */
   const [imported, setImported] = useState<Record<string, Band>>({});
   const [importError, setImportError] = useState<string | null>(null);
+
+  const fresh = answer?.term === term ? answer : null;
+  const candidates = fresh?.candidates ?? [];
+  const searchError = fresh?.error ?? null;
+  const isSearching = Boolean(term) && isLoggedIn && !fresh;
 
   useEffect(() => {
     if (!term) return;        // nothing typed: no request
     if (!isLoggedIn) return;  // the panel is hidden anyway, and the API would say 401
 
-    setIsSearching(true);
-    setSearchError(null);
+    let current = true;
 
     upstreamAPI.search(term)
-      .then(({ data }) => setCandidates(data))
+      .then(({ data }) => { if (current) setAnswer({ term, candidates: data, error: null }); })
       .catch((error) => {
+        if (!current) return;
         console.error(error);
         // Said here and nowhere else: the rest of the site does not depend on it.
-        setSearchError("Could not reach MusicBrainz. Our own results are below.");
-        setCandidates([]);
-      })
-      .finally(() => setIsSearching(false));
+        setAnswer({
+          term,
+          candidates: [],
+          error: "Could not reach MusicBrainz. Our own results are below.",
+        });
+      });
+
+    return () => { current = false; };
   }, [term, isLoggedIn]);
 
   const ours = term ? bands.filter((band) => matchesIn(band, term, category)) : [];
@@ -77,7 +94,7 @@ function SearchResults({ bands, setBands }: { bands: Band[]; setBands: SetBands 
       })
       .catch((error) => {
         console.error(error);
-        setImportError("This band could not be imported. It may already be here.");
+        setImportError(errorMessage(error, "This band could not be imported. It may already be here."));
       });
   };
 
@@ -121,7 +138,8 @@ function SearchResults({ bands, setBands }: { bands: Band[]; setBands: SetBands 
 
       {!isLoggedIn ? (
         <p className="search-note search-members-only">
-          <Link to="/signup">Log in</Link> to also search MusicBrainz and import bands from it.
+          Log in to also search MusicBrainz and import bands from it, or{" "}
+          <Link to="/signup">create an account</Link>.
         </p>
       ) : (
       <section className="search-panel" aria-label="On MusicBrainz">

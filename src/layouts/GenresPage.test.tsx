@@ -1,16 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { screen } from "@testing-library/react";
-import type { ReactNode } from "react";
-import { useAuth } from "../context/AuthContext";
-import { renderPage, session, expectShell } from "../test/renderPage";
+import { renderPage, expectShell } from "../test/renderPage";
 import GenresPage from "./GenresPage";
 
-vi.mock("../context/AuthContext", () => ({
-  AuthProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
-  useAuth: vi.fn(),
-}));
-
-beforeEach(() => vi.mocked(useAuth).mockReturnValue(session() as never));
+// The real <AuthProvider> runs here: nothing about authentication is faked.
+afterEach(() => vi.restoreAllMocks());
 
 describe("GenresPage", () => {
   it("titles the page and shows the taxonomy", () => {

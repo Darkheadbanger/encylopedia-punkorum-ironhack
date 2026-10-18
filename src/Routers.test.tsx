@@ -1,34 +1,27 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import Routers from "./Routers";
 import { makeBand } from "./test/fixtures";
-import { useAuth } from "./context/AuthContext";
-import type { ReactNode } from "react";
+import { AuthProvider } from "./context/AuthContext";
+import { signedIn, settleAuth } from "./test/renderPage";
 
-vi.mock("./context/AuthContext", () => ({
-  AuthProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
-  useAuth: vi.fn(),
-}));
-
-const session = (isLoggedIn: boolean) => ({
-  user: isLoggedIn ? { id: "1", email: "joey@ramones.com", username: "joey" } : null,
-  isLoggedIn,
-  isLoading: false,
-  login: vi.fn(),
-  signup: vi.fn(),
-  logout: vi.fn(),
+// Logged out unless a test says otherwise. The real <AuthProvider> runs below:
+// being logged in means a token the server accepts, as in the browser.
+beforeEach(() => signedIn(false));
+afterEach(() => {
+  vi.restoreAllMocks();
+  localStorage.clear();
 });
 
-// Logged out unless a test says otherwise.
-beforeEach(() => vi.mocked(useAuth).mockReturnValue(session(false) as never));
-
-const logIn = () => vi.mocked(useAuth).mockReturnValue(session(true) as never);
+const logIn = () => signedIn(true);
 
 const renderAt = (path: string) =>
   render(
     <MemoryRouter initialEntries={[path]}>
-      <Routers bands={[makeBand()]} setBands={vi.fn()} />
+      <AuthProvider>
+        <Routers bands={[makeBand()]} setBands={vi.fn()} />
+      </AuthProvider>
     </MemoryRouter>
   );
 
@@ -61,32 +54,40 @@ describe("Routers", () => {
     expect(screen.getByRole("heading", { level: 2, name: "Sex Pistols" })).toBeInTheDocument();
   });
 
-  it("/addBand shows the add form to a logged-in visitor", () => {
+  it("/addBand shows the add form to a logged-in visitor", async () => {
     logIn();
     renderAt("/addBand");
+
+    await settleAuth();
     expectLayout({ loggedIn: true });
     expect(
       screen.getByRole("heading", { name: "Add New Band to Encyclopedia Punkorum" })
     ).toBeInTheDocument();
   });
 
-  it("/addBand sends a logged-out visitor home", () => {
+  it("/addBand sends a logged-out visitor home", async () => {
     renderAt("/addBand");
+
+    await settleAuth();
     expect(
       screen.queryByRole("heading", { name: "Add New Band to Encyclopedia Punkorum" })
     ).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Bands" })).toBeInTheDocument(); // the home page
   });
 
-  it("/updateBand/:updateId shows the edit form to a logged-in visitor", () => {
+  it("/updateBand/:updateId shows the edit form to a logged-in visitor", async () => {
     logIn();
     renderAt("/updateBand/band-1");
+
+    await settleAuth();
     expectLayout({ loggedIn: true });
     expect(screen.getByRole("heading", { name: "Edit Band: Sex Pistols" })).toBeInTheDocument();
   });
 
-  it("/updateBand/:updateId sends a logged-out visitor home", () => {
+  it("/updateBand/:updateId sends a logged-out visitor home", async () => {
     renderAt("/updateBand/band-1");
+
+    await settleAuth();
     expect(screen.queryByRole("heading", { name: "Edit Band: Sex Pistols" })).not.toBeInTheDocument();
   });
 

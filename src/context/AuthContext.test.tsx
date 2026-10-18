@@ -1,16 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AuthProvider, useAuth } from "./AuthContext";
-import { authAPI } from "../services/api";
-
-vi.mock("../services/api", () => ({
-  authAPI: {
-    login: vi.fn(),
-    signup: vi.fn(),
-    verify: vi.fn(),
-  },
-}));
+import { accepts, answers, refuses, watches } from "../test/server";
 
 const joey = { id: "507f1f77bcf86cd799439011", email: "joey@ramones.com", username: "joey" };
 
@@ -45,15 +37,17 @@ beforeEach(() => {
 
 describe("AuthContext", () => {
   it("starts logged out when no token is stored", async () => {
+    const asked = watches("/auth/verify", joey);
     renderProbe();
+
     expect(await screen.findByTestId("state")).toHaveTextContent("out");
     // Nothing stored means nothing to verify: no pointless call to the server
-    expect(authAPI.verify).not.toHaveBeenCalled();
+    expect(asked).toHaveLength(0);
   });
 
   it("stores the token and exposes the user after a successful login", async () => {
-    vi.mocked(authAPI.login).mockResolvedValue({ data: { authToken: "a-token" } } as never);
-    vi.mocked(authAPI.verify).mockResolvedValue({ data: joey } as never);
+    accepts("/auth/login", { authToken: "a-token" });
+    answers("/auth/verify", joey);
     renderProbe();
 
     await userEvent.click(await screen.findByRole("button", { name: "log in" }));
@@ -63,7 +57,7 @@ describe("AuthContext", () => {
   });
 
   it("stays logged out and keeps no token when login fails", async () => {
-    vi.mocked(authAPI.login).mockRejectedValue(new Error("401"));
+    refuses("post", "/auth/login", "Incorrect email or password.", 401);
     renderProbe();
 
     await userEvent.click(await screen.findByRole("button", { name: "log in" }));
@@ -73,8 +67,8 @@ describe("AuthContext", () => {
   });
 
   it("drops the token and the user on logout", async () => {
-    vi.mocked(authAPI.login).mockResolvedValue({ data: { authToken: "a-token" } } as never);
-    vi.mocked(authAPI.verify).mockResolvedValue({ data: joey } as never);
+    accepts("/auth/login", { authToken: "a-token" });
+    answers("/auth/verify", joey);
     renderProbe();
 
     await userEvent.click(await screen.findByRole("button", { name: "log in" }));
@@ -88,7 +82,7 @@ describe("AuthContext", () => {
 
   it("restores the session from a stored token", async () => {
     localStorage.setItem("authToken", "a-token");
-    vi.mocked(authAPI.verify).mockResolvedValue({ data: joey } as never);
+    answers("/auth/verify", joey);
 
     renderProbe();
 
@@ -97,7 +91,7 @@ describe("AuthContext", () => {
 
   it("discards a stored token the server refuses", async () => {
     localStorage.setItem("authToken", "expired-or-forged");
-    vi.mocked(authAPI.verify).mockRejectedValue(new Error("401"));
+    refuses("get", "/auth/verify", "Token missing or invalid.", 401);
 
     renderProbe();
 
