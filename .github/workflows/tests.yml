@@ -1,0 +1,26 @@
+# Continuous integration: every push and every pull request runs the checks.
+# A red cross on GitHub means something is broken before it reaches Netlify.
+
+name: Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci             # exact versions from package-lock.json
+      - run: npm run lint       # ESLint
+      - run: npm run typecheck  # TypeScript
+      - run: npm run test:run   # Vitest + React Testing Library
